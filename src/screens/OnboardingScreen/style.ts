@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-const personalizeStyles = StyleSheet.create({
+const onboardingStyles = StyleSheet.create({
   mainContainer: {
     height: '100%',
     paddingLeft: '6%',
@@ -33,12 +33,37 @@ const personalizeStyles = StyleSheet.create({
     includeFontPadding: false
   },
   textInputContainer: {
-    marginBottom: '100%',
   },
   skipButtonContainer: {
     alignSelf: 'flex-end',
     paddingTop: '5%',
   },
+  categoryContainer: {
+    height: 45,
+    padding: 10,
+    marginRight: 5,
+    marginTop: 5,
+    borderRadius: 5,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  categoryMainContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  addButton: {
+    height: 45,
+    padding: 10,
+    marginRight: 5,
+    borderRadius: 5,
+    borderWidth: 2,
+    width: 50,
+    alignSelf: 'flex-end',
+    marginBottom: '10%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
 
-export default personalizeStyles;
+export default onboardingStyles;

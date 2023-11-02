@@ -9,7 +9,11 @@ const PersonalizeScreen = () => {
   const colors = useThemeColors();
   const [name, setName] = useState('');
   const handleSubmit = () => {
-    navigate('');
+    navigate('OnboardingScreen');
+  };
+
+  const handleSkip = () => {
+    navigate('OnboardingScreen');
   };
   return (
     <View
@@ -17,7 +21,7 @@ const PersonalizeScreen = () => {
         styles.mainContainer,
         {backgroundColor: colors.primaryBackground},
       ]}>
-      <TouchableOpacity style={styles.skipButtonContainer}>
+      <TouchableOpacity style={styles.skipButtonContainer} onPress={handleSkip}>
         <Text
           style={[
             styles.subtitleText,

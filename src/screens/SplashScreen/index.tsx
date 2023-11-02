@@ -25,7 +25,7 @@ const SplashScreen = () => {
       <Text
         style={[
           styles.subtitleText,
-          {marginBottom: '110%', color: colors.secondaryText},
+          {marginBottom: '120%', color: colors.secondaryText},
         ]}>
         Penny with zero
       </Text>
