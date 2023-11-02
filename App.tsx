@@ -1,24 +1,12 @@
 import React from 'react';
-import SplashScreen from './src/screens/SplashScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {setNavigationRef} from './src/utils/navigationUtils';
-import { useColorScheme } from 'react-native';
-
-const AppWrapper = () => {
-  const colorScheme = useColorScheme();
-
-  return (
-    <NavigationContainer ref={setNavigationRef}>
-      <SplashScreen />
-      {/* Other app screens/components */}
-    </NavigationContainer>
-  );
-};
+import HomeStack from './src/navigation/HomeStack';
 
 const App = () => {
   return (
     <NavigationContainer ref={setNavigationRef}>
-      <SplashScreen />
+      <HomeStack />
     </NavigationContainer>
   );
 };
