@@ -6,24 +6,24 @@ const Colors = {
     primaryText: '#000000',
     secondaryBackground: '#ECECEC',
     secondaryText: '#333333',
-    accentGreen: '#98FB98',
+    accentGreen: '#6E8B3D',
     accentOrange: '#FFA500',
-    buttonText: "#FFFFFF"
+    buttonText: '#FFFFFF',
   },
   dark: {
-    primaryBackground: '#121212',
+    primaryBackground: '#000000',
     primaryText: '#FFFFFF',
     secondaryBackground: '#333333',
     secondaryText: '#CCCCCC',
     accentGreen: '#98FB98',
     accentOrange: '#FFA500',
-    buttonText: "#000000"
+    buttonText: '#000000',
   },
 };
 
 const useThemeColors = () => {
   const colorScheme = useColorScheme();
-  console.log(colorScheme)
+  console.log(colorScheme);
   const colors = Colors[colorScheme];
 
   return colors;

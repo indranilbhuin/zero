@@ -1,12 +1,15 @@
-import {View, Text, StyleSheet, Switch} from 'react-native';
+import {View, Text} from 'react-native';
 import React from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
 import useThemeColors from '../../hooks/useThemeColors';
+import {navigate} from '../../utils/navigationUtils';
+import styles from "./style"
 
 const SplashScreen = () => {
   const handleClick = () => {
-    console.log('first');
+    navigate('PersonalizeScreen');
   };
+  
   const colors = useThemeColors();
 
   return (
@@ -15,7 +18,6 @@ const SplashScreen = () => {
         styles.mainContainer,
         {backgroundColor: colors.primaryBackground},
       ]}>
-      {/* <Switch /> */}
       <Text style={[styles.titleText, {color: colors.primaryText}]}>zero</Text>
       <Text style={[styles.subtitleText, {color: colors.secondaryText}]}>
         Count Every
@@ -37,22 +39,3 @@ const SplashScreen = () => {
 };
 
 export default SplashScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  titleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 90,
-    includeFontPadding: false,
-    paddingTop: '20%',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 25,
-    includeFontPadding: false,
-  },
-});
