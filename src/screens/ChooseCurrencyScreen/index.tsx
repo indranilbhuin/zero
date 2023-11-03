@@ -15,7 +15,26 @@ import PrimaryButton from '../../components/PrimaryButton';
 const ChooseCurrencyScreen = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
+  const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
+
   const handleCurrencySubmit = () => {};
+
+  const handleSearch = (text: string) => {
+    setSearch(text);
+    const filtered = currencies.filter(currency => {
+      const {code, name, symbol, symbolNative} = currency;
+      const searchItem = text.toLowerCase();
+
+      return (
+        code.toLowerCase().includes(searchItem) ||
+        name.toLowerCase().includes(searchItem) ||
+        symbol.toLowerCase().includes(searchItem) ||
+        symbolNative.toLowerCase().includes(searchItem)
+      );
+    });
+    setFilteredCurrencies(filtered);
+  };
+
   return (
     <View
       style={[
@@ -51,7 +70,7 @@ const ChooseCurrencyScreen = () => {
             },
           ]}
           value={search}
-          onChangeText={setSearch}
+          onChangeText={handleSearch}
           placeholder="eg. INR"
           placeholderTextColor={colors.secondaryText}
         />
@@ -74,7 +93,7 @@ const ChooseCurrencyScreen = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.currencyMainContainer}>
-          {currencies.map(currency => (
+          {filteredCurrencies.map(currency => (
             <TouchableOpacity key={currency.code}>
               <View
                 style={[
@@ -113,7 +132,7 @@ const ChooseCurrencyScreen = () => {
         </View>
       </ScrollView>
 
-      <View style={{marginBottom: 5}}>
+      <View style={{marginBottom: 20}}>
         <PrimaryButton
           onPress={handleCurrencySubmit}
           backgroundColor={colors.primaryText}
