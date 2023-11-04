@@ -14,15 +14,16 @@ const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   return (
-    <>
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        <Stack.Screen name="PersonalizeScreen" component={PersonalizeScreen} />
-        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-        <Stack.Screen name="ChooseCurrencyScreen" component={ChooseCurrencyScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      </Stack.Navigator>
-    </>
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen name="SplashScreen" component={SplashScreen} />
+      <Stack.Screen name="PersonalizeScreen" component={PersonalizeScreen} />
+      <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+      <Stack.Screen
+        name="ChooseCurrencyScreen"
+        component={ChooseCurrencyScreen}
+      />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+    </Stack.Navigator>
   );
 };
 

@@ -1,21 +1,64 @@
 import {Text, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
 import useThemeColors from '../../hooks/useThemeColors';
 import styles from './style';
 import {navigate} from '../../utils/navigationUtils';
 import defaultCategories from '../../../assets/defaultCategories.json';
+import {createCategory} from '../../services/CategoryService';
+import {getAllUsers} from '../../services/UserService';
+import {setUserData} from '../../redux/slice/userDataSlice';
+import {useDispatch, useSelector} from 'react-redux';
 
 const OnboardingScreen = () => {
   const colors = useThemeColors();
   const [category, setCategory] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const userId = useSelector(
+    (state: {userData: {userId: any}}) => state.userData.userId,
+  );
 
+  const dispatch = useDispatch();
   const handleSkip = () => {
     navigate('ChooseCurrencyScreen');
   };
 
-  const handleSubmit = () => {
+  const allUsers = async () => {
+    try {
+      const users = await getAllUsers();
+      const userId = String(users[0]?._id);
+      console.log(userId);
+      const username = users[0]?.username;
+      const email = users[0]?.email;
+      const userData = {userId, username, email};
+      dispatch(setUserData(userData));
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    allUsers();
+  }, []);
+
+  console.log(userId);
+
+  const handleSubmit = async () => {
+    for (const category of selectedCategories) {
+      await createCategory(
+        category.name,
+        Realm.BSON.ObjectID.createFromHexString(userId),
+      );
+    }
     navigate('ChooseCurrencyScreen');
+  };
+
+  const toggleCategorySelection = category => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(
+        selectedCategories.filter(item => item !== category),
+      );
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
   };
 
   return (
@@ -54,12 +97,16 @@ const OnboardingScreen = () => {
 
       <View style={styles.categoryMainContainer}>
         {defaultCategories.map(category => (
-          <TouchableOpacity key={category._id}>
+          <TouchableOpacity
+            key={category._id}
+            onPress={() => toggleCategorySelection(category)}>
             <View
               style={[
                 styles.categoryContainer,
                 {
-                  backgroundColor: colors.primaryText,
+                  backgroundColor: selectedCategories.includes(category)
+                    ? colors.accentGreen
+                    : colors.primaryText,
                   borderColor: colors.secondaryText,
                 },
               ]}>
