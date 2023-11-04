@@ -4,12 +4,24 @@ import PrimaryButton from '../../components/PrimaryButton';
 import useThemeColors from '../../hooks/useThemeColors';
 import styles from './style';
 import {navigate} from '../../utils/navigationUtils';
+import { createUser } from '../../services/UserService';
 
 const PersonalizeScreen = () => {
   const colors = useThemeColors();
   const [name, setName] = useState('');
-  const handleSubmit = () => {
-    navigate('OnboardingScreen');
+  const [email, setEmail] = useState("null");
+
+  const handleSubmit = async () => {
+    if (!name || !email) {
+      return;
+    }
+  
+    try {
+      await createUser(name, email);
+      navigate('OnboardingScreen');
+    } catch (error) {
+      console.error('Error saving user data to Realm:', error);
+    }
   };
 
   const handleSkip = () => {

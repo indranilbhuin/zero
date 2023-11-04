@@ -1,14 +1,22 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import {Text, View} from 'react-native';
+import styles from './style';
+import useThemeColors from '../../hooks/useThemeColors';
 
 const HomeScreen = () => {
+  const colors = useThemeColors();
+  const userName = 'User';
   return (
-    <View>
-      <Text>HomeScreen</Text>
+    <View
+      style={[
+        styles.mainContainer,
+        {backgroundColor: colors.primaryBackground},
+      ]}>
+      <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        Hey, {userName}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
-export default HomeScreen
-
-const styles = StyleSheet.create({})
+export default HomeScreen;

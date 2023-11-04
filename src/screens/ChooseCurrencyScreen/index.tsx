@@ -11,13 +11,26 @@ import useThemeColors from '../../hooks/useThemeColors';
 import Icon from '../../components/Icons';
 import currencies from '../../../assets/currencies.json';
 import PrimaryButton from '../../components/PrimaryButton';
+import {navigate} from '../../utils/navigationUtils';
+import {createCurrency} from '../../services/CurrencyService';
 
 const ChooseCurrencyScreen = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
+  const [selectedCurrency, setSelectedCurrency] = useState(null);
 
-  const handleCurrencySubmit = () => {};
+  const handleCurrencySubmit = async () => {
+    if (selectedCurrency) {
+      await createCurrency(
+        selectedCurrency.code,
+        selectedCurrency.symbol,
+        selectedCurrency.name,
+      );
+
+      navigate('HomeScreen');
+    }
+  };
 
   const handleSearch = (text: string) => {
     setSearch(text);
@@ -33,6 +46,10 @@ const ChooseCurrencyScreen = () => {
       );
     });
     setFilteredCurrencies(filtered);
+  };
+
+  const handleCurrencySelect = currency => {
+    setSelectedCurrency(currency);
   };
 
   return (
@@ -94,12 +111,17 @@ const ChooseCurrencyScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.currencyMainContainer}>
           {filteredCurrencies.map(currency => (
-            <TouchableOpacity key={currency.code}>
+            <TouchableOpacity
+              key={currency.code}
+              onPress={() => handleCurrencySelect(currency)}>
               <View
                 style={[
                   styles.currencyContainer,
                   {
-                    backgroundColor: colors.primaryText,
+                    backgroundColor:
+                      selectedCurrency === currency
+                        ? colors.accentGreen
+                        : colors.primaryText,
                     borderColor: colors.secondaryText,
                   },
                 ]}>
