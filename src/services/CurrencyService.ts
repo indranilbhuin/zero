@@ -32,6 +32,17 @@ export const getCurrencyById = async (currencyId: Realm.BSON.ObjectId) => {
   return currency;
 };
 
+export const getCurrencyByUserId = async (userId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  const currencies = realm.objects('Currency');
+
+  const currenciesByUserId = Array.from(currencies).filter((currency) => {
+    return currency.user && currency.user._id.equals(userId);
+  });
+
+  return currenciesByUserId;
+};
+
 export const getAllCurrencies = async () => {
   const realm = await getRealm();
   const currencies = realm.objects('Currency');

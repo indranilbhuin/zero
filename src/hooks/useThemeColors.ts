@@ -9,6 +9,7 @@ const Colors = {
     accentGreen: '#6E8B3D',
     accentOrange: '#FFA500',
     buttonText: '#FFFFFF',
+    containerColor: "E0E0E0"
   },
   dark: {
     primaryBackground: '#000000',
@@ -18,6 +19,7 @@ const Colors = {
     accentGreen: '#98FB98',
     accentOrange: '#FFA500',
     buttonText: '#000000',
+    containerColor: "1f1f1f"
   },
 };
 

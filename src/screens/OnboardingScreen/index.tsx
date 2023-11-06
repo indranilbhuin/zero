@@ -23,7 +23,7 @@ const OnboardingScreen = () => {
     navigate('ChooseCurrencyScreen');
   };
 
-  const allUsers = async () => {
+  const fetchAllUsers = async () => {
     try {
       const users = await getAllUsers();
       const userId = String(users[0]?._id);
@@ -36,7 +36,7 @@ const OnboardingScreen = () => {
   };
 
   useEffect(() => {
-    allUsers();
+    fetchAllUsers();
   }, []);
 
   console.log(userId);
