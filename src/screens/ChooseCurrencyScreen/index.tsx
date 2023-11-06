@@ -11,24 +11,34 @@ import useThemeColors from '../../hooks/useThemeColors';
 import Icon from '../../components/Icons';
 import currencies from '../../../assets/currencies.json';
 import PrimaryButton from '../../components/PrimaryButton';
-import {navigate} from '../../utils/navigationUtils';
 import {createCurrency} from '../../services/CurrencyService';
+import {useDispatch, useSelector} from 'react-redux';
+import AsyncStorageService from '../../utils/asyncStorageService';
+import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 
 const ChooseCurrencyScreen = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
   const [selectedCurrency, setSelectedCurrency] = useState(null);
+  const userId = useSelector(
+    (state: {userData: {userId: any}}) => state.userData.userId,
+  );
+  console.log(userId);
+  const dispatch = useDispatch();
 
   const handleCurrencySubmit = async () => {
     if (selectedCurrency) {
+      console.log('second');
       await createCurrency(
         selectedCurrency.code,
         selectedCurrency.symbol,
         selectedCurrency.name,
+        Realm.BSON.ObjectID.createFromHexString(userId),
       );
 
-      navigate('HomeScreen');
+      await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
+      dispatch(setIsOnboarded(true));
     }
   };
 

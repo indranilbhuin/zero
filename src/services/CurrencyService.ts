@@ -4,17 +4,25 @@ export const createCurrency = async (
   code: string,
   symbol: string,
   name: string,
+  userId: Realm.BSON.ObjectId,
 ) => {
   const realm = await getRealm();
 
   realm.write(() => {
+    const user = realm.objectForPrimaryKey('User', userId);
     const uniqueId = new Realm.BSON.ObjectId();
-    realm.create('Currency', {
-      _id: uniqueId,
-      code,
-      symbol,
-      name,
-    });
+    console.log("first")
+    if (user) {
+      realm.create('Currency', {
+        _id: uniqueId,
+        code,
+        symbol,
+        name,
+        user: user,
+      });
+    } else {
+      console.error('User not found.');
+    }
   });
 };
 

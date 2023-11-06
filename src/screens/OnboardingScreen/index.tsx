@@ -122,7 +122,7 @@ const OnboardingScreen = () => {
         ))}
       </View>
 
-      <View style={styles.subtitleTextContainer}>
+      {/* <View style={styles.subtitleTextContainer}>
         <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
           Add your own category
         </Text>
@@ -159,13 +159,14 @@ const OnboardingScreen = () => {
             Add
           </Text>
         </TouchableOpacity>
+      </View> */}
+      <View style={styles.buttonContainer}>
+        <PrimaryButton
+          onPress={handleSubmit}
+          backgroundColor={colors.primaryText}
+          buttonText={'Continue'}
+        />
       </View>
-
-      <PrimaryButton
-        onPress={handleSubmit}
-        backgroundColor={colors.primaryText}
-        buttonText={'Continue'}
-      />
     </View>
   );
 };
