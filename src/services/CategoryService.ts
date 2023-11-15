@@ -3,6 +3,7 @@ import {getRealm} from '../utils/realmService';
 export const createCategory = async (
   name: string,
   userId: Realm.BSON.ObjectId,
+  icon: string | null,
 ) => {
   const realm = await getRealm();
 
@@ -15,6 +16,7 @@ export const createCategory = async (
           name: name,
           categoryTotal: 0,
           user: user,
+          icon: icon,
         });
       } else {
         console.error('User not found.');
@@ -30,4 +32,14 @@ export const createCategory = async (
 export const getAllCategories = async () => {
   const realm = await getRealm();
   return realm.objects('Category');
+};
+
+export const getAllCategoriesByUserId = async (userId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  const categories = realm.objects('Category');
+  const categoriesByUserId = Array.from(categories).filter(category => {
+    return category.user && category.user._id.equals(userId);
+  });
+
+  return categoriesByUserId;
 };

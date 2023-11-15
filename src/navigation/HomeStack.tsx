@@ -9,6 +9,7 @@ import useThemeColors from '../hooks/useThemeColors';
 import ReportsScreen from '../screens/ReportsScreen';
 import DebtsScreen from '../screens/DebtsScreen';
 import AddTransactionsScreen from '../screens/AddTransactionsScreen';
+import AddCategoryScreen from '../screens/AddCategoryScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -111,6 +112,7 @@ const HomeStack = () => {
         name="AddTransactionsScreen"
         component={AddTransactionsScreen}
       />
+      <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
     </Stack.Navigator>
   );
 };

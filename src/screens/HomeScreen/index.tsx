@@ -11,6 +11,7 @@ import TransactionList from '../../components/TransactionList';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectUserName} from '../../redux/slice/userNameSlice';
 import {
+  FETCH_ALL_CATEGORY_DATA,
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
@@ -26,6 +27,8 @@ const HomeScreen = () => {
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
+
+    dispatch({type: FETCH_ALL_CATEGORY_DATA});
   }, [userId, userName]);
 
   const todaySpent = 800;
