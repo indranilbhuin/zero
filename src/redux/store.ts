@@ -1,12 +1,15 @@
 import {configureStore} from '@reduxjs/toolkit';
-import userDataReducer from './slice/userDataSlice';
-import userOnboardingReducer from './slice/isOnboardedSlice';
+import rootReducer from './rootReducer';
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from './rootSaga';
+
+const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
-  reducer: {
-    userData: userDataReducer,
-    userOnboarding: userOnboardingReducer,
-  },
+  reducer: rootReducer,
+  middleware: [sagaMiddleware],
 });
+
+sagaMiddleware.run(rootSaga)
 
 export default store;

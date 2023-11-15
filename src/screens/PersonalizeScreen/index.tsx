@@ -27,6 +27,7 @@ const PersonalizeScreen = () => {
   const handleSkip = () => {
     navigate('OnboardingScreen');
   };
+
   return (
     <View
       style={[
@@ -80,8 +81,8 @@ const PersonalizeScreen = () => {
 
       <PrimaryButton
         onPress={handleSubmit}
-        backgroundColor={colors.primaryText}
-        buttonText={'Continue'}
+        colors={colors}
+        buttonTitle={'Continue'}
       />
     </View>
   );

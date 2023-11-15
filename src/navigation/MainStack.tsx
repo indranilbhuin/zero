@@ -1,16 +1,16 @@
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useMemo, useState} from 'react';
 import AsyncStorageService from '../utils/asyncStorageService';
-import {setIsOnboarded} from '../redux/slice/isOnboardedSlice';
+import {
+  selectIsOnboarded,
+  setIsOnboarded,
+} from '../redux/slice/isOnboardedSlice';
 import HomeStack from './HomeStack';
 import OnboardingStack from './OnboardingStack';
 
 const MainStack = () => {
   const dispatch = useDispatch();
-  const isOnboarded = useSelector(
-    (state: {userOnboarding: {isOnboarded: boolean}}) =>
-      state.userOnboarding.isOnboarded,
-  );
+  const isOnboarded = useSelector(selectIsOnboarded);
 
   const [stack, setStack] = useState(null);
 
