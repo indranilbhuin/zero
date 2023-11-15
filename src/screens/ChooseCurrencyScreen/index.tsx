@@ -15,16 +15,15 @@ import {createCurrency} from '../../services/CurrencyService';
 import {useDispatch, useSelector} from 'react-redux';
 import AsyncStorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
+import {selectUserId} from '../../redux/slice/userIdSlice';
 
 const ChooseCurrencyScreen = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
   const [selectedCurrency, setSelectedCurrency] = useState(null);
-  const userId = useSelector(
-    (state: {userData: {userId: any}}) => state.userData.userId,
-  );
-  console.log(userId);
+  const userId = useSelector(selectUserId);
+  console.log("in currency screen",userId);
   const dispatch = useDispatch();
 
   const handleCurrencySubmit = async () => {
@@ -167,8 +166,8 @@ const ChooseCurrencyScreen = () => {
       <View style={{marginBottom: 20}}>
         <PrimaryButton
           onPress={handleCurrencySubmit}
-          backgroundColor={colors.primaryText}
-          buttonText={'Continue'}
+          colors={colors}
+          buttonTitle={'Continue'}
         />
       </View>
     </View>

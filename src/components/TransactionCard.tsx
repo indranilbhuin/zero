@@ -5,19 +5,19 @@ import useThemeColors from '../hooks/useThemeColors';
 const TransactionCard = ({currencySymbol, day, totalSpent}) => {
   const colors = useThemeColors();
   return (
-    <View style={[styles.card, {backgroundColor: colors.primaryText}]}>
+    <View style={[styles.card, {backgroundColor: colors.containerColor}]}>
       <View style={styles.textContainer}>
         <Text
           style={[
             styles.subtitleText,
-            {color: colors.buttonText, fontSize: 14},
+            {color: colors.primaryText, fontSize: 14},
           ]}>
           {day}'s
         </Text>
         <Text
           style={[
             styles.subtitleText,
-            {color: colors.buttonText, fontSize: 14},
+            {color: colors.primaryText, fontSize: 14},
           ]}>
           Transactions
         </Text>

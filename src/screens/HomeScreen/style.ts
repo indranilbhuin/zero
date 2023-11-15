@@ -21,7 +21,7 @@ const homeStyles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 5,
+    marginRight: 8,
   },
   initialsText: {
     fontFamily: 'FiraCode-Medium',

@@ -11,6 +11,7 @@ const SplashScreen = () => {
   };
   
   const colors = useThemeColors();
+  console.log(colors)
 
   return (
     <View
@@ -31,8 +32,8 @@ const SplashScreen = () => {
       </Text>
       <PrimaryButton
         onPress={handleClick}
-        backgroundColor={colors.primaryText}
-        buttonText={'Get Started'}
+        colors={colors}
+        buttonTitle={'Get Started'}
       />
     </View>
   );

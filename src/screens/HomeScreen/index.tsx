@@ -3,70 +3,35 @@ import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './style';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
-import {getAllUsers} from '../../services/UserService';
-import {setUserData} from '../../redux/slice/userDataSlice';
 import Icon from '../../components/Icons';
 import {navigate} from '../../utils/navigationUtils';
-import {getCurrencyByUserId} from '../../services/CurrencyService';
-import {setCurrencyData} from '../../redux/slice/currencyDataSlice';
+import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import TransactionCard from '../../components/TransactionCard';
+import TransactionList from '../../components/TransactionList';
+import {selectUserId} from '../../redux/slice/userIdSlice';
+import {selectUserName} from '../../redux/slice/userNameSlice';
+import {
+  FETCH_ALL_USER_DATA,
+  FETCH_CURRENCY_DATA,
+} from '../../redux/actionTypes';
 
 const HomeScreen = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const allTransactions = [];
-  const userName = useSelector(
-    (state: {userData: {userName: any}}) => state.userData.userName,
-  );
-  const userId = useSelector(
-    (state: {userData: {userId: any}}) => state.userData.userId,
-  );
-
-  const currencySymbol = useSelector(
-    (state: {currencyData: {currencySymbol: any}}) =>
-      state.currencyData.currencySymbol,
-  );
-
-  const fetchAllUsers = async () => {
-    try {
-      const users = await getAllUsers();
-      const userId = String(users[0]?._id);
-      console.log(userId);
-      const username = users[0]?.username;
-      const email = users[0]?.email;
-      const userData = {userId, username, email};
-      dispatch(setUserData(userData));
-    } catch (error) {}
-  };
-
-  const fetchCurrency = async () => {
-    try {
-      const currencies = await getCurrencyByUserId(
-        Realm.BSON.ObjectID.createFromHexString(userId),
-      );
-      console.log(currencies);
-      const currencyId = String(currencies[0]?._id);
-      const currencyName = currencies[0]?.name;
-      const currencySymbol = currencies[0]?.symbol;
-      const currencyCode = currencies[0]?.code;
-      const currencyData = {
-        currencyId,
-        currencyName,
-        currencySymbol,
-        currencyCode,
-      };
-      dispatch(setCurrencyData(currencyData));
-    } catch (error) {}
-  };
+  const userName = useSelector(selectUserName);
+  const userId = useSelector(selectUserId);
+  const currencySymbol = useSelector(selectCurrencySymbol);
 
   useEffect(() => {
-    fetchAllUsers();
-    fetchCurrency();
-  }, []);
+    dispatch({type: FETCH_ALL_USER_DATA});
+    dispatch({type: FETCH_CURRENCY_DATA});
+  }, [userId, userName]);
+
   const todaySpent = 800;
   const yesterdaySpent = 1200;
   const thisMonthSpent = 3000;
-
+  console.log(currencySymbol);
   return (
     <>
       <View
@@ -106,14 +71,9 @@ const HomeScreen = () => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.listExpenseContainer}>
-            {/* <Text
-            style={[
-              styles.subtitleText,
-              {color: colors.accentGreen, fontSize: 12},
-            ]}>
-            How are you doing today !!
-          </Text> */}
-            <ScrollView horizontal={true}>
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}>
               <View style={styles.cardContainer}>
                 <TransactionCard
                   currencySymbol={currencySymbol}
@@ -142,7 +102,10 @@ const HomeScreen = () => {
               </Text>
               <View>
                 {allTransactions.length === 0 ? (
-                  <Text>No Transactions Yet</Text>
+                  <>
+                    <Text>No Transactions Yet</Text>
+                    <TransactionList currencySymbol={currencySymbol} />
+                  </>
                 ) : (
                   <View></View>
                 )}
