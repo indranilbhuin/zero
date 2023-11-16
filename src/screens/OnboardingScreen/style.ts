@@ -65,7 +65,7 @@ const onboardingStyles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonContainer: {
-    marginTop: "75%"
+    marginTop: "50%"
   }
 });
 

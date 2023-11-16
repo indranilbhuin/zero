@@ -1,5 +1,6 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
+import Icon from './Icons';
 
 const CategoryContainer = ({
   categories,
@@ -9,7 +10,7 @@ const CategoryContainer = ({
 }) => {
   return (
     <View style={styles.categoryMainContainer}>
-      {categories.map(category => (
+      {categories?.map(category => (
         <TouchableOpacity
           key={category._id}
           onPress={() => toggleCategorySelection(category)}>
@@ -23,6 +24,14 @@ const CategoryContainer = ({
                 borderColor: colors.secondaryText,
               },
             ]}>
+            <View style={styles.iconContainer}>
+              <Icon
+                name={category.icon}
+                size={20}
+                color={colors.buttonText}
+                type="MaterialCommunityIcons"
+              />
+            </View>
             <Text
               style={[
                 styles.subtitleText,
@@ -58,5 +67,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  iconContainer: {
+    marginRight: 5,
   },
 });

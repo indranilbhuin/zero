@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.19.4",
+    "@react-native-community/datetimepicker": "^7.6.1",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
     "@realm/react": "^0.6.1",
     "@reduxjs/toolkit": "^1.9.7",
+    "moment": "^2.29.4",
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-get-random-values": "^1.9.0",

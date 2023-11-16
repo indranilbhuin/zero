@@ -4,6 +4,7 @@ import Category from './CategorySchema';
 
 class Expense extends Realm.Object<Expense> {
   _id!: Realm.BSON.ObjectId;
+  title!: string;
   amount!: number;
   description!: string;
   category!: Category;
@@ -14,6 +15,7 @@ class Expense extends Realm.Object<Expense> {
     name: 'Expense',
     properties: {
       _id: 'objectId',
+      title: 'string',
       amount: 'double',
       description: 'string',
       category: 'Category',

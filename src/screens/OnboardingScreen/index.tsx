@@ -33,6 +33,7 @@ const OnboardingScreen = () => {
       await createCategory(
         category.name,
         Realm.BSON.ObjectID.createFromHexString(userId),
+        category.icon,
       );
     }
     navigate('ChooseCurrencyScreen');

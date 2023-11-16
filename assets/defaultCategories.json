@@ -1,32 +1,62 @@
 [
-  {"_id": "5f75cddc0ef99a4704df8e6c", "name": "Food", "categoryTotal": 0.0},
+  {
+    "_id": "5f75cddc0ef99a4704df8e6c",
+    "name": "Food",
+    "categoryTotal": 0.0,
+    "icon": "food-fork-drink"
+  },
   {
     "_id": "5f75cddc0ef99a4704df8e6d",
     "name": "Transportation",
-    "categoryTotal": 0.0
+    "categoryTotal": 0.0,
+    "icon": "bus"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e6e",
     "name": "Entertainment",
-    "categoryTotal": 0.0
+    "categoryTotal": 0.0,
+    "icon": "gamepad-variant"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e6f",
     "name": "Healthcare",
-    "categoryTotal": 0.0
+    "categoryTotal": 0.0,
+    "icon": "bandage"
   },
-  {"_id": "5f75cddc0ef99a4704df8e70", "name": "Shopping", "categoryTotal": 0.0},
-  {"_id": "5f75cddc0ef99a4704df8e71", "name": "Travel", "categoryTotal": 0.0},
+  {
+    "_id": "5f75cddc0ef99a4704df8e70",
+    "name": "Shopping",
+    "categoryTotal": 0.0,
+    "icon": "shopping"
+  },
+  {
+    "_id": "5f75cddc0ef99a4704df8e71",
+    "name": "Travel",
+    "categoryTotal": 0.0,
+    "icon": "airplane"
+  },
   {
     "_id": "5f75cddc0ef99a4704df8e72",
     "name": "Utilities",
-    "categoryTotal": 0.0
+    "categoryTotal": 0.0,
+    "icon": "wifi-strength-2"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e73",
     "name": "Education",
-    "categoryTotal": 0.0
+    "categoryTotal": 0.0,
+    "icon": "notebook"
   },
-  {"_id": "5f75cddc0ef99a4704df8e74", "name": "Gifts", "categoryTotal": 0.0},
-  {"_id": "5f75cddc0ef99a4704df8e75", "name": "Other", "categoryTotal": 0.0}
+  {
+    "_id": "5f75cddc0ef99a4704df8e74",
+    "name": "Gifts",
+    "categoryTotal": 0.0,
+    "icon": "gift-open"
+  },
+  {
+    "_id": "5f75cddc0ef99a4704df8e75",
+    "name": "Other",
+    "categoryTotal": 0.0,
+    "icon": "selection-ellipse"
+  }
 ]
