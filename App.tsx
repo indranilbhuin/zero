@@ -1,25 +1,18 @@
 import React from 'react';
-import SplashScreen from './src/screens/SplashScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {setNavigationRef} from './src/utils/navigationUtils';
-import { useColorScheme } from 'react-native';
-
-const AppWrapper = () => {
-  const colorScheme = useColorScheme();
-
-  return (
-    <NavigationContainer ref={setNavigationRef}>
-      <SplashScreen />
-      {/* Other app screens/components */}
-    </NavigationContainer>
-  );
-};
+import {Provider} from 'react-redux';
+import store from './src/redux/store';
+import OnboardingStack from './src/navigation/OnboardingStack';
+import MainStack from './src/navigation/MainStack';
 
 const App = () => {
   return (
-    <NavigationContainer ref={setNavigationRef}>
-      <SplashScreen />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer ref={setNavigationRef}>
+        <MainStack />
+      </NavigationContainer>
+    </Provider>
   );
 };
 

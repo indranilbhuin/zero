@@ -1,4 +1,8 @@
+import {useEffect, useState} from 'react';
+import AsyncStorageService from '../utils/asyncStorageService';
 import useColorScheme from './useColorScheme';
+import {useSelector} from 'react-redux';
+import {selectThemePreference} from '../redux/slice/themePreferenceSlice';
 
 const Colors = {
   light: {
@@ -6,27 +10,47 @@ const Colors = {
     primaryText: '#000000',
     secondaryBackground: '#ECECEC',
     secondaryText: '#333333',
-    accentGreen: '#98FB98',
+    accentGreen: '#6E8B3D',
     accentOrange: '#FFA500',
-    buttonText: "#FFFFFF"
+    buttonText: '#FFFFFF',
+    containerColor: '#E0E0E0',
   },
   dark: {
-    primaryBackground: '#121212',
+    primaryBackground: '#000000',
     primaryText: '#FFFFFF',
     secondaryBackground: '#333333',
     secondaryText: '#CCCCCC',
     accentGreen: '#98FB98',
     accentOrange: '#FFA500',
-    buttonText: "#000000"
+    buttonText: '#000000',
+    containerColor: '#1f1f1f',
   },
 };
 
 const useThemeColors = () => {
+  const selectedTheme = useSelector(selectThemePreference);
   const colorScheme = useColorScheme();
-  console.log(colorScheme)
-  const colors = Colors[colorScheme];
+  const [theme, setTheme] = useState(null);
 
-  return colors;
+  async function fetchTheme() {
+    const storedTheme = await AsyncStorageService.getItem('themePreference');
+    console.log('this is the async theme', storedTheme);
+    setTheme(storedTheme);
+  }
+
+  useEffect(() => {
+    fetchTheme();
+  }, [selectedTheme]);
+
+  if (theme === 'system') {
+    return Colors[colorScheme];
+  } else if (theme === 'dark') {
+    return Colors[theme];
+  } else if (theme === 'light') {
+    return Colors[theme];
+  } else {
+    return Colors[colorScheme];
+  }
 };
 
 export default useThemeColors;
