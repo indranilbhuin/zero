@@ -15,11 +15,20 @@ import {
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
+import {
+  getExpenseRequest,
+  selectExpenseData,
+  selectExpenseError,
+  selectExpenseLoading,
+} from '../../redux/slice/expenseDataSlice';
+import moment from 'moment';
 
 const HomeScreen = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const allTransactions = [];
+  const allTransactions = useSelector(selectExpenseData);
+  const expenseLoading = useSelector(selectExpenseLoading);
+  const expenseError = useSelector(selectExpenseError);
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
@@ -27,14 +36,48 @@ const HomeScreen = () => {
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
-
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
   }, [userId, userName]);
 
-  const todaySpent = 800;
-  const yesterdaySpent = 1200;
-  const thisMonthSpent = 3000;
+  useEffect(() => {
+    dispatch(getExpenseRequest());
+  }, [userId]);
+
+  if (expenseLoading) {
+    return <Text>Loading ...</Text>;
+  }
+
+  if (expenseError) {
+    return <Text>Error</Text>;
+  }
+
+  console.log('in home screen', allTransactions);
+
+  const calculateSpent = (unit, subtract = 0) => {
+    const currentDate = moment().utc();
+    console.log(currentDate)
+    if (unit === 'day') {
+      currentDate.subtract(subtract, 'days');
+    } else if (unit === 'month') {
+      currentDate.startOf('month');
+    }
+
+    const filteredTransactions = allTransactions.filter(
+      (transaction) => moment(transaction.date).isSameOrAfter(currentDate, unit)
+    );
+
+    const totalSpent = filteredTransactions.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0
+    );
+
+    return totalSpent;
+  };
+  const todaySpent = calculateSpent('day', 0);
+  const yesterdaySpent = calculateSpent('day', 1);
+  const thisMonthSpent = calculateSpent('month');
   console.log(currencySymbol);
+
   return (
     <>
       <View
@@ -104,13 +147,13 @@ const HomeScreen = () => {
                 All Transactions
               </Text>
               <View>
-                {allTransactions.length === 0 ? (
-                  <>
-                    <Text>No Transactions Yet</Text>
-                    <TransactionList currencySymbol={currencySymbol} />
-                  </>
+                {allTransactions?.length === 0 ? (
+                  <Text>No Transactions Yet</Text>
                 ) : (
-                  <View></View>
+                  <TransactionList
+                    currencySymbol={currencySymbol}
+                    allExpenses={allTransactions}
+                  />
                 )}
               </View>
             </View>

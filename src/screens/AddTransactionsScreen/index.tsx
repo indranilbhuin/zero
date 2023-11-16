@@ -19,6 +19,8 @@ import PrimaryButton from '../../components/PrimaryButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from '../../components/Icons';
 import moment from 'moment';
+import {createExpense} from '../../services/ExpenseService';
+import {selectUserId} from '../../redux/slice/userIdSlice';
 
 const AddTransactionsScreen = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -26,7 +28,8 @@ const AddTransactionsScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
-  const [expenseAmount, setExpenseAmount] = useState(null);
+  const [expenseAmount, setExpenseAmount] = useState<null | number>(null);
+  const userId = useSelector(selectUserId);
 
   const colors = useThemeColors();
   const dispatch = useDispatch();
@@ -46,8 +49,9 @@ const AddTransactionsScreen = () => {
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || createdAt;
+    const utcDate = moment(currentDate).utc().toDate();
+    setCreatedAt(utcDate);
     setShowDatePicker(false);
-    setCreatedAt(currentDate);
   };
 
   const handleAddCategory = () => {
@@ -55,10 +59,37 @@ const AddTransactionsScreen = () => {
   };
 
   const handleAddExpense = () => {
-    
-  }
+    if (
+      expenseTitle.trim() === '' ||
+      expenseAmount === null ||
+      selectedCategories.length === 0
+    ) {
+      return;
+    }
+    const categoryId = selectedCategories[0]._id;
+    try {
+      createExpense(
+        Realm.BSON.ObjectID.createFromHexString(userId),
+        expenseTitle,
+        Number(expenseAmount),
+        expenseDescription,
+        categoryId,
+        createdAt,
+      );
+      goBack();
+    } catch (error) {
+      console.error('Error creating expense:', error);
+    }
+  };
 
-  console.log('selected category', selectedCategories);
+  console.log(
+    'selected category',
+    selectedCategories,
+    expenseTitle,
+    expenseAmount,
+    expenseDescription,
+    createdAt,
+  );
 
   return (
     <View
@@ -121,7 +152,7 @@ const AddTransactionsScreen = () => {
               testID="dateTimePicker"
               value={createdAt}
               mode="date"
-              is24Hour={true}
+              is24Hour={false}
               display="default"
               onChange={handleDateChange}
               style={{backgroundColor: colors.accentGreen}}
@@ -153,7 +184,11 @@ const AddTransactionsScreen = () => {
         </View>
       </ScrollView>
       <View style={styles.submitButtonContainer}>
-        <PrimaryButton onPress={handleAddExpense} colors={colors} buttonTitle="Add" />
+        <PrimaryButton
+          onPress={handleAddExpense}
+          colors={colors}
+          buttonTitle="Add"
+        />
       </View>
     </View>
   );

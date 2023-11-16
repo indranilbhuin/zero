@@ -67,7 +67,7 @@ const TabStack = () => {
           tabBarTestID: 'home-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
-            height: 70,
+            height: 55,
           },
         }}
       />
@@ -81,7 +81,7 @@ const TabStack = () => {
           tabBarTestID: 'all-vendor-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
-            height: 70,
+            height: 55,
           },
         }}
       />
@@ -95,7 +95,7 @@ const TabStack = () => {
           tabBarTestID: 'profile-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
-            height: 70,
+            height: 55,
           },
         }}
       />
