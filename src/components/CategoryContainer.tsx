@@ -8,6 +8,7 @@ const CategoryContainer = ({
   toggleCategorySelection,
   selectedCategories,
 }) => {
+  console.log(selectedCategories)
   return (
     <View style={styles.categoryMainContainer}>
       {categories?.map(category => (
@@ -18,12 +19,13 @@ const CategoryContainer = ({
             style={[
               styles.categoryContainer,
               {
-                backgroundColor: selectedCategories.includes(category)
+                backgroundColor: selectedCategories?.includes(category)
                   ? colors.accentGreen
                   : colors.primaryText,
                 borderColor: colors.secondaryText,
               },
             ]}>
+            {console.log(selectedCategories?.includes(category))}
             <View style={styles.iconContainer}>
               <Icon
                 name={category.icon}

@@ -24,8 +24,6 @@ export const createCategory = async (
     });
   } catch (error) {
     console.error('Error creating category:', error);
-  } finally {
-    realm.close();
   }
 };
 
