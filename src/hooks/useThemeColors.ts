@@ -14,9 +14,10 @@ const Colors = {
     accentOrange: '#FFA500',
     buttonText: '#FFFFFF',
     containerColor: '#E0E0E0',
+    cardBackground: '#EFEFEF'
   },
   dark: {
-    primaryBackground: '#000000',
+    primaryBackground: '#0F0F0F',
     primaryText: '#FFFFFF',
     secondaryBackground: '#333333',
     secondaryText: '#CCCCCC',
@@ -24,6 +25,7 @@ const Colors = {
     accentOrange: '#FFA500',
     buttonText: '#000000',
     containerColor: '#1f1f1f',
+    cardBackground: '#262626'
   },
 };
 

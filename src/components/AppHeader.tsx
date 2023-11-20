@@ -6,7 +6,7 @@ const AppHeader = ({onPress, colors, text}) => {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.iconButtonContainer}>
-        <TouchableOpacity onPress={onPress} testID="back-button">
+        <TouchableOpacity onPress={onPress}>
           <Icon
             name="caret-back-circle"
             size={25}

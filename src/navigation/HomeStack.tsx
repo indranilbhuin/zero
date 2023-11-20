@@ -10,6 +10,7 @@ import ReportsScreen from '../screens/ReportsScreen';
 import DebtsScreen from '../screens/DebtsScreen';
 import AddTransactionsScreen from '../screens/AddTransactionsScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
+import UpdateTransactionScreen from '../screens/UpdateTransactionScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -64,7 +65,6 @@ const TabStack = () => {
           tabBarLabel: 'Home',
           headerShown: false,
           tabBarIcon: HomeIcon,
-          tabBarTestID: 'home-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,
@@ -78,7 +78,6 @@ const TabStack = () => {
           tabBarLabel: 'All Vendors',
           headerShown: false,
           tabBarIcon: ReportsIcon,
-          tabBarTestID: 'all-vendor-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,
@@ -92,7 +91,6 @@ const TabStack = () => {
           tabBarLabel: 'All Vendors',
           headerShown: false,
           tabBarIcon: DebtIcon,
-          tabBarTestID: 'profile-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,
@@ -113,6 +111,10 @@ const HomeStack = () => {
         component={AddTransactionsScreen}
       />
       <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
+      <Stack.Screen
+        name="UpdateTransactionScreen"
+        component={UpdateTransactionScreen}
+      />
     </Stack.Navigator>
   );
 };

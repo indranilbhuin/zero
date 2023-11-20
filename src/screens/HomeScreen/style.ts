@@ -39,6 +39,7 @@ const homeStyles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: '-2%',
     marginRight: '-2%',
+    width: '80%'
   },
   settingsContainer: {},
   subtitleText: {
@@ -48,6 +49,7 @@ const homeStyles = StyleSheet.create({
   },
   listExpenseContainer: {
     marginTop: '5%',
+    marginBottom: '2%'
   },
   card: {
     height: 150,
@@ -73,16 +75,25 @@ const homeStyles = StyleSheet.create({
   },
   addButtonContainer: {
     position: "absolute",
-    bottom: 20,
-    right: 20,
+    bottom: 15,
+    right: 15,
     zIndex: 1,
   },
   addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 5,
+    width: 50,
+    height: 50,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+  },
+  noImage: {
+    height: 80,
+    width: 80
+  },
+  noTransactionContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 350
   }
 });
 

@@ -13,8 +13,6 @@ export const createUser = async (username: string, email: string) => {
     });
   } catch (error) {
     console.error('Error creating User:', error);
-  } finally {
-    realm.close();
   }
 };
 
@@ -39,8 +37,6 @@ export const updateUserById = async (
     });
   } catch (error) {
     console.error('Error updating User:', error);
-  } finally {
-    realm.close();
   }
 };
 

@@ -1,5 +1,12 @@
-import React, {useEffect} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import styles from './style';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -25,6 +32,7 @@ import moment from 'moment';
 
 const HomeScreen = () => {
   const colors = useThemeColors();
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
   const allTransactions = useSelector(selectExpenseData);
   const expenseLoading = useSelector(selectExpenseLoading);
@@ -32,6 +40,10 @@ const HomeScreen = () => {
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+  };
 
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
@@ -42,6 +54,13 @@ const HomeScreen = () => {
   useEffect(() => {
     dispatch(getExpenseRequest());
   }, [userId]);
+
+  useEffect(() => {
+    if (refreshing) {
+      dispatch(getExpenseRequest());
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
   if (expenseLoading) {
     return <Text>Loading ...</Text>;
@@ -55,20 +74,20 @@ const HomeScreen = () => {
 
   const calculateSpent = (unit, subtract = 0) => {
     const currentDate = moment().utc();
-    console.log(currentDate)
+    console.log(currentDate);
     if (unit === 'day') {
       currentDate.subtract(subtract, 'days');
     } else if (unit === 'month') {
       currentDate.startOf('month');
     }
 
-    const filteredTransactions = allTransactions.filter(
-      (transaction) => moment(transaction.date).isSameOrAfter(currentDate, unit)
+    const filteredTransactions = allTransactions.filter(transaction =>
+      moment(transaction.date).isSameOrAfter(currentDate, unit),
     );
 
     const totalSpent = filteredTransactions.reduce(
       (sum, transaction) => sum + transaction.amount,
-      0
+      0,
     );
 
     return totalSpent;
@@ -115,7 +134,11 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <View style={styles.listExpenseContainer}>
             <ScrollView
               horizontal={true}
@@ -148,7 +171,26 @@ const HomeScreen = () => {
               </Text>
               <View>
                 {allTransactions?.length === 0 ? (
-                  <Text>No Transactions Yet</Text>
+                  <View style={styles.noTransactionContainer}>
+                    {colors.primaryText === '#000000' ? (
+                      <Image
+                        source={require('../../../assets/images/lightNoTransaction.png')}
+                        style={styles.noImage}
+                      />
+                    ) : (
+                      <Image
+                        source={require('../../../assets/images/darkNoTransaction.png')}
+                        style={styles.noImage}
+                      />
+                    )}
+                    <Text
+                      style={[
+                        styles.subtitleText,
+                        {color: colors.primaryText, fontSize: 13, marginTop: 5},
+                      ]}>
+                      No Transactions Yet
+                    </Text>
+                  </View>
                 ) : (
                   <TransactionList
                     currencySymbol={currencySymbol}
@@ -162,7 +204,10 @@ const HomeScreen = () => {
       </View>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
-          style={[styles.addButton, {backgroundColor: colors.primaryText}]}
+          style={[
+            styles.addButton,
+            {backgroundColor: `${colors.primaryText}90`},
+          ]}
           onPress={() => navigate('AddTransactionsScreen')}>
           <Icon
             name={'credit-card-plus'}
