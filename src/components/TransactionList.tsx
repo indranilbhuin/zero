@@ -7,8 +7,8 @@ import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
 import {navigate} from '../utils/navigationUtils';
 import Category from '../schemas/CategorySchema';
 import {deleteExpenseById} from '../services/ExpenseService';
-import { useDispatch } from 'react-redux';
-import { getExpenseRequest } from '../redux/slice/expenseDataSlice';
+import {useDispatch} from 'react-redux';
+import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
 
 const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
   const slideAnim = useRef(new Animated.Value(1)).current;
@@ -21,13 +21,19 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
     expenseDate: Date,
     expenseAmount: string,
   ) => {
-    navigate('UpdateTransactionScreen', {
-      expenseId,
-      expenseTitle,
-      expenseDescription,
-      category,
-      expenseDate,
-      expenseAmount,
+    Animated.timing(slideAnim, {
+      toValue: 200,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      navigate('UpdateTransactionScreen', {
+        expenseId,
+        expenseTitle,
+        expenseDescription,
+        category,
+        expenseDate,
+        expenseAmount,
+      });
     });
   };
 
@@ -185,7 +191,7 @@ const TransactionList = ({currencySymbol, allExpenses}) => {
           expense={expense}
           currencySymbol={currencySymbol}
           colors={colors}
-          dispatch ={dispatch}
+          dispatch={dispatch}
         />
       ))}
     </View>
