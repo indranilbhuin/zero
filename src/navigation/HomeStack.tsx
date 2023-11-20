@@ -9,8 +9,9 @@ import useThemeColors from '../hooks/useThemeColors';
 import ReportsScreen from '../screens/ReportsScreen';
 import DebtsScreen from '../screens/DebtsScreen';
 import AddTransactionsScreen from '../screens/AddTransactionsScreen';
-import AddCategoryScreen from '../screens/AddCategoryScreen';
 import UpdateTransactionScreen from '../screens/UpdateTransactionScreen';
+import CategoryScreen from '../screens/CategoryScreen';
+import AddCategoryScreen from '../screens/AddCategoryScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -62,7 +63,6 @@ const TabStack = () => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
           headerShown: false,
           tabBarIcon: HomeIcon,
           tabBarStyle: {
@@ -75,7 +75,6 @@ const TabStack = () => {
         name="ReportsScreen"
         component={ReportsScreen}
         options={{
-          tabBarLabel: 'All Vendors',
           headerShown: false,
           tabBarIcon: ReportsIcon,
           tabBarStyle: {
@@ -88,7 +87,6 @@ const TabStack = () => {
         name="DebtsScreen"
         component={DebtsScreen}
         options={{
-          tabBarLabel: 'All Vendors',
           headerShown: false,
           tabBarIcon: DebtIcon,
           tabBarStyle: {
@@ -110,11 +108,12 @@ const HomeStack = () => {
         name="AddTransactionsScreen"
         component={AddTransactionsScreen}
       />
-      <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
+      <Stack.Screen name="CategoryScreen" component={CategoryScreen} />
       <Stack.Screen
         name="UpdateTransactionScreen"
         component={UpdateTransactionScreen}
       />
+      <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
     </Stack.Navigator>
   );
 };

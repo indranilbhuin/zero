@@ -204,10 +204,7 @@ const HomeScreen = () => {
       </View>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
-          style={[
-            styles.addButton,
-            {backgroundColor: `${colors.primaryText}90`},
-          ]}
+          style={[styles.addButton, {backgroundColor: colors.primaryText}]}
           onPress={() => navigate('AddTransactionsScreen')}>
           <Icon
             name={'credit-card-plus'}

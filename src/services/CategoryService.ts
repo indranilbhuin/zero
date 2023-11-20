@@ -27,6 +27,22 @@ export const createCategory = async (
   }
 };
 
+export const deleteCategoryById = async (categoryId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  try {
+    realm.write(() => {
+      const category = realm.objectForPrimaryKey('Category', categoryId);
+      if (category) {
+        realm.delete(category);
+      } else {
+        console.error('Category not found.');
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting Category:', error);
+  }
+};
+
 export const getAllCategories = async () => {
   const realm = await getRealm();
   return realm.objects('Category');

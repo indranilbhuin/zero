@@ -124,7 +124,7 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
       <Swipeable
         renderLeftActions={renderLeftActions}
         renderRightActions={renderRightActions}
-        friction={4}>
+        friction={2}>
         <Animated.View
           style={[
             styles.transactionContainer,

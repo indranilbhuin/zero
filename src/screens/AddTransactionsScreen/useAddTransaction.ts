@@ -15,7 +15,7 @@ const useAddTransaction = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
-  const [expenseAmount, setExpenseAmount] = useState<null | number>(null);
+  const [expenseAmount, setExpenseAmount] = useState('');
   const userId = useSelector(selectUserId);
 
   const colors = useThemeColors();
@@ -42,7 +42,7 @@ const useAddTransaction = () => {
   };
 
   const handleAddCategory = () => {
-    navigate('AddCategoryScreen');
+    navigate('CategoryScreen');
   };
 
   const handleAddExpense = () => {

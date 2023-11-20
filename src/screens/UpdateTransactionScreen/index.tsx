@@ -78,7 +78,7 @@ const UpdateTransactionScreen = () => {
   };
 
   const handleAddCategory = () => {
-    navigate('AddCategoryScreen');
+    navigate('CategoryScreen');
   };
 
   const handleUpdateExpense = () => {

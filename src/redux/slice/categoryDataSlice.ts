@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
 
 const initialState = {
-  categoryData: {},
+  categoryData: [],
 };
 
 const categoryDataSlice = createSlice({
