@@ -5,12 +5,15 @@ import {Provider} from 'react-redux';
 import store from './src/redux/store';
 import OnboardingStack from './src/navigation/OnboardingStack';
 import MainStack from './src/navigation/MainStack';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer ref={setNavigationRef}>
-        <MainStack />
+        
+          <MainStack />
+        {/* </GestureHandlerRootView> */}
       </NavigationContainer>
     </Provider>
   );

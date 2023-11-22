@@ -2,40 +2,54 @@ import {
   Dimensions,
   Modal,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {goBack} from '../../utils/navigationUtils';
+import React, {useMemo, useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
+import {useDispatch} from 'react-redux';
+import {updateCategoryById} from '../../services/CategoryService';
+import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
+import {goBack} from '../../utils/navigationUtils';
+import Icon from '../../components/Icons';
 import AppHeader from '../../components/AppHeader';
 import CustomInput from '../../components/CustomInput';
-import PrimaryButton from '../../components/PrimaryButton';
-import Icon from '../../components/Icons';
 import addTransactionStyles from '../AddTransactionsScreen/style';
+import PrimaryButton from '../../components/PrimaryButton';
+import addCategoryStyles from '../AddCategoryScreen/style';
 import allIcons from '../../../assets/categoryIcons.json';
-import {createCategory} from '../../services/CategoryService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-import styles from './style';
+import {RouteProp, useRoute} from '@react-navigation/native';
 
-const AddCategoryScreen = () => {
+type UpdateCategoryScreenRouteProp = RouteProp<
+  {
+    UpdateCategoryScreen: {
+      categoryId: string;
+      categoryName: string;
+      categoryIcon: string;
+    };
+  },
+  'UpdateCategoryScreen'
+>;
+
+const UpdateCategoryScreen = () => {
+  const route = useRoute<UpdateCategoryScreenRouteProp>();
+  const categoryData = route.params;
+
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const [categoryName, setCategoryName] = useState('');
+  const [categoryName, setCategoryName] = useState(categoryData.categoryName);
   const [isIconModalVisible, setIsIconModalVisible] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState('null');
+  const [selectedIcon, setSelectedIcon] = useState(categoryData.categoryIcon);
   const [searchText, setSearchText] = useState('');
-  const userId = useSelector(selectUserId);
 
-  const handleAddCategory = () => {
+  const handleUpdateCategory = () => {
     try {
-      createCategory(
+      updateCategoryById(
+        Realm.BSON.ObjectID.createFromHexString(categoryData.categoryId),
         categoryName,
-        Realm.BSON.ObjectID.createFromHexString(userId),
         selectedIcon,
       );
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
@@ -51,6 +65,13 @@ const AddCategoryScreen = () => {
 
   console.log('this is the selectedicon', selectedIcon);
 
+  const filteredIcons = useMemo(() => {
+    const lowerCaseSearch = searchText.toLowerCase();
+    return Object.keys(allIcons).filter(iconName =>
+      iconName.toLowerCase().includes(lowerCaseSearch),
+    );
+  }, [searchText]);
+
   const renderIcons = () => {
     const handleSelectIcon = iconName => {
       setSelectedIcon(iconName);
@@ -61,16 +82,18 @@ const AddCategoryScreen = () => {
     const iconsPerRow = 6;
     const iconSize = (screenWidth * 0.7) / iconsPerRow;
 
-    return Object.keys(allIcons).map((iconName, index) => (
+    return filteredIcons.map((iconName, index) => (
       <TouchableOpacity
         key={index}
         style={[
-          styles.iconItem,
+          addCategoryStyles.iconItem,
           {
             width: iconSize,
             height: iconSize,
             backgroundColor:
-              selectedIcon === iconName ? colors.primaryText : undefined,
+              selectedIcon === iconName
+                ? colors.primaryText
+                : undefined,
           },
         ]}
         onPress={() => handleSelectIcon(iconName)}>
@@ -91,11 +114,11 @@ const AddCategoryScreen = () => {
   return (
     <View
       style={[
-        styles.mainContainer,
+        addCategoryStyles.mainContainer,
         {backgroundColor: colors.primaryBackground},
       ]}>
-      <View style={styles.headerContainer}>
-        <AppHeader onPress={goBack} colors={colors} text="Add Category" />
+      <View style={addCategoryStyles.headerContainer}>
+        <AppHeader onPress={goBack} colors={colors} text="Update Category" />
       </View>
 
       <CustomInput
@@ -108,7 +131,7 @@ const AddCategoryScreen = () => {
 
       <Text
         style={[
-          styles.subtitleText,
+          addCategoryStyles.subtitleText,
           {color: colors.primaryText, marginBottom: 10},
         ]}>
         Pick your own icon
@@ -145,15 +168,15 @@ const AddCategoryScreen = () => {
               addTransactionStyles.dateText,
               {color: colors.primaryText, fontSize: 14},
             ]}>
-            Tap to select icon
+            Tap to change icon
           </Text>
         </TouchableOpacity>
       </View>
       <View style={{marginTop: '125%'}}>
         <PrimaryButton
-          onPress={handleAddCategory}
+          onPress={handleUpdateCategory}
           colors={colors}
-          buttonTitle="Add"
+          buttonTitle="Update"
         />
       </View>
 
@@ -162,13 +185,16 @@ const AddCategoryScreen = () => {
         transparent={true}
         visible={isIconModalVisible}
         onRequestClose={handleIconModalClose}>
-        <View style={[styles.modalContainer]}>
+        <View style={[addCategoryStyles.modalContainer]}>
           <View
-            style={[styles.modal, {backgroundColor: colors.containerColor}]}>
+            style={[
+              addCategoryStyles.modal,
+              {backgroundColor: colors.containerColor},
+            ]}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text
                 style={[
-                  styles.subtitleText,
+                  addCategoryStyles.subtitleText,
                   {
                     color: colors.primaryText,
                     fontSize: 17,
@@ -181,7 +207,7 @@ const AddCategoryScreen = () => {
               </Text>
               <TextInput
                 style={[
-                  styles.textInput,
+                  addCategoryStyles.textInput,
                   {
                     borderColor: colors.primaryText,
                     color: colors.primaryText,
@@ -210,4 +236,6 @@ const AddCategoryScreen = () => {
   );
 };
 
-export default AddCategoryScreen;
+export default UpdateCategoryScreen;
+
+const styles = StyleSheet.create({});

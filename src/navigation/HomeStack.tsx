@@ -9,7 +9,10 @@ import useThemeColors from '../hooks/useThemeColors';
 import ReportsScreen from '../screens/ReportsScreen';
 import DebtsScreen from '../screens/DebtsScreen';
 import AddTransactionsScreen from '../screens/AddTransactionsScreen';
+import UpdateTransactionScreen from '../screens/UpdateTransactionScreen';
+import CategoryScreen from '../screens/CategoryScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
+import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -61,10 +64,8 @@ const TabStack = () => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
           headerShown: false,
           tabBarIcon: HomeIcon,
-          tabBarTestID: 'home-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,
@@ -75,10 +76,8 @@ const TabStack = () => {
         name="ReportsScreen"
         component={ReportsScreen}
         options={{
-          tabBarLabel: 'All Vendors',
           headerShown: false,
           tabBarIcon: ReportsIcon,
-          tabBarTestID: 'all-vendor-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,
@@ -89,10 +88,8 @@ const TabStack = () => {
         name="DebtsScreen"
         component={DebtsScreen}
         options={{
-          tabBarLabel: 'All Vendors',
           headerShown: false,
           tabBarIcon: DebtIcon,
-          tabBarTestID: 'profile-tab',
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,
@@ -112,7 +109,16 @@ const HomeStack = () => {
         name="AddTransactionsScreen"
         component={AddTransactionsScreen}
       />
+      <Stack.Screen name="CategoryScreen" component={CategoryScreen} />
+      <Stack.Screen
+        name="UpdateTransactionScreen"
+        component={UpdateTransactionScreen}
+      />
       <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
+      <Stack.Screen
+        name="UpdateCategoryScreen"
+        component={UpdateCategoryScreen}
+      />
     </Stack.Navigator>
   );
 };
@@ -122,6 +128,7 @@ export default HomeStack;
 const styles = StyleSheet.create({
   labelText: {
     fontSize: 12,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'FiraCode-Medium',
+    includeFontPadding: false,
   },
 });

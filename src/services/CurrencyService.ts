@@ -11,7 +11,7 @@ export const createCurrency = async (
   realm.write(() => {
     const user = realm.objectForPrimaryKey('User', userId);
     const uniqueId = new Realm.BSON.ObjectId();
-    console.log("first")
+    console.log('first');
     if (user) {
       realm.create('Currency', {
         _id: uniqueId,
@@ -26,6 +26,33 @@ export const createCurrency = async (
   });
 };
 
+export const updateCurrencyById = async (
+  currencyId: Realm.BSON.ObjectId,
+  newCurrencyData: {code?: string; symbol?: string; name?: string},
+) => {
+  const realm = await getRealm();
+  try {
+    realm.write(() => {
+      const currency = realm.objectForPrimaryKey('Currency', currencyId);
+      if (currency) {
+        if (newCurrencyData.code) {
+          currency.code = newCurrencyData.code;
+        }
+        if (newCurrencyData.symbol) {
+          currency.symbol = newCurrencyData.symbol;
+        }
+        if (newCurrencyData.name) {
+          currency.name = newCurrencyData.name;
+        }
+      } else {
+        console.error('Currency not found.');
+      }
+    });
+  } catch (error) {
+    console.error('Error updating Currency:', error);
+  }
+};
+
 export const getCurrencyById = async (currencyId: Realm.BSON.ObjectId) => {
   const realm = await getRealm();
   const currency = realm.objectForPrimaryKey('Currency', currencyId);
@@ -36,7 +63,7 @@ export const getCurrencyByUserId = async (userId: Realm.BSON.ObjectId) => {
   const realm = await getRealm();
   const currencies = realm.objects('Currency');
 
-  const currenciesByUserId = Array.from(currencies).filter((currency) => {
+  const currenciesByUserId = Array.from(currencies).filter(currency => {
     return currency.user && currency.user._id.equals(userId);
   });
 

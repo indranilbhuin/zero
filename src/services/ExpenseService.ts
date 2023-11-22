@@ -25,10 +25,61 @@ export const createExpense = async (
         user: user,
         date: date,
       });
-
-      category.categoryTotal += amount;
     }
   });
+};
+
+export const updateExpenseById = async (
+  expenseId: Realm.BSON.ObjectId,
+  categoryId?: Realm.BSON.ObjectId,
+  newTitle?: string,
+  newAmount?: number,
+  newDescription?: string,
+  newDate?: Date,
+) => {
+  const realm = await getRealm();
+
+  try {
+    realm.write(() => {
+      const expense = realm.objectForPrimaryKey('Expense', expenseId);
+      const category = realm.objectForPrimaryKey('Category', categoryId);
+      if (expense) {
+        if (expense.title) {
+          expense.title = newTitle;
+        }
+        if (expense.description) {
+          expense.description = newDescription;
+        }
+        if (expense.amount) {
+          expense.amount = newAmount;
+        }
+        if (expense.date) {
+          expense.date = newDate;
+        }
+        if (expense.category) {
+          expense.category = category;
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error updating Expense:', error);
+  }
+};
+
+export const deleteExpenseById = async (expenseId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  try {
+    realm.write(() => {
+      const expense = realm.objectForPrimaryKey('Expense', expenseId);
+      if (expense) {
+        realm.delete(expense);
+      } else {
+        console.error('Expense not found.');
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting Expense:', error);
+  }
 };
 
 export const getAllExpensesByUserId = async (userId: Realm.BSON.ObjectId) => {

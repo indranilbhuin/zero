@@ -1,78 +1,199 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {Animated, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useRef} from 'react';
 import useThemeColors from '../hooks/useThemeColors';
 import Icon from './Icons';
 import moment from 'moment';
+import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
+import {navigate} from '../utils/navigationUtils';
+import Category from '../schemas/CategorySchema';
+import {deleteExpenseById} from '../services/ExpenseService';
+import {useDispatch} from 'react-redux';
+import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
 
-const TransactionList = ({currencySymbol, allExpenses}) => {
-  const colors = useThemeColors();
-  if (!allExpenses) {
-    return <Text>Loading...</Text>;
-  }
+const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
+  const slideAnim = useRef(new Animated.Value(1)).current;
+
+  const handleEdit = (
+    expenseId: string,
+    expenseTitle: string,
+    expenseDescription: string,
+    category: Category,
+    expenseDate: Date,
+    expenseAmount: string,
+  ) => {
+    Animated.timing(slideAnim, {
+      toValue: 200,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      navigate('UpdateTransactionScreen', {
+        expenseId,
+        expenseTitle,
+        expenseDescription,
+        category,
+        expenseDate,
+        expenseAmount,
+      });
+    });
+  };
+
+  const handleDelete = (expenseId: Realm.BSON.ObjectId) => {
+    Animated.timing(slideAnim, {
+      toValue: -200,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      deleteExpenseById(expenseId);
+      dispatch(getExpenseRequest());
+    });
+  };
+
+  const renderLeftActions = () => {
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          handleEdit(
+            String(expense._id),
+            expense.title,
+            expense.description,
+            expense.category,
+            expense.date,
+            expense.amount,
+          )
+        }
+        style={{flexDirection: 'row'}}>
+        <View
+          style={[
+            styles.swipeView,
+            {
+              backgroundColor: colors.cardBackground,
+              borderTopLeftRadius: 10,
+              borderBottomLeftRadius: 10,
+            },
+          ]}>
+          <Icon
+            name={'edit'}
+            size={20}
+            color={colors.accentGreen}
+            type={'MaterialIcons'}
+          />
+        </View>
+        <View
+          style={[
+            styles.stretchView,
+            {backgroundColor: colors.cardBackground, marginRight: -250},
+          ]}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderRightActions = () => {
+    return (
+      <TouchableOpacity
+        style={{flexDirection: 'row'}}
+        onPress={() => handleDelete(expense._id)}>
+        <View
+          style={[
+            styles.stretchView,
+            {backgroundColor: colors.cardBackground, marginLeft: -250},
+          ]}
+        />
+        <View
+          style={[
+            styles.swipeView,
+            {
+              backgroundColor: colors.cardBackground,
+              borderTopRightRadius: 10,
+              borderBottomRightRadius: 10,
+            },
+          ]}>
+          <Icon
+            name={'delete-empty'}
+            size={20}
+            color={colors.accentOrange}
+            type={'MaterialCommunityIcons'}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <View style={styles.mainContainer}>
-      {allExpenses.length === 0 ? (
-        <Text>No Transactions Yet</Text>
-      ) : (
-        allExpenses?.map(expense => (
-          <TouchableOpacity
-            style={[
-              styles.transactionContainer,
-              {backgroundColor: colors.containerColor},
-            ]}
-            key={expense._id}>
-            <View style={styles.iconNameContainer}>
-              <View
-                style={[
-                  styles.iconContainer,
-                  {backgroundColor: colors.primaryText},
-                ]}>
-                <Icon
-                  name={expense.category.icon}
-                  size={20}
-                  color={colors.buttonText}
-                  type={'MaterialCommunityIcons'}
-                />
-              </View>
-              <View>
-                <Text
-                  style={[styles.transactionText, {color: colors.primaryText}]}>
-                  {expense.title}
-                </Text>
-                <View style={styles.descriptionContainer}>
-                  <Text
-                    style={[
-                      styles.descriptionText,
-                      {color: colors.primaryText},
-                    ]}>
-                    {expense.category.name} .
-                  </Text>
-                  <Text
-                    style={[
-                      styles.descriptionText,
-                      {color: colors.primaryText},
-                    ]}>
-                    {expense.description} .
-                  </Text>
-                  <Text
-                    style={[
-                      styles.descriptionText,
-                      {color: colors.primaryText},
-                    ]}>
-                    {moment(expense.date).format('Do MMM')}
-                  </Text>
-                </View>
-              </View>
+    <GestureHandlerRootView>
+      <Swipeable
+        renderLeftActions={renderLeftActions}
+        renderRightActions={renderRightActions}
+        friction={2}>
+        <Animated.View
+          style={[
+            styles.transactionContainer,
+            {
+              backgroundColor: colors.containerColor,
+              transform: [{translateX: slideAnim}],
+            },
+          ]}
+          key={expense._id}>
+          <View style={styles.iconNameContainer}>
+            <View
+              style={[
+                styles.iconContainer,
+                {backgroundColor: colors.primaryText},
+              ]}>
+              <Icon
+                name={expense.category.icon}
+                size={20}
+                color={colors.buttonText}
+                type={'MaterialCommunityIcons'}
+              />
             </View>
             <View>
               <Text
                 style={[styles.transactionText, {color: colors.primaryText}]}>
-                {currencySymbol} {expense.amount}
+                {expense.title}
               </Text>
+              <View style={styles.descriptionContainer}>
+                <Text
+                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                  {expense.category.name} .
+                </Text>
+                <Text
+                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                  {expense.description} .
+                </Text>
+                <Text
+                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                  {moment(expense.date).format('Do MMM')}
+                </Text>
+              </View>
             </View>
-          </TouchableOpacity>
-        ))
-      )}
+          </View>
+          <View>
+            <Text style={[styles.transactionText, {color: colors.primaryText}]}>
+              {currencySymbol} {expense.amount}
+            </Text>
+          </View>
+        </Animated.View>
+      </Swipeable>
+    </GestureHandlerRootView>
+  );
+};
+
+const TransactionList = ({currencySymbol, allExpenses}) => {
+  const colors = useThemeColors();
+  const dispatch = useDispatch();
+
+  return (
+    <View style={styles.mainContainer}>
+      {allExpenses?.map(expense => (
+        <TransactionItem
+          key={expense._id}
+          expense={expense}
+          currencySymbol={currencySymbol}
+          colors={colors}
+          dispatch={dispatch}
+        />
+      ))}
     </View>
   );
 };
@@ -118,5 +239,17 @@ const styles = StyleSheet.create({
     fontFamily: 'FiraCode-Medium',
     fontSize: 14,
     includeFontPadding: false,
+  },
+  swipeView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60,
+    width: 60,
+  },
+  stretchView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60,
+    width: 250,
   },
 });

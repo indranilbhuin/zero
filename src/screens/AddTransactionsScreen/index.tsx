@@ -1,95 +1,46 @@
 import {
   ScrollView,
-  StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import useThemeColors from '../../hooks/useThemeColors';
+import React from 'react';
 import CustomInput from '../../components/CustomInput';
 import AppHeader from '../../components/AppHeader';
-import {goBack, navigate} from '../../utils/navigationUtils';
-import {useDispatch, useSelector} from 'react-redux';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
+import {goBack} from '../../utils/navigationUtils';
 import CategoryContainer from '../../components/CategoryContainer';
 import SecondaryButton from '../../components/SecondaryButton';
 import PrimaryButton from '../../components/PrimaryButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from '../../components/Icons';
 import moment from 'moment';
-import {createExpense} from '../../services/ExpenseService';
-import {selectUserId} from '../../redux/slice/userIdSlice';
+import useAddTransaction from './useAddTransaction';
+import styles from './style';
+import {useSelector} from 'react-redux';
+import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 
 const AddTransactionsScreen = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [createdAt, setCreatedAt] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [expenseTitle, setExpenseTitle] = useState('');
-  const [expenseDescription, setExpenseDescription] = useState('');
-  const [expenseAmount, setExpenseAmount] = useState<null | number>(null);
-  const userId = useSelector(selectUserId);
-
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const categories = useSelector(selectCategoryData);
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
-  }, []);
-
-  const toggleCategorySelection = category => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories([]);
-    } else {
-      setSelectedCategories([category]);
-    }
-  };
-
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || createdAt;
-    const utcDate = moment(currentDate).utc().toDate();
-    setCreatedAt(utcDate);
-    setShowDatePicker(false);
-  };
-
-  const handleAddCategory = () => {
-    navigate('AddCategoryScreen');
-  };
-
-  const handleAddExpense = () => {
-    if (
-      expenseTitle.trim() === '' ||
-      expenseAmount === null ||
-      selectedCategories.length === 0
-    ) {
-      return;
-    }
-    const categoryId = selectedCategories[0]._id;
-    try {
-      createExpense(
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        expenseTitle,
-        Number(expenseAmount),
-        expenseDescription,
-        categoryId,
-        createdAt,
-      );
-      goBack();
-    } catch (error) {
-      console.error('Error creating expense:', error);
-    }
-  };
-
-  console.log(
-    'selected category',
-    selectedCategories,
+  const {
+    colors,
     expenseTitle,
-    expenseAmount,
+    setExpenseTitle,
     expenseDescription,
+    setExpenseDescription,
+    expenseAmount,
+    setExpenseAmount,
+    setShowDatePicker,
     createdAt,
-  );
+    showDatePicker,
+    handleDateChange,
+    categories,
+    toggleCategorySelection,
+    selectedCategories,
+    handleAddCategory,
+    handleAddExpense,
+  } = useAddTransaction();
+
+  const currencySymbol = useSelector(selectCurrencySymbol);
 
   return (
     <View
@@ -115,15 +66,43 @@ const AddTransactionsScreen = () => {
         placeholder="eg. From Aroma's"
         label="Expense Description"
       />
-      <CustomInput
-        colors={colors}
-        input={expenseAmount}
-        setInput={setExpenseAmount}
-        placeholder="eg. 320"
-        label="Expense Amount"
-      />
+      <Text
+        style={[
+          styles.labelText,
+          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
+        ]}>
+        Expense Amount
+      </Text>
+      <View
+        style={[
+          styles.textInputContainer,
+          {
+            borderColor: colors.primaryText,
+            backgroundColor: colors.secondaryBackground,
+          },
+        ]}>
+        <Text
+          style={[
+            styles.subtitleText,
+            {color: colors.primaryText, fontSize: 15},
+          ]}>
+          {currencySymbol}
+        </Text>
+        <TextInput
+          style={[
+            styles.textInput,
+            {
+              color: colors.primaryText,
+            },
+          ]}
+          value={expenseAmount}
+          onChangeText={setExpenseAmount}
+          placeholder={'eg. 320'}
+          placeholderTextColor={colors.secondaryText}
+        />
+      </View>
       <View style={styles.dateContainer}>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} testID="from">
+        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <View
             style={[
               styles.dateButtonContainer,
@@ -146,10 +125,9 @@ const AddTransactionsScreen = () => {
           {moment(createdAt).format('Do MMM YYYY')}
         </Text>
 
-        <View testID="date-time-from-picker">
+        <View>
           {showDatePicker && (
             <DateTimePicker
-              testID="dateTimePicker"
               value={createdAt}
               mode="date"
               is24Hour={false}
@@ -195,46 +173,3 @@ const AddTransactionsScreen = () => {
 };
 
 export default AddTransactionsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-  addButtonContainer: {
-    marginBottom: 10,
-  },
-  submitButtonContainer: {
-    marginTop: 5,
-    marginBottom: 15,
-  },
-  dateButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    width: 40,
-    borderRadius: 5,
-    borderWidth: 2,
-    marginRight: 10,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  dateText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});
