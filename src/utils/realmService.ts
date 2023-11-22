@@ -6,9 +6,9 @@ import Currency from '../schemas/CurrencySchema';
 
 const realmConfig: Realm.Configuration = {
   schema: [User, Category, Expense, Currency],
+  schemaVersion: 1,
 };
 
 export const getRealm = () => {
   return Realm.open(realmConfig);
 };
-

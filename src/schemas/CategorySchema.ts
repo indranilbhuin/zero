@@ -4,7 +4,7 @@ import User from './UserSchema';
 class Category extends Realm.Object<Category> {
   _id!: Realm.BSON.ObjectId;
   name!: string;
-  categoryTotal!: number;
+  categoryStatus!: boolean;
   user!: User | null;
   icon?: string | null;
 
@@ -13,7 +13,7 @@ class Category extends Realm.Object<Category> {
     properties: {
       _id: 'objectId',
       name: 'string',
-      categoryTotal: 'double',
+      categoryStatus: 'bool',
       user: 'User',
       icon: {type: 'string', optional: true},
     },

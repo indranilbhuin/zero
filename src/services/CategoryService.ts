@@ -14,7 +14,7 @@ export const createCategory = async (
         realm.create('Category', {
           _id: new Realm.BSON.ObjectId(),
           name: name,
-          categoryTotal: 0,
+          categoryStatus: true,
           user: user,
           icon: icon,
         });
@@ -27,19 +27,47 @@ export const createCategory = async (
   }
 };
 
-export const deleteCategoryById = async (categoryId: Realm.BSON.ObjectId) => {
+export const softDeleteCategoryById = async (
+  categoryId: Realm.BSON.ObjectId,
+) => {
   const realm = await getRealm();
   try {
     realm.write(() => {
       const category = realm.objectForPrimaryKey('Category', categoryId);
       if (category) {
-        realm.delete(category);
+        if (category.categoryStatus) {
+          category.categoryStatus = false;
+        }
       } else {
         console.error('Category not found.');
       }
     });
   } catch (error) {
     console.error('Error deleting Category:', error);
+  }
+};
+
+export const updateCategoryById = async (
+  categoryId?: Realm.BSON.ObjectId,
+  newName?: string,
+  newIcon?: string,
+) => {
+  const realm = await getRealm();
+
+  try {
+    realm.write(() => {
+      const category = realm.objectForPrimaryKey('Category', categoryId);
+      if (category) {
+        if (category.name) {
+          category.name = newName;
+        }
+        if (category.icon) {
+          category.icon = newIcon;
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error updating Category:', error);
   }
 };
 

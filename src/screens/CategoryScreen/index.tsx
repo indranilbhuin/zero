@@ -1,23 +1,59 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import AppHeader from '../../components/AppHeader';
 import {goBack, navigate} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
-import {useSelector} from 'react-redux';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
-import {deleteCategoryById} from '../../services/CategoryService';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import homeStyles from '../HomeScreen/style';
+import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
+import { softDeleteCategoryById } from '../../services/CategoryService';
 
 const CategoryScreen = () => {
-  const categories = useSelector(selectCategoryData);
-
   const colors = useThemeColors();
+  const dispatch = useDispatch();
+  const categories = useSelector(selectActiveCategories);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleEdit = (categoryId: Realm.BSON.ObjectId) => {};
+  useEffect(() => {
+    if (refreshing) {
+      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      setRefreshing(false);
+    }
+  }, [refreshing]);
 
-  const handleDelete = (categoryId: Realm.BSON.ObjectId) => {
-    console.log('this category is deleting', categoryId);
+  const onRefresh = () => {
+    setRefreshing(true);
+  };
+
+  const handleEdit = (
+    categoryId: string,
+    categoryName: string,
+    categoryIcon: string,
+  ) => {
+    navigate('UpdateCategoryScreen', {
+      categoryId,
+      categoryName,
+      categoryIcon,
+    });
+  };
+
+  const handleDelete = async (categoryId: Realm.BSON.ObjectId) => {
+    try {
+      await softDeleteCategoryById(categoryId);
+      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      setRefreshing(true);
+    } catch (error) {
+      console.log('this category is deleting', categoryId);
+    }
   };
 
   return (
@@ -30,60 +66,76 @@ const CategoryScreen = () => {
         <View style={styles.headerContainer}>
           <AppHeader onPress={goBack} colors={colors} text="Category Screen" />
         </View>
-
-        {categories?.map(category => (
-          <View
-            style={[
-              styles.transactionContainer,
-              {
-                backgroundColor: colors.containerColor,
-              },
-            ]}
-            key={category._id}>
-            <View style={styles.iconNameContainer}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          <View style={{marginBottom: 65}}>
+            {categories?.map(category => (
               <View
                 style={[
-                  styles.iconContainer,
-                  {backgroundColor: colors.primaryText},
-                ]}>
-                <Icon
-                  name={category.icon}
-                  size={20}
-                  color={colors.buttonText}
-                  type={'MaterialCommunityIcons'}
-                />
+                  styles.transactionContainer,
+                  {
+                    backgroundColor: colors.containerColor,
+                  },
+                ]}
+                key={category._id}>
+                <View style={styles.iconNameContainer}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      {backgroundColor: colors.primaryText},
+                    ]}>
+                    <Icon
+                      name={category.icon}
+                      size={20}
+                      color={colors.buttonText}
+                      type={'MaterialCommunityIcons'}
+                    />
+                  </View>
+                  <View>
+                    <Text
+                      style={[
+                        styles.transactionText,
+                        {color: colors.primaryText},
+                      ]}>
+                      {category.name}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() =>
+                      handleEdit(
+                        String(category._id),
+                        category.name,
+                        category.icon,
+                      )
+                    }>
+                    <Icon
+                      name={'edit'}
+                      size={20}
+                      color={colors.accentGreen}
+                      type={'MaterialIcons'}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => handleDelete(category._id)}>
+                    <Icon
+                      name={'delete-empty'}
+                      size={20}
+                      color={colors.accentOrange}
+                      type={'MaterialCommunityIcons'}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View>
-                <Text
-                  style={[styles.transactionText, {color: colors.primaryText}]}>
-                  {category.name}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => handleEdit(category._id)}>
-                <Icon
-                  name={'edit'}
-                  size={20}
-                  color={colors.accentGreen}
-                  type={'MaterialIcons'}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => handleDelete(category._id)}>
-                <Icon
-                  name={'delete-empty'}
-                  size={20}
-                  color={colors.accentOrange}
-                  type={'MaterialCommunityIcons'}
-                />
-              </TouchableOpacity>
-            </View>
+            ))}
           </View>
-        ))}
+        </ScrollView>
       </View>
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity

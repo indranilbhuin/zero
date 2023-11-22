@@ -12,6 +12,7 @@ import AddTransactionsScreen from '../screens/AddTransactionsScreen';
 import UpdateTransactionScreen from '../screens/UpdateTransactionScreen';
 import CategoryScreen from '../screens/CategoryScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
+import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -114,6 +115,7 @@ const HomeStack = () => {
         component={UpdateTransactionScreen}
       />
       <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
+      <Stack.Screen name="UpdateCategoryScreen" component={UpdateCategoryScreen} />
     </Stack.Navigator>
   );
 };
