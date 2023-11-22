@@ -49,7 +49,7 @@ const HomeScreen = () => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
-  }, [userId, userName]);
+  }, [userId, userName, currencySymbol]);
 
   useEffect(() => {
     dispatch(getExpenseRequest());
