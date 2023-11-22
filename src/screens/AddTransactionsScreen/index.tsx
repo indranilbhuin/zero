@@ -1,4 +1,10 @@
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import CustomInput from '../../components/CustomInput';
 import AppHeader from '../../components/AppHeader';
@@ -11,6 +17,8 @@ import Icon from '../../components/Icons';
 import moment from 'moment';
 import useAddTransaction from './useAddTransaction';
 import styles from './style';
+import {useSelector} from 'react-redux';
+import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 
 const AddTransactionsScreen = () => {
   const {
@@ -31,6 +39,8 @@ const AddTransactionsScreen = () => {
     handleAddCategory,
     handleAddExpense,
   } = useAddTransaction();
+
+  const currencySymbol = useSelector(selectCurrencySymbol);
 
   return (
     <View
@@ -56,13 +66,41 @@ const AddTransactionsScreen = () => {
         placeholder="eg. From Aroma's"
         label="Expense Description"
       />
-      <CustomInput
-        colors={colors}
-        input={expenseAmount}
-        setInput={setExpenseAmount}
-        placeholder="eg. 320"
-        label="Expense Amount"
-      />
+      <Text
+        style={[
+          styles.labelText,
+          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
+        ]}>
+        Expense Amount
+      </Text>
+      <View
+        style={[
+          styles.textInputContainer,
+          {
+            borderColor: colors.primaryText,
+            backgroundColor: colors.secondaryBackground,
+          },
+        ]}>
+        <Text
+          style={[
+            styles.subtitleText,
+            {color: colors.primaryText, fontSize: 15},
+          ]}>
+          {currencySymbol}
+        </Text>
+        <TextInput
+          style={[
+            styles.textInput,
+            {
+              color: colors.primaryText,
+            },
+          ]}
+          value={expenseAmount}
+          onChangeText={setExpenseAmount}
+          placeholder={'eg. 320'}
+          placeholderTextColor={colors.secondaryText}
+        />
+      </View>
       <View style={styles.dateContainer}>
         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <View

@@ -1,8 +1,9 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSelector, createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
+import Category from '../../schemas/CategorySchema';
 
 const initialState = {
-  categoryData: {},
+  categoryData: [],
 };
 
 const categoryDataSlice = createSlice({
@@ -18,6 +19,14 @@ const categoryDataSlice = createSlice({
 
 export const selectCategoryData = (state: RootState) =>
   state.category.categoryData;
+
+export const selectActiveCategories = createSelector(
+  [selectCategoryData],
+  categoryData =>
+    categoryData.filter(
+      (category: Category) => category.categoryStatus === true,
+    ),
+);
 
 export const {setCategoryData} = categoryDataSlice.actions;
 

@@ -19,7 +19,7 @@ import addTransactionStyles from '../AddTransactionsScreen/style';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import Category from '../../schemas/CategorySchema';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
+import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {updateExpenseById} from '../../services/ExpenseService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import useThemeColors from '../../hooks/useThemeColors';
@@ -58,7 +58,7 @@ const UpdateTransactionScreen = () => {
   );
   const [createdAt, setCreatedAt] = useState(expenseData.expenseDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const categories = useSelector(selectCategoryData);
+  const categories = useSelector(selectActiveCategories);
   const currencySymbol = useSelector(selectCurrencySymbol);
   const dispatch = useDispatch();
 
@@ -78,7 +78,7 @@ const UpdateTransactionScreen = () => {
   };
 
   const handleAddCategory = () => {
-    navigate('AddCategoryScreen');
+    navigate('CategoryScreen');
   };
 
   const handleUpdateExpense = () => {

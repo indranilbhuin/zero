@@ -25,8 +25,6 @@ export const createExpense = async (
         user: user,
         date: date,
       });
-
-      category.categoryTotal += amount;
     }
   });
 };
@@ -64,7 +62,7 @@ export const updateExpenseById = async (
       }
     });
   } catch (error) {
-    console.error('Error updating Category:', error);
+    console.error('Error updating Expense:', error);
   }
 };
 

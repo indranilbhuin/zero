@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
+import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {createExpense} from '../../services/ExpenseService';
 import {navigate, goBack} from '../../utils/navigationUtils';
@@ -15,12 +15,12 @@ const useAddTransaction = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
-  const [expenseAmount, setExpenseAmount] = useState<null | number>(null);
+  const [expenseAmount, setExpenseAmount] = useState('');
   const userId = useSelector(selectUserId);
 
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const categories = useSelector(selectCategoryData);
+  const categories = useSelector(selectActiveCategories);
 
   useEffect(() => {
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
@@ -42,7 +42,7 @@ const useAddTransaction = () => {
   };
 
   const handleAddCategory = () => {
-    navigate('AddCategoryScreen');
+    navigate('CategoryScreen');
   };
 
   const handleAddExpense = () => {
