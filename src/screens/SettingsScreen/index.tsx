@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,24 +19,45 @@ import {
 import CustomInput from '../../components/CustomInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import {updateUserById} from '../../services/UserService';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import {
+  selectCurrencyCode,
+  selectCurrencyId,
+  selectCurrencyName,
+  selectCurrencySymbol,
+  setCurrencyData,
+} from '../../redux/slice/currencyDataSlice';
 import {selectUserName, setUserName} from '../../redux/slice/userNameSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
+import chooseCurrencyStyles from '../ChooseCurrencyScreen/style';
+import currencies from '../../../assets/currencies.json';
+import {updateCurrencyById} from '../../services/CurrencyService';
+import addCategoryStyles from '../AddCategoryScreen/style';
 
 const SettingsScreen = () => {
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
+  const currencyId = useSelector(selectCurrencyId);
+  const currencyCode = useSelector(selectCurrencyCode);
+  const currencyName = useSelector(selectCurrencyName);
+  const currencySymbol = useSelector(selectCurrencySymbol);
+  const selectedTheme = useSelector(selectThemePreference);
+
+  const currencyData = {
+    code: currencyCode,
+    name: currencyName,
+    symbol: currencySymbol,
+  };
+
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
   const [name, setName] = useState(userName);
+  const [searchText, setSearchText] = useState('');
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
-  const windowHeight = Dimensions.get('window').height;
+  const [selectedCurrency, setSelectedCurrency] = useState(currencyData);
+  const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
 
   const colors = useThemeColors();
   const dispatch = useDispatch();
-
-  const currencySymbol = useSelector(selectCurrencySymbol);
-  const selectedTheme = useSelector(selectThemePreference);
 
   useEffect(() => {
     const getThemePreference = async () => {
@@ -62,6 +84,14 @@ const SettingsScreen = () => {
     setIsNameModalVisible(false);
   };
 
+  const handleCurrencyModalClose = () => {
+    setIsCurrencyModalVisible(false);
+  };
+
+  const handleCurrencySelect = currency => {
+    setSelectedCurrency(currency);
+  };
+
   const handleThemeSelection = async theme => {
     try {
       if (theme === 'system') {
@@ -76,14 +106,55 @@ const SettingsScreen = () => {
     }
   };
 
-  const handleNameSubmit = async () => {
+  const handleNameUpdate = async () => {
     try {
       await updateUserById(Realm.BSON.ObjectID.createFromHexString(userId), {
         username: name,
       });
       dispatch(setUserName(name));
       setIsNameModalVisible(false);
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error updating the name:', error);
+    }
+  };
+
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+    const filtered = currencies.filter(currency => {
+      const {code, name, symbol, symbolNative} = currency;
+      const searchItem = text.toLowerCase();
+
+      return (
+        code.toLowerCase().includes(searchItem) ||
+        name.toLowerCase().includes(searchItem) ||
+        symbol.toLowerCase().includes(searchItem) ||
+        symbolNative.toLowerCase().includes(searchItem)
+      );
+    });
+    setFilteredCurrencies(filtered);
+  };
+
+  const handleCurrencyUpdate = async () => {
+    try {
+      await updateCurrencyById(
+        Realm.BSON.ObjectID.createFromHexString(currencyId),
+        {
+          name: selectedCurrency.name,
+          code: selectedCurrency.code,
+          symbol: selectedCurrency.symbol,
+        },
+      );
+      const currencyData = {
+        currencyId,
+        currencyName: selectedCurrency.name,
+        currencySymbol: selectedCurrency.symbol,
+        currencyCode: selectedCurrency.code,
+      };
+      dispatch(setCurrencyData(currencyData));
+      setIsCurrencyModalVisible(false);
+    } catch (error) {
+      console.error('Error updating the currency:', error);
+    }
   };
 
   const renderRadioButtons = onThemeSelect => {
@@ -113,6 +184,56 @@ const SettingsScreen = () => {
     ));
   };
 
+  console.log(selectedCurrency);
+
+  const renderCurrencySymbol = () => {
+    return (
+      <View style={chooseCurrencyStyles.currencyMainContainer}>
+        {filteredCurrencies.map(currency => (
+          <TouchableOpacity
+            key={currency.code}
+            onPress={() => handleCurrencySelect(currency)}>
+            <View
+              style={[
+                chooseCurrencyStyles.currencyContainer,
+                {
+                  backgroundColor:
+                    selectedCurrency.code === currency.code
+                      ? colors.accentGreen
+                      : colors.primaryText,
+                  borderColor: colors.secondaryText,
+                },
+              ]}>
+              <View style={chooseCurrencyStyles.symbolContainer}>
+                <Text
+                  style={[
+                    styles.subtitleText,
+                    {color: colors.buttonText, fontSize: 20},
+                  ]}>
+                  {currency.symbolNative}
+                </Text>
+                <Text
+                  style={[
+                    styles.subtitleText,
+                    {color: colors.buttonText, fontSize: 13},
+                  ]}>
+                  {currency.code}
+                </Text>
+              </View>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.buttonText, fontSize: 10},
+                ]}>
+                {currency.name}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
   return (
     <View
       style={[
@@ -140,7 +261,6 @@ const SettingsScreen = () => {
               style={[
                 styles.individualSettingsContainer,
                 {
-                  // backgroundColor: colors.containerColor,
                   borderColor: colors.secondaryText,
                 },
               ]}>
@@ -185,7 +305,7 @@ const SettingsScreen = () => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsCurrencyModalVisible(true)}>
             <View
               style={[
                 styles.individualSettingsContainer,
@@ -197,17 +317,26 @@ const SettingsScreen = () => {
               <Text
                 style={[
                   styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
+                  {color: colors.primaryText, fontSize: 14, width: '50%'},
                 ]}>
                 Change Currency Symbol
               </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
-                {currencySymbol}
-              </Text>
+              <View style={{alignItems: 'flex-end'}}>
+                <Text
+                  style={[
+                    styles.subtitleText,
+                    {color: colors.primaryText, fontSize: 14},
+                  ]}>
+                  {currencySymbol}
+                </Text>
+                <Text
+                  style={[
+                    styles.subtitleText,
+                    {color: colors.primaryText, fontSize: 14},
+                  ]}>
+                  {currencyName}
+                </Text>
+              </View>
             </View>
           </TouchableOpacity>
         </View>
@@ -267,10 +396,56 @@ const SettingsScreen = () => {
               placeholder={'change user name'}
             />
             <PrimaryButton
-              onPress={handleNameSubmit}
+              onPress={handleNameUpdate}
               colors={colors}
               buttonTitle={'Update'}
             />
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isCurrencyModalVisible}
+        onRequestClose={handleCurrencyModalClose}>
+        <View style={[styles.modalContainer]}>
+          <View
+            style={[styles.modal, {backgroundColor: colors.containerColor}]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {
+                    color: colors.primaryText,
+                    fontSize: 17,
+                    marginTop: 10,
+                    marginBottom: 30,
+                    fontFamily: 'FiraCode-SemiBold',
+                  },
+                ]}>
+                Select Currency Symbol
+              </Text>
+              <TextInput
+                style={[
+                  addCategoryStyles.textInput,
+                  {
+                    borderColor: colors.primaryText,
+                    color: colors.primaryText,
+                    backgroundColor: colors.secondaryBackground,
+                  },
+                ]}
+                placeholder="Search Currency"
+                value={searchText}
+                onChangeText={handleSearch}
+              />
+              {renderCurrencySymbol()}
+              <PrimaryButton
+                onPress={handleCurrencyUpdate}
+                colors={colors}
+                buttonTitle={'Update'}
+              />
+            </ScrollView>
           </View>
         </View>
       </Modal>
