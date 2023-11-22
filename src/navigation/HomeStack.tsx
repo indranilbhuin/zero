@@ -115,7 +115,10 @@ const HomeStack = () => {
         component={UpdateTransactionScreen}
       />
       <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
-      <Stack.Screen name="UpdateCategoryScreen" component={UpdateCategoryScreen} />
+      <Stack.Screen
+        name="UpdateCategoryScreen"
+        component={UpdateCategoryScreen}
+      />
     </Stack.Navigator>
   );
 };
@@ -125,6 +128,7 @@ export default HomeStack;
 const styles = StyleSheet.create({
   labelText: {
     fontSize: 12,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'FiraCode-Medium',
+    includeFontPadding: false,
   },
 });

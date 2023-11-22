@@ -1,5 +1,5 @@
 import {
-  Dimensions,
+  Linking,
   Modal,
   ScrollView,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
@@ -32,6 +33,9 @@ import chooseCurrencyStyles from '../ChooseCurrencyScreen/style';
 import currencies from '../../../assets/currencies.json';
 import {updateCurrencyById} from '../../services/CurrencyService';
 import addCategoryStyles from '../AddCategoryScreen/style';
+import {getAppVersion} from '../../utils/getVersion';
+import Icon from '../../components/Icons';
+import {goBack} from '../../utils/navigationUtils';
 
 const SettingsScreen = () => {
   const userName = useSelector(selectUserName);
@@ -55,6 +59,7 @@ const SettingsScreen = () => {
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(currencyData);
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
+  const appVersion = getAppVersion();
 
   const colors = useThemeColors();
   const dispatch = useDispatch();
@@ -234,6 +239,24 @@ const SettingsScreen = () => {
     );
   };
 
+  const handleRateNow = () => {
+    console.log('rate on playstore');
+  };
+
+  const handleGithub = () => {
+    const githubRepoURL = 'https://github.com/indranilbhuin/zero';
+    Linking.openURL(githubRepoURL).catch(err =>
+      console.error('Error opening GitHub:', err),
+    );
+  };
+
+  const handlePrivacyPolicy = () => {
+    const privacyPolicyURL = 'https://github.com/indranilbhuin/zero';
+    Linking.openURL(privacyPolicyURL).catch(err =>
+      console.error('Error opening GitHub:', err),
+    );
+  };
+
   return (
     <View
       style={[
@@ -242,12 +265,29 @@ const SettingsScreen = () => {
       ]}>
       <View style={styles.headerContainer}>
         <View style={styles.greetingsContainer}>
+          <View style={styles.iconButtonContainer}>
+            <TouchableOpacity onPress={goBack}>
+              <Icon
+                name="caret-back-circle"
+                size={25}
+                color={colors.primaryText}
+                type={'IonIcons'}
+              />
+            </TouchableOpacity>
+          </View>
           <Text style={[styles.titleText, {color: colors.primaryText}]}>
             zero
           </Text>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Text
+          style={[
+            styles.subtitleText,
+            {color: colors.accentGreen, fontSize: 14, marginTop: 15},
+          ]}>
+          Appearance & Personalization
+        </Text>
         <View
           style={[
             styles.settingsContainer,
@@ -311,7 +351,9 @@ const SettingsScreen = () => {
                 styles.individualSettingsContainer,
                 {
                   backgroundColor: colors.containerColor,
-                  borderColor: colors.secondaryText,
+                  borderBottomWidth: 0,
+                  borderBottomLeftRadius: 8,
+                  borderBottomRightRadius: 8,
                 },
               ]}>
               <Text
@@ -340,6 +382,157 @@ const SettingsScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
+
+        <Text
+          style={[
+            styles.subtitleText,
+            {color: colors.accentGreen, fontSize: 14, marginTop: 15},
+          ]}>
+          Help & Feedback
+        </Text>
+        <View
+          style={[
+            styles.settingsContainer,
+            {
+              backgroundColor: colors.containerColor,
+              borderColor: colors.secondaryText,
+            },
+          ]}>
+          <TouchableOpacity onPress={handleRateNow}>
+            <View
+              style={[
+                styles.individualSettingsContainer,
+                {
+                  borderColor: colors.secondaryText,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 14},
+                ]}>
+                Rate the app
+              </Text>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 11},
+                ]}>
+                Enjoying Expense Tracker? Your feedback helps us improve!
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleGithub}>
+            <View
+              style={[
+                styles.individualSettingsContainer,
+                {
+                  borderColor: colors.secondaryText,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 14},
+                ]}>
+                Github
+              </Text>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 11},
+                ]}>
+                Explore the Source Code
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handlePrivacyPolicy}>
+            <View
+              style={[
+                styles.individualSettingsContainer,
+                {
+                  borderColor: colors.secondaryText,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 14, width: '50%'},
+                ]}>
+                Privacy Policy
+              </Text>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 11},
+                ]}>
+                Your Data, Your Device: zero Servers, zero Access.
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableWithoutFeedback>
+            <View
+              style={[
+                styles.individualSettingsContainer,
+                {
+                  borderColor: colors.secondaryText,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 14, width: '50%'},
+                ]}>
+                Version
+              </Text>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {color: colors.primaryText, fontSize: 11},
+                ]}>
+                v{appVersion}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        <Text
+          style={[
+            styles.subtitleText,
+            {
+              color: colors.primaryText,
+              fontSize: 12,
+              alignSelf: 'center',
+              textAlign: 'center',
+              marginTop: 15,
+            },
+          ]}>
+          Embrace the simplicity of zero
+        </Text>
+        <Text
+          style={[
+            styles.subtitleText,
+            {
+              color: colors.primaryText,
+              fontSize: 12,
+              alignSelf: 'center',
+              textAlign: 'center',
+            },
+          ]}>
+          Developed with{' '}
+          <Text style={{color: colors.accentGreen}}>passion</Text> in India.
+        </Text>
       </ScrollView>
 
       <Modal
@@ -477,14 +670,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   settingsContainer: {
-    marginTop: 10,
+    marginTop: 15,
     borderWidth: 1,
     borderRadius: 8,
   },
   individualSettingsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 60,
+    height: 65,
     alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
@@ -503,7 +696,6 @@ const styles = StyleSheet.create({
   modal: {
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    // alignItems: 'center',
     padding: 15,
   },
   radioButton: {
@@ -524,5 +716,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  iconButtonContainer: {
+    marginRight: 10,
   },
 });
