@@ -8,20 +8,22 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
-import AppHeader from '../../components/AppHeader';
-import {goBack, navigate} from '../../utils/navigationUtils';
+import {navigate} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import homeStyles from '../HomeScreen/style';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-import { softDeleteCategoryById } from '../../services/CategoryService';
+import {softDeleteCategoryById} from '../../services/CategoryService';
+import HeaderContainer from '../../components/HeaderContainer';
 
 const CategoryScreen = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const categories = useSelector(selectActiveCategories);
   const [refreshing, setRefreshing] = useState(false);
+
+  console.log(categories);
 
   useEffect(() => {
     if (refreshing) {
@@ -38,11 +40,13 @@ const CategoryScreen = () => {
     categoryId: string,
     categoryName: string,
     categoryIcon: string,
+    categoryColor: string,
   ) => {
     navigate('UpdateCategoryScreen', {
       categoryId,
       categoryName,
       categoryIcon,
+      categoryColor,
     });
   };
 
@@ -63,8 +67,8 @@ const CategoryScreen = () => {
           styles.mainContainer,
           {backgroundColor: colors.primaryBackground},
         ]}>
-        <View style={styles.headerContainer}>
-          <AppHeader onPress={goBack} colors={colors} text="Category Screen" />
+        <View style={{marginBottom: 15}}>
+          <HeaderContainer headerText={'Categories'} />
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -90,7 +94,7 @@ const CategoryScreen = () => {
                     <Icon
                       name={category.icon}
                       size={20}
-                      color={colors.buttonText}
+                      color={category.color}
                       type={'MaterialCommunityIcons'}
                     />
                   </View>
@@ -112,6 +116,7 @@ const CategoryScreen = () => {
                         String(category._id),
                         category.name,
                         category.icon,
+                        category.color,
                       )
                     }>
                     <Icon

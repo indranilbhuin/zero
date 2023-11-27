@@ -44,6 +44,11 @@ const addCategoryStyles = StyleSheet.create({
     fontFamily: 'FiraCode-Medium',
     includeFontPadding: false,
   },
+  colorCircle: {
+    height: 25,
+    width: 25,
+    borderRadius: 50
+  }
 });
 
 export default addCategoryStyles;

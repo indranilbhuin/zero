@@ -34,6 +34,7 @@ const OnboardingScreen = () => {
         category.name,
         Realm.BSON.ObjectID.createFromHexString(userId),
         category.icon,
+        category.color,
       );
     }
     navigate('ChooseCurrencyScreen');

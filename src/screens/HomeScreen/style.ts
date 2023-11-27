@@ -31,7 +31,7 @@ const homeStyles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: '5%',
+    marginTop: 15,
     justifyContent: 'space-between',
   },
   greetingsContainer: {
@@ -49,7 +49,7 @@ const homeStyles = StyleSheet.create({
   },
   listExpenseContainer: {
     marginTop: '5%',
-    marginBottom: '2%'
+    marginBottom: '20%'
   },
   card: {
     height: 150,

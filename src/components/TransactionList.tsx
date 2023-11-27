@@ -143,7 +143,7 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
               <Icon
                 name={expense.category.icon}
                 size={20}
-                color={colors.buttonText}
+                color={expense.category.color}
                 type={'MaterialCommunityIcons'}
               />
             </View>

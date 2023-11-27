@@ -11,8 +11,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer ref={setNavigationRef}>
-        
-          <MainStack />
+        <MainStack />
         {/* </GestureHandlerRootView> */}
       </NavigationContainer>
     </Provider>

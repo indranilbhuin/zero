@@ -29,6 +29,7 @@ import {
   selectExpenseLoading,
 } from '../../redux/slice/expenseDataSlice';
 import moment from 'moment';
+import HeaderContainer from '../../components/HeaderContainer';
 
 const HomeScreen = () => {
   const colors = useThemeColors();
@@ -104,35 +105,7 @@ const HomeScreen = () => {
           styles.mainContainer,
           {backgroundColor: colors.primaryBackground},
         ]}>
-        <View style={styles.headerContainer}>
-          <View style={styles.greetingsContainer}>
-            <View
-              style={[
-                styles.initialsContainer,
-                {backgroundColor: colors.primaryText},
-              ]}>
-              <Text style={[styles.initialsText, {color: colors.buttonText}]}>
-                {userName
-                  .split(' ')
-                  .map((name: string) => name.charAt(0))
-                  .join('')}
-              </Text>
-            </View>
-            <Text style={[styles.titleText, {color: colors.primaryText}]}>
-              Hey, {userName}
-            </Text>
-          </View>
-          <View style={styles.settingsContainer}>
-            <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
-              <Icon
-                name={'setting'}
-                size={20}
-                color={colors.primaryText}
-                type={'AntDesign'}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <HeaderContainer headerText={`Hey, ${userName}`}/>
 
         <ScrollView
           showsVerticalScrollIndicator={false}

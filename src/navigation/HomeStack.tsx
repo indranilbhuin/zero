@@ -44,6 +44,13 @@ const DebtIcon = ({color}: any) => (
   </View>
 );
 
+const CategoriesIcon = ({color}: any) => (
+  <View style={{alignItems: 'center'}}>
+    <Icon name={'shape'} size={25} type={'MaterialCommunityIcons'} color={color} />
+    <Text style={[styles.labelText, {color: color}]}>Categories</Text>
+  </View>
+);
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -78,6 +85,18 @@ const TabStack = () => {
         options={{
           headerShown: false,
           tabBarIcon: ReportsIcon,
+          tabBarStyle: {
+            backgroundColor: colors.primaryText,
+            height: 55,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="CategoryScreen"
+        component={CategoryScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: CategoriesIcon,
           tabBarStyle: {
             backgroundColor: colors.primaryText,
             height: 55,

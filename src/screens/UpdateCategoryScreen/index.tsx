@@ -22,6 +22,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import addCategoryStyles from '../AddCategoryScreen/style';
 import allIcons from '../../../assets/categoryIcons.json';
 import {RouteProp, useRoute} from '@react-navigation/native';
+import allColors from '../../../assets/categoryColors.json';
 
 type UpdateCategoryScreenRouteProp = RouteProp<
   {
@@ -29,6 +30,7 @@ type UpdateCategoryScreenRouteProp = RouteProp<
       categoryId: string;
       categoryName: string;
       categoryIcon: string;
+      categoryColor: string;
     };
   },
   'UpdateCategoryScreen'
@@ -44,6 +46,10 @@ const UpdateCategoryScreen = () => {
   const [isIconModalVisible, setIsIconModalVisible] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(categoryData.categoryIcon);
   const [searchText, setSearchText] = useState('');
+  const [isColorModalVisible, setIsColorModalVisible] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(
+    categoryData.categoryColor,
+  );
 
   const handleUpdateCategory = () => {
     try {
@@ -51,6 +57,7 @@ const UpdateCategoryScreen = () => {
         Realm.BSON.ObjectID.createFromHexString(categoryData.categoryId),
         categoryName,
         selectedIcon,
+        selectedColor
       );
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
@@ -61,6 +68,10 @@ const UpdateCategoryScreen = () => {
 
   const handleIconModalClose = () => {
     setIsIconModalVisible(false);
+  };
+
+  const handleColorModalClose = () => {
+    setIsColorModalVisible(false);
   };
 
   console.log('this is the selectedicon', selectedIcon);
@@ -91,9 +102,7 @@ const UpdateCategoryScreen = () => {
             width: iconSize,
             height: iconSize,
             backgroundColor:
-              selectedIcon === iconName
-                ? colors.primaryText
-                : undefined,
+              selectedIcon === iconName ? colors.primaryText : undefined,
           },
         ]}
         onPress={() => handleSelectIcon(iconName)}>
@@ -106,6 +115,37 @@ const UpdateCategoryScreen = () => {
               : colors.secondaryText
           }
           type={'MaterialCommunityIcons'}
+        />
+      </TouchableOpacity>
+    ));
+  };
+
+  const renderColors = () => {
+    const handleSelectColor = color => {
+      setSelectedColor(color);
+      setIsColorModalVisible(false);
+    };
+
+    const screenWidth = Dimensions.get('window').width;
+    const colorsPerRow = 6;
+    const colorSize = (screenWidth * 0.7) / colorsPerRow;
+    console.log(allColors);
+
+    return Object.keys(allColors).map((color, index) => (
+      <TouchableOpacity
+        key={index}
+        style={[
+          addCategoryStyles.iconItem,
+          {
+            width: colorSize,
+            height: colorSize,
+            backgroundColor:
+              selectedIcon === color ? colors.primaryText : undefined,
+          },
+        ]}
+        onPress={() => handleSelectColor(color)}>
+        <View
+          style={[addCategoryStyles.colorCircle, {backgroundColor: color}]}
         />
       </TouchableOpacity>
     ));
@@ -134,7 +174,7 @@ const UpdateCategoryScreen = () => {
           addCategoryStyles.subtitleText,
           {color: colors.primaryText, marginBottom: 10},
         ]}>
-        Pick your own icon
+        Change icon or color
       </Text>
       <View style={addTransactionStyles.dateContainer}>
         <TouchableOpacity
@@ -172,7 +212,44 @@ const UpdateCategoryScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{marginTop: '125%'}}>
+
+      <View style={addTransactionStyles.dateContainer}>
+        <TouchableOpacity
+          style={[
+            addTransactionStyles.dateButtonContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+            },
+          ]}
+          onPress={() => setIsColorModalVisible(true)}>
+          {selectedColor === 'null' ? (
+            <View
+              style={[
+                addCategoryStyles.colorCircle,
+                {backgroundColor: colors.accentGreen},
+              ]}
+            />
+          ) : (
+            <View
+              style={[
+                addCategoryStyles.colorCircle,
+                {backgroundColor: selectedColor},
+              ]}
+            />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setIsColorModalVisible(true)}>
+          <Text
+            style={[
+              addTransactionStyles.dateText,
+              {color: colors.primaryText, fontSize: 14},
+            ]}>
+            Tap to Change Color
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{marginTop: '110%'}}>
         <PrimaryButton
           onPress={handleUpdateCategory}
           colors={colors}
@@ -227,6 +304,45 @@ const UpdateCategoryScreen = () => {
                   justifyContent: 'center',
                 }}>
                 {renderIcons()}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isColorModalVisible}
+        onRequestClose={handleColorModalClose}>
+        <View style={[addCategoryStyles.modalContainer]}>
+          <View
+            style={[
+              addCategoryStyles.modal,
+              {backgroundColor: colors.containerColor},
+            ]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text
+                style={[
+                  addCategoryStyles.subtitleText,
+                  {
+                    color: colors.primaryText,
+                    fontSize: 17,
+                    marginTop: 10,
+                    marginBottom: 30,
+                    fontFamily: 'FiraCode-SemiBold',
+                  },
+                ]}>
+                Select Color
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                {renderColors()}
               </View>
             </ScrollView>
           </View>
