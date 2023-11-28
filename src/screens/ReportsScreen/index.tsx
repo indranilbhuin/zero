@@ -249,10 +249,10 @@ const ReportsScreen = () => {
         style={{
           flexDirection: 'row',
           flexWrap: 'wrap',
-          marginTop: 10,
+          marginTop: 15,
           justifyContent: 'center',
         }}>
-        {slices.map((slice, index) => (
+        {slices.map(slice => (
           <View
             key={slice.key}
             style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -269,7 +269,7 @@ const ReportsScreen = () => {
                 },
               ]}
               key={slice.key}>
-              {slice?.label}
+              {slice?.label} |
             </Text>
           </View>
         ))}
@@ -315,11 +315,62 @@ const ReportsScreen = () => {
     }));
 
     return (
-      <View style={{}}>
+      <View>
         <PieChart style={{height: 200}} data={data} />
         <Labels slices={data} />
       </View>
     );
+  };
+
+  const renderCalendar = () => {
+    const firstDayOfMonth = moment(
+      `${selectedYear}-${moment().month(selectedMonth).format('MM')}-01`,
+    ).day();
+    const daysInMonth = moment(
+      `${selectedYear}-${moment().month(selectedMonth).format('MM')}`,
+      'YYYY-MM',
+    ).daysInMonth();
+
+    const blanks = Array(firstDayOfMonth).fill(0);
+    const days = Array.from({length: daysInMonth}, (_, i) => i + 1);
+
+    const calendar = [...blanks, ...days];
+
+    return calendar.map((day, index) => {
+      const date = moment(
+        `${selectedYear}-${selectedMonth}-${day}`,
+        'YYYY-MMM-D',
+      );
+      const dayTransactions = filteredTransactions.filter(item =>
+        moment(item.date).isSame(date, 'day'),
+      );
+
+      const hasTransactions = dayTransactions.length > 0;
+      let opacity = hasTransactions ? dayTransactions.length / 10 : 1;
+      let visibility = Math.round(opacity * 100);
+      console.log(visibility);
+
+      const backgroundColor = hasTransactions
+        ? `${colors.accentOrange}${visibility}`
+        : 'transparent';
+
+      return (
+        <View key={index} style={[styles.calendarDay, {backgroundColor}]}>
+          <TouchableOpacity>
+            <Text
+              style={[
+                styles.subtitleText,
+                {
+                  color: colors.primaryText,
+                  fontSize: 13,
+                },
+              ]}>
+              {day !== 0 ? day : ''}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    });
   };
 
   return (
@@ -346,6 +397,7 @@ const ReportsScreen = () => {
 
       <ScrollView>
         <View style={styles.chartContainer}>{renderPieChart()}</View>
+        <View style={styles.calendarContainer}>{renderCalendar()}</View>
       </ScrollView>
     </View>
   );
@@ -372,6 +424,7 @@ const styles = StyleSheet.create({
     fontFamily: 'FiraCode-Medium',
     fontSize: 15,
     includeFontPadding: false,
+    opacity: 1,
   },
   modalContainer: {
     flex: 1,
@@ -405,11 +458,24 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     marginTop: 15,
+    marginBottom: 25,
   },
   dotContainer: {
     height: 8,
     width: 8,
     borderRadius: 40,
     marginRight: 3,
+  },
+  calendarContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  calendarDay: {
+    width: '14.28%',
+    // aspectRatio: 1,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
