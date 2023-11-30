@@ -18,7 +18,6 @@ import TransactionList from '../../components/TransactionList';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectUserName} from '../../redux/slice/userNameSlice';
 import {
-  FETCH_ALL_CATEGORY_DATA,
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
@@ -29,6 +28,7 @@ import {
   selectExpenseLoading,
 } from '../../redux/slice/expenseDataSlice';
 import moment from 'moment';
+import HeaderContainer from '../../components/HeaderContainer';
 
 const HomeScreen = () => {
   const colors = useThemeColors();
@@ -48,7 +48,6 @@ const HomeScreen = () => {
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
   }, [userId, userName, currencySymbol]);
 
   useEffect(() => {
@@ -104,35 +103,7 @@ const HomeScreen = () => {
           styles.mainContainer,
           {backgroundColor: colors.primaryBackground},
         ]}>
-        <View style={styles.headerContainer}>
-          <View style={styles.greetingsContainer}>
-            <View
-              style={[
-                styles.initialsContainer,
-                {backgroundColor: colors.primaryText},
-              ]}>
-              <Text style={[styles.initialsText, {color: colors.buttonText}]}>
-                {userName
-                  .split(' ')
-                  .map((name: string) => name.charAt(0))
-                  .join('')}
-              </Text>
-            </View>
-            <Text style={[styles.titleText, {color: colors.primaryText}]}>
-              Hey, {userName}
-            </Text>
-          </View>
-          <View style={styles.settingsContainer}>
-            <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
-              <Icon
-                name={'setting'}
-                size={20}
-                color={colors.primaryText}
-                type={'AntDesign'}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <HeaderContainer headerText={`Hey, ${userName}`}/>
 
         <ScrollView
           showsVerticalScrollIndicator={false}

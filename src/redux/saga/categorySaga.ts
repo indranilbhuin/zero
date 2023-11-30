@@ -1,4 +1,4 @@
-import {call, put, select, takeLatest} from 'redux-saga/effects';
+import {call, put, select, takeEvery} from 'redux-saga/effects';
 import {selectUserId} from '../slice/userIdSlice';
 import {FETCH_ALL_CATEGORY_DATA} from '../actionTypes';
 import {getAllCategoriesByUserId} from '../../services/CategoryService';
@@ -17,5 +17,5 @@ function* fetchAllCategories(): Generator<any, void, any> {
 }
 
 export function* watchFetchAllCategories() {
-  yield takeLatest(FETCH_ALL_CATEGORY_DATA, fetchAllCategories);
+  yield takeEvery(FETCH_ALL_CATEGORY_DATA, fetchAllCategories);
 }

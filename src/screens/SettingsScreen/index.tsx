@@ -203,7 +203,7 @@ const SettingsScreen = () => {
                 chooseCurrencyStyles.currencyContainer,
                 {
                   backgroundColor:
-                    selectedCurrency.code === currency.code
+                    selectedCurrency?.code === currency.code
                       ? colors.accentGreen
                       : colors.primaryText,
                   borderColor: colors.secondaryText,
@@ -251,7 +251,7 @@ const SettingsScreen = () => {
   };
 
   const handlePrivacyPolicy = () => {
-    const privacyPolicyURL = 'https://github.com/indranilbhuin/zero';
+    const privacyPolicyURL = 'https://github.com/indranilbhuin/zero/blob/master/PRIVACYPOLICY.md';
     Linking.openURL(privacyPolicyURL).catch(err =>
       console.error('Error opening GitHub:', err),
     );
@@ -484,10 +484,12 @@ const SettingsScreen = () => {
               style={[
                 styles.individualSettingsContainer,
                 {
-                  borderColor: colors.secondaryText,
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'flex-start',
+                  borderBottomWidth: 0,
+                  borderBottomLeftRadius: 8,
+                  borderBottomRightRadius: 8,
                 },
               ]}>
               <Text

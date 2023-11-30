@@ -25,12 +25,11 @@ const CategoryContainer = ({
                 borderColor: colors.secondaryText,
               },
             ]}>
-            {console.log(selectedCategories?.includes(category))}
             <View style={styles.iconContainer}>
               <Icon
                 name={category.icon}
                 size={20}
-                color={colors.buttonText}
+                color={category.color}
                 type="MaterialCommunityIcons"
               />
             </View>

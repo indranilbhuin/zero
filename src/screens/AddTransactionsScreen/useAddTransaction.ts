@@ -42,7 +42,7 @@ const useAddTransaction = () => {
   };
 
   const handleAddCategory = () => {
-    navigate('CategoryScreen');
+    navigate('AddCategoryScreen');
   };
 
   const handleAddExpense = () => {
