@@ -9,6 +9,7 @@ import Category from '../schemas/CategorySchema';
 import {deleteExpenseById} from '../services/ExpenseService';
 import {useDispatch} from 'react-redux';
 import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
+import {FETCH_ALL_CATEGORY_DATA} from '../redux/actionTypes';
 
 const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
   const slideAnim = useRef(new Animated.Value(1)).current;
@@ -37,13 +38,13 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
     });
   };
 
-  const handleDelete = (expenseId: Realm.BSON.ObjectId) => {
+  const handleDelete = async (expenseId: Realm.BSON.ObjectId) => {
     Animated.timing(slideAnim, {
       toValue: -200,
       duration: 250,
       useNativeDriver: true,
-    }).start(() => {
-      deleteExpenseById(expenseId);
+    }).start(async () => {
+      await deleteExpenseById(expenseId);
       dispatch(getExpenseRequest());
     });
   };

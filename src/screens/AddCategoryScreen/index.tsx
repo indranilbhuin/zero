@@ -43,7 +43,7 @@ const AddCategoryScreen = () => {
         selectedIcon,
         selectedColor,
       );
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      // dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
       console.error('Error creating category:', error);

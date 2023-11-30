@@ -1,4 +1,6 @@
 import {getRealm} from '../utils/realmService';
+import {FETCH_ALL_CATEGORY_DATA} from '../redux/actionTypes';
+import store from '../redux/store';
 
 export const createExpense = async (
   userId: Realm.BSON.ObjectId,
@@ -73,6 +75,7 @@ export const deleteExpenseById = async (expenseId: Realm.BSON.ObjectId) => {
       const expense = realm.objectForPrimaryKey('Expense', expenseId);
       if (expense) {
         realm.delete(expense);
+        // store.dispatch({type: FETCH_ALL_CATEGORY_DATA});
       } else {
         console.error('Expense not found.');
       }

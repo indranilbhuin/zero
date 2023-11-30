@@ -17,6 +17,7 @@ import {
 } from '../../redux/slice/expenseDataSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import moment from 'moment';
+import {navigate} from '../../utils/navigationUtils';
 
 const ReportsScreen = () => {
   const colors = useThemeColors();
@@ -28,8 +29,13 @@ const ReportsScreen = () => {
   const allTransactions = useSelector(selectExpenseData);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
+  const dayNames = moment.weekdaysShort();
+
+  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
+  console.log('copy', allTransactionsCopy, 'real', allTransactions);
+
   const filterTransactions = (year, month) => {
-    const filtered = allTransactions.filter(item => {
+    const filtered = allTransactionsCopy?.filter(item => {
       const transactionYear = moment(item.date).year();
       const transactionMonth = moment(item.date).format('MMMM');
       return transactionYear === year && (!month || transactionMonth === month);
@@ -43,7 +49,7 @@ const ReportsScreen = () => {
   useEffect(() => {
     dispatch(getExpenseRequest());
     filterTransactions(selectedYear, selectedMonth);
-  }, [selectedYear, selectedMonth]);
+  }, [selectedYear, selectedMonth, allTransactionsCopy?.length]);
 
   const handleYearPicker = () => {
     setShowYearPicker(true);
@@ -243,6 +249,16 @@ const ReportsScreen = () => {
     setSelectedMonth(month);
   };
 
+  const totalAmountForMonth = filteredTransactions.reduce(
+    (sum, transaction) => sum + transaction.amount,
+    0,
+  );
+
+  const daysInMonth = moment(
+    `${selectedYear}-${moment().month(selectedMonth).format('MM')}`,
+    'YYYY-MM',
+  ).daysInMonth();
+
   const Labels = ({slices}) => {
     return (
       <View
@@ -282,7 +298,7 @@ const ReportsScreen = () => {
     const categoryMap = new Map();
     console.log(categoryMap);
 
-    filteredTransactions.forEach(transaction => {
+    filteredTransactions?.forEach(transaction => {
       const {amount, category} = transaction;
 
       const categoryName = category.name;
@@ -321,15 +337,12 @@ const ReportsScreen = () => {
       </View>
     );
   };
+  console.log(selectedMonth, selectedYear);
 
   const renderCalendar = () => {
     const firstDayOfMonth = moment(
       `${selectedYear}-${moment().month(selectedMonth).format('MM')}-01`,
     ).day();
-    const daysInMonth = moment(
-      `${selectedYear}-${moment().month(selectedMonth).format('MM')}`,
-      'YYYY-MM',
-    ).daysInMonth();
 
     const blanks = Array(firstDayOfMonth).fill(0);
     const days = Array.from({length: daysInMonth}, (_, i) => i + 1);
@@ -345,29 +358,58 @@ const ReportsScreen = () => {
         moment(item.date).isSame(date, 'day'),
       );
 
+      const totalAmountForDay = dayTransactions.reduce(
+        (sum, transaction) => sum + transaction.amount,
+        0,
+      );
+
       const hasTransactions = dayTransactions.length > 0;
-      let opacity = hasTransactions ? dayTransactions.length / 10 : 1;
+      let opacity = hasTransactions
+        ? totalAmountForDay / totalAmountForMonth
+        : 1;
       let visibility = Math.round(opacity * 100);
-      console.log(visibility);
 
       const backgroundColor = hasTransactions
-        ? `${colors.accentOrange}${visibility}`
+        ? `${colors.accentGreen}${visibility}`
         : 'transparent';
 
-      return (
+      console.log('this is daytransaction: ', day, dayTransactions);
+
+      const isDate = moment(
+        `${selectedYear}-${selectedMonth}-${day}`,
+        'YYYY-MMMM-D',
+      ).toISOString();
+
+      return day !== 0 ? (
+        <TouchableOpacity
+          key={index}
+          style={[styles.calendarDay, {backgroundColor}]}
+          onPress={() =>
+            navigate('EverydayTransaction', {dayTransactions, isDate})
+          }>
+          <Text
+            style={[
+              styles.subtitleText,
+              {
+                color: colors.primaryText,
+                fontSize: 13,
+              },
+            ]}>
+            {day !== 0 ? day : ''}
+          </Text>
+        </TouchableOpacity>
+      ) : (
         <View key={index} style={[styles.calendarDay, {backgroundColor}]}>
-          <TouchableOpacity>
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.primaryText,
-                  fontSize: 13,
-                },
-              ]}>
-              {day !== 0 ? day : ''}
-            </Text>
-          </TouchableOpacity>
+          <Text
+            style={[
+              styles.subtitleText,
+              {
+                color: colors.primaryText,
+                fontSize: 13,
+              },
+            ]}>
+            {''}
+          </Text>
         </View>
       );
     });
@@ -394,9 +436,75 @@ const ReportsScreen = () => {
           </View>
         </ScrollView>
       </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <View
+          style={[
+            styles.categoryContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+              width: '48.5%',
+            },
+          ]}>
+          <Text
+            style={[
+              styles.subtitleText,
+              {
+                color: colors.buttonText,
+                fontSize: 13,
+                fontFamily: 'FiraCode-SemiBold',
+              },
+            ]}>
+            Total: {totalAmountForMonth}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.categoryContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+              width: '48.5%',
+            },
+          ]}>
+          <Text
+            style={[
+              styles.subtitleText,
+              {
+                color: colors.buttonText,
+                fontSize: 13,
+                fontFamily: 'FiraCode-SemiBold',
+              },
+            ]}>
+            Avg/Day: {(totalAmountForMonth / daysInMonth).toFixed(2)}
+          </Text>
+        </View>
+      </View>
 
       <ScrollView>
         <View style={styles.chartContainer}>{renderPieChart()}</View>
+        <View style={styles.calendarContainer}>
+          {dayNames.map((day, index) => (
+            <View key={index} style={styles.calendarDay}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {
+                    color: colors.primaryText,
+                    fontSize: 13,
+                  },
+                ]}>
+                {day}
+              </Text>
+            </View>
+          ))}
+        </View>
         <View style={styles.calendarContainer}>{renderCalendar()}</View>
       </ScrollView>
     </View>
@@ -457,8 +565,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.8,
   },
   chartContainer: {
-    marginTop: 15,
-    marginBottom: 25,
+    marginTop: '12%',
+    marginBottom: '12%',
   },
   dotContainer: {
     height: 8,
@@ -473,7 +581,6 @@ const styles = StyleSheet.create({
   },
   calendarDay: {
     width: '14.28%',
-    // aspectRatio: 1,
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',

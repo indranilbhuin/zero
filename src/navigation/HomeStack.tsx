@@ -13,6 +13,7 @@ import UpdateTransactionScreen from '../screens/UpdateTransactionScreen';
 import CategoryScreen from '../screens/CategoryScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
 import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
+import EverydayTransaction from '../screens/EverydayTransaction';
 
 const screenOptions = {
   headerShown: false,
@@ -46,7 +47,12 @@ const DebtIcon = ({color}: any) => (
 
 const CategoriesIcon = ({color}: any) => (
   <View style={{alignItems: 'center'}}>
-    <Icon name={'shape'} size={25} type={'MaterialCommunityIcons'} color={color} />
+    <Icon
+      name={'shape'}
+      size={25}
+      type={'MaterialCommunityIcons'}
+      color={color}
+    />
     <Text style={[styles.labelText, {color: color}]}>Categories</Text>
   </View>
 );
@@ -137,6 +143,10 @@ const HomeStack = () => {
       <Stack.Screen
         name="UpdateCategoryScreen"
         component={UpdateCategoryScreen}
+      />
+      <Stack.Screen
+        name="EverydayTransaction"
+        component={EverydayTransaction}
       />
     </Stack.Navigator>
   );
