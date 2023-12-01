@@ -14,6 +14,7 @@ import CategoryScreen from '../screens/CategoryScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
 import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
 import EverydayTransaction from '../screens/EverydayTransaction';
+import AddDebtorScreen from '../screens/AddDebtorScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -147,6 +148,10 @@ const HomeStack = () => {
       <Stack.Screen
         name="EverydayTransaction"
         component={EverydayTransaction}
+      />
+      <Stack.Screen
+        name="AddDebtorScreen"
+        component={AddDebtorScreen}
       />
     </Stack.Navigator>
   );

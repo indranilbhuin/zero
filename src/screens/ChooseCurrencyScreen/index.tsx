@@ -9,7 +9,7 @@ import React, {useState} from 'react';
 import styles from './style';
 import useThemeColors from '../../hooks/useThemeColors';
 import Icon from '../../components/Icons';
-import currencies from '../../../assets/currencies.json';
+import currencies from '../../../assets/jsons/currencies.json';
 import PrimaryButton from '../../components/PrimaryButton';
 import {createCurrency} from '../../services/CurrencyService';
 import {useDispatch, useSelector} from 'react-redux';

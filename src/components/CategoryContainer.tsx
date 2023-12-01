@@ -8,7 +8,7 @@ const CategoryContainer = ({
   toggleCategorySelection,
   selectedCategories,
 }) => {
-  console.log(selectedCategories)
+  console.log(selectedCategories);
   return (
     <View style={styles.categoryMainContainer}>
       {categories?.map(category => (
@@ -25,14 +25,17 @@ const CategoryContainer = ({
                 borderColor: colors.secondaryText,
               },
             ]}>
-            <View style={styles.iconContainer}>
-              <Icon
-                name={category.icon}
-                size={20}
-                color={category.color}
-                type="MaterialCommunityIcons"
-              />
-            </View>
+            {category.icon !== undefined ? (
+              <View style={styles.iconContainer}>
+                <Icon
+                  name={category.icon}
+                  size={20}
+                  color={category.color}
+                  type="MaterialCommunityIcons"
+                />
+              </View>
+            ) : null}
+
             <Text
               style={[
                 styles.subtitleText,
