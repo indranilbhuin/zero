@@ -9,7 +9,6 @@ import Category from '../schemas/CategorySchema';
 import {deleteExpenseById} from '../services/ExpenseService';
 import {useDispatch} from 'react-redux';
 import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
-import {FETCH_ALL_CATEGORY_DATA} from '../redux/actionTypes';
 
 const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
   const slideAnim = useRef(new Animated.Value(1)).current;

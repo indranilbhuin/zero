@@ -4,6 +4,7 @@ import {watchFetchCurrency} from './saga/currencySaga';
 import {watchFetchAllCategories} from './saga/categorySaga';
 import {watchFetchAllExpenses} from './saga/expenseSaga';
 import {watchFetchAllDebtors} from './saga/debtorSaga';
+import {watchFetchAllDebts} from './saga/debtSaga';
 
 function* rootSaga() {
   yield all([
@@ -12,6 +13,7 @@ function* rootSaga() {
     watchFetchAllCategories(),
     watchFetchAllExpenses(),
     watchFetchAllDebtors(),
+    watchFetchAllDebts(),
   ]);
 }
 

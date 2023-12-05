@@ -5,25 +5,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import HeaderContainer from '../../components/HeaderContainer';
 import useThemeColors from '../../hooks/useThemeColors';
 import homeStyles from '../HomeScreen/style';
 import {navigate} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
 import DebtorList from '../../components/DebtorList';
-import { useDispatch, useSelector } from 'react-redux';
-import { FETCH_ALL_DEBTOR_DATA } from '../../redux/actionTypes';
-import { selectDebtorData } from '../../redux/slice/debtorDataSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
+import {
+  getAllDebtRequest,
+  selectAllDebtData,
+} from '../../redux/slice/allDebtDataSlice';
 
 const DebtsScreen = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const debtors = useSelector(selectDebtorData);
-  console.log(debtors)
+  const allDebts = useSelector(selectAllDebtData);
+  console.log(JSON.parse(JSON.stringify(allDebts)));
+  console.log(debtors);
 
   useEffect(() => {
-    dispatch({ type: FETCH_ALL_DEBTOR_DATA });
+    dispatch({type: FETCH_ALL_DEBTOR_DATA});
+    dispatch(getAllDebtRequest());
   }, []);
 
   return (
@@ -88,7 +95,7 @@ const DebtsScreen = () => {
       </View>
 
       <ScrollView>
-        <DebtorList colors={colors} debtors={debtors}/>
+        <DebtorList colors={colors} debtors={debtors} allDebts={allDebts} />
       </ScrollView>
 
       <View style={homeStyles.addButtonContainer}>

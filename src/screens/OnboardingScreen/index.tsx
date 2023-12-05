@@ -13,7 +13,6 @@ import {FETCH_ALL_USER_DATA} from '../../redux/actionTypes';
 
 const OnboardingScreen = () => {
   const colors = useThemeColors();
-  const [category, setCategory] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const userId = useSelector(selectUserId);
 

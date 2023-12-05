@@ -8,6 +8,8 @@ import userIdReducer from './slice/userIdSlice';
 import categoryReducer from './slice/categoryDataSlice';
 import expenseReducer from './slice/expenseDataSlice';
 import debtorReducer from './slice/debtorDataSlice';
+import debtReducer from './slice/debtDataSlice';
+import allDebtReducer from './slice/allDebtDataSlice'
 
 const rootReducer = combineReducers({
   userOnboarding: userOnboardingReducer,
@@ -19,6 +21,8 @@ const rootReducer = combineReducers({
   category: categoryReducer,
   expense: expenseReducer,
   debtor: debtorReducer,
+  debt: debtReducer,
+  allDebt: allDebtReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
