@@ -6,7 +6,11 @@ import {useSelector} from 'react-redux';
 import {selectUserName} from '../redux/slice/userNameSlice';
 import {navigate} from '../utils/navigationUtils';
 
-const HeaderContainer = ({headerText}) => {
+interface HeaderContainerProps {
+  headerText: string;
+}
+
+const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
   const colors = useThemeColors();
   const userName = useSelector(selectUserName);
 

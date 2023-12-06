@@ -14,7 +14,7 @@ const Colors = {
     accentOrange: '#FFA500',
     buttonText: '#FFFFFF',
     containerColor: '#E0E0E0',
-    cardBackground: '#EFEFEF'
+    cardBackground: '#EFEFEF',
   },
   dark: {
     primaryBackground: '#0F0F0F',
@@ -25,14 +25,14 @@ const Colors = {
     accentOrange: '#FFA500',
     buttonText: '#000000',
     containerColor: '#1f1f1f',
-    cardBackground: '#262626'
+    cardBackground: '#262626',
   },
 };
 
 const useThemeColors = () => {
   const selectedTheme = useSelector(selectThemePreference);
   const colorScheme = useColorScheme();
-  const [theme, setTheme] = useState(null);
+  const [theme, setTheme] = useState<string | null>(null);
 
   async function fetchTheme() {
     const storedTheme = await AsyncStorageService.getItem('themePreference');

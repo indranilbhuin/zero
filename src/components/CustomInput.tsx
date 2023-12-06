@@ -1,7 +1,22 @@
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import React from 'react';
+import {Colors} from '../types/colorType';
 
-const CustomInput = ({colors, input, setInput, placeholder, label}) => {
+interface CustomInputProps {
+  input: string;
+  label: string;
+  colors: Colors;
+  placeholder: string;
+  setInput: (value: string) => void;
+}
+
+const CustomInput: React.FC<CustomInputProps> = ({
+  colors,
+  input,
+  setInput,
+  placeholder,
+  label,
+}) => {
   return (
     <View>
       {label ? (

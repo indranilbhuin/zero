@@ -2,7 +2,17 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import useThemeColors from '../hooks/useThemeColors';
 
-const TransactionCard = ({currencySymbol, day, totalSpent}) => {
+interface TransactionCardProps {
+  currencySymbol: string;
+  day: string;
+  totalSpent: string;
+}
+
+const TransactionCard: React.FC<TransactionCardProps> = ({
+  currencySymbol,
+  day,
+  totalSpent,
+}) => {
   const colors = useThemeColors();
   return (
     <View style={[styles.card, {backgroundColor: colors.containerColor}]}>

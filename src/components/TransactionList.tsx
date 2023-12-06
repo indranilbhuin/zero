@@ -9,8 +9,28 @@ import Category from '../schemas/CategorySchema';
 import {deleteExpenseById} from '../services/ExpenseService';
 import {useDispatch} from 'react-redux';
 import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
+import Expense from '../schemas/ExpenseSchema';
+import {Colors} from '../types/colorType';
+import {Dispatch} from 'redux';
 
-const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
+interface TransactionListProps {
+  currencySymbol: string;
+  allExpenses: Array<Expense>;
+}
+
+interface TransactionItemProps {
+  currencySymbol: string;
+  expense: Expense;
+  colors: Colors;
+  dispatch: Dispatch<any>;
+}
+
+const TransactionItem: React.FC<TransactionItemProps> = ({
+  currencySymbol,
+  expense,
+  colors,
+  dispatch,
+}) => {
   const slideAnim = useRef(new Animated.Value(1)).current;
 
   const handleEdit = (
@@ -19,7 +39,7 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
     expenseDescription: string,
     category: Category,
     expenseDate: Date,
-    expenseAmount: string,
+    expenseAmount: number,
   ) => {
     Animated.timing(slideAnim, {
       toValue: 200,
@@ -133,7 +153,7 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
               transform: [{translateX: slideAnim}],
             },
           ]}
-          key={expense._id}>
+          key={String(expense._id)}>
           <View style={styles.iconNameContainer}>
             <View
               style={[
@@ -141,9 +161,9 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
                 {backgroundColor: colors.primaryText},
               ]}>
               <Icon
-                name={expense.category.icon}
+                name={expense.category.icon ?? 'selection-ellipse'}
                 size={20}
-                color={expense.category.color}
+                color={expense.category.color ?? colors.buttonText}
                 type={'MaterialCommunityIcons'}
               />
             </View>
@@ -179,15 +199,18 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
   );
 };
 
-const TransactionList = ({currencySymbol, allExpenses}) => {
+const TransactionList: React.FC<TransactionListProps> = ({
+  currencySymbol,
+  allExpenses,
+}) => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
 
   return (
     <View style={styles.mainContainer}>
-      {allExpenses?.map(expense => (
+      {allExpenses?.map((expense: Expense) => (
         <TransactionItem
-          key={expense._id}
+          key={String(expense._id)}
           expense={expense}
           currencySymbol={currencySymbol}
           colors={colors}
