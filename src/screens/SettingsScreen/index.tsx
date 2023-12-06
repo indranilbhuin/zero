@@ -30,7 +30,7 @@ import {
 import {selectUserName, setUserName} from '../../redux/slice/userNameSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import chooseCurrencyStyles from '../ChooseCurrencyScreen/style';
-import currencies from '../../../assets/currencies.json';
+import currencies from '../../../assets/jsons/currencies.json';
 import {updateCurrencyById} from '../../services/CurrencyService';
 import addCategoryStyles from '../AddCategoryScreen/style';
 import {getAppVersion} from '../../utils/getVersion';

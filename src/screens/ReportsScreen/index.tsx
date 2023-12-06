@@ -532,7 +532,6 @@ const styles = StyleSheet.create({
     fontFamily: 'FiraCode-Medium',
     fontSize: 15,
     includeFontPadding: false,
-    opacity: 1,
   },
   modalContainer: {
     flex: 1,

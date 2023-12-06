@@ -4,7 +4,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import useThemeColors from '../../hooks/useThemeColors';
 import styles from './style';
 import {navigate} from '../../utils/navigationUtils';
-import defaultCategories from '../../../assets/defaultCategories.json';
+import defaultCategories from '../../../assets/jsons/defaultCategories.json';
 import {createCategory} from '../../services/CategoryService';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
@@ -13,7 +13,6 @@ import {FETCH_ALL_USER_DATA} from '../../redux/actionTypes';
 
 const OnboardingScreen = () => {
   const colors = useThemeColors();
-  const [category, setCategory] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const userId = useSelector(selectUserId);
 

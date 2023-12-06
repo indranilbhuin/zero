@@ -178,7 +178,7 @@ const HomeScreen = () => {
           style={[styles.addButton, {backgroundColor: colors.primaryText}]}
           onPress={() => navigate('AddTransactionsScreen')}>
           <Icon
-            name={'credit-card-plus'}
+            name={'wallet-plus'}
             size={30}
             color={colors.buttonText}
             type={'MaterialCommunityIcons'}

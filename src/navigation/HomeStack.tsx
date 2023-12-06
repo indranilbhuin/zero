@@ -14,6 +14,11 @@ import CategoryScreen from '../screens/CategoryScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
 import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
 import EverydayTransaction from '../screens/EverydayTransaction';
+import AddDebtorScreen from '../screens/AddDebtorScreen';
+import DebtsTransactionScreen from '../screens/IndividualDebtsScreen';
+import IndividualDebtsScreen from '../screens/IndividualDebtsScreen';
+import AddDebtsScreen from '../screens/AddDebtsScreen';
+import UpdateDebtScreen from '../screens/UpdateDebtScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -148,6 +153,13 @@ const HomeStack = () => {
         name="EverydayTransaction"
         component={EverydayTransaction}
       />
+      <Stack.Screen name="AddDebtorScreen" component={AddDebtorScreen} />
+      <Stack.Screen
+        name="IndividualDebtsScreen"
+        component={IndividualDebtsScreen}
+      />
+      <Stack.Screen name="AddDebtsScreen" component={AddDebtsScreen} />
+      <Stack.Screen name="UpdateDebtScreen" component={UpdateDebtScreen} />
     </Stack.Navigator>
   );
 };

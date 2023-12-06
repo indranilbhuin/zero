@@ -15,8 +15,8 @@ import CustomInput from '../../components/CustomInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import Icon from '../../components/Icons';
 import addTransactionStyles from '../AddTransactionsScreen/style';
-import allIcons from '../../../assets/categoryIcons.json';
-import allColors from '../../../assets/categoryColors.json';
+import allIcons from '../../../assets/jsons/categoryIcons.json';
+import allColors from '../../../assets/jsons/categoryColors.json';
 import {createCategory} from '../../services/CategoryService';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
@@ -43,7 +43,7 @@ const AddCategoryScreen = () => {
         selectedIcon,
         selectedColor,
       );
-      // dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
       console.error('Error creating category:', error);

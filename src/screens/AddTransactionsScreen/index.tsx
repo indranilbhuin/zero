@@ -41,6 +41,7 @@ const AddTransactionsScreen = () => {
   } = useAddTransaction();
 
   const currencySymbol = useSelector(selectCurrencySymbol);
+  console.log("hehehe", categories)
 
   return (
     <View

@@ -12,7 +12,6 @@ import React, {useMemo, useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch} from 'react-redux';
 import {updateCategoryById} from '../../services/CategoryService';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 import {goBack} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
 import AppHeader from '../../components/AppHeader';
@@ -20,9 +19,9 @@ import CustomInput from '../../components/CustomInput';
 import addTransactionStyles from '../AddTransactionsScreen/style';
 import PrimaryButton from '../../components/PrimaryButton';
 import addCategoryStyles from '../AddCategoryScreen/style';
-import allIcons from '../../../assets/categoryIcons.json';
+import allIcons from '../../../assets/jsons/categoryIcons.json';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import allColors from '../../../assets/categoryColors.json';
+import allColors from '../../../assets/jsons/categoryColors.json';
 
 type UpdateCategoryScreenRouteProp = RouteProp<
   {
