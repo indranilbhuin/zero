@@ -1,8 +1,17 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
+import {Colors} from '../types/colorType';
+import Category from '../schemas/CategorySchema';
 
-const CategoryContainer = ({
+interface CategoryContainerProps {
+  categories: Array<Category>;
+  toggleCategorySelection(category: Category): void;
+  colors: Colors;
+  selectedCategories: Array<Category>;
+}
+
+const CategoryContainer: React.FC<CategoryContainerProps> = ({
   categories,
   colors,
   toggleCategorySelection,
@@ -11,9 +20,9 @@ const CategoryContainer = ({
   console.log(selectedCategories);
   return (
     <View style={styles.categoryMainContainer}>
-      {categories?.map(category => (
+      {categories?.map((category: Category) => (
         <TouchableOpacity
-          key={category._id}
+          key={String(category._id)}
           onPress={() => toggleCategorySelection(category)}>
           <View
             style={[

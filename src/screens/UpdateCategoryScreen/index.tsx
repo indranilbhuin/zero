@@ -22,6 +22,7 @@ import addCategoryStyles from '../AddCategoryScreen/style';
 import allIcons from '../../../assets/jsons/categoryIcons.json';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import allColors from '../../../assets/jsons/categoryColors.json';
+import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 
 type UpdateCategoryScreenRouteProp = RouteProp<
   {
@@ -56,9 +57,9 @@ const UpdateCategoryScreen = () => {
         Realm.BSON.ObjectID.createFromHexString(categoryData.categoryId),
         categoryName,
         selectedIcon,
-        selectedColor
+        selectedColor,
       );
-      // dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
       console.error('Error creating category:', error);

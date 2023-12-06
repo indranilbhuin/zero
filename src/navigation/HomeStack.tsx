@@ -15,7 +15,6 @@ import AddCategoryScreen from '../screens/AddCategoryScreen';
 import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
 import EverydayTransaction from '../screens/EverydayTransaction';
 import AddDebtorScreen from '../screens/AddDebtorScreen';
-import DebtsTransactionScreen from '../screens/IndividualDebtsScreen';
 import IndividualDebtsScreen from '../screens/IndividualDebtsScreen';
 import AddDebtsScreen from '../screens/AddDebtsScreen';
 import UpdateDebtScreen from '../screens/UpdateDebtScreen';

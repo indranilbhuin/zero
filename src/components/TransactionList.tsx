@@ -37,13 +37,13 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
     });
   };
 
-  const handleDelete = async (expenseId: Realm.BSON.ObjectId) => {
+  const handleDelete = (expenseId: Realm.BSON.ObjectId) => {
     Animated.timing(slideAnim, {
       toValue: -200,
       duration: 250,
       useNativeDriver: true,
-    }).start(async () => {
-      await deleteExpenseById(expenseId);
+    }).start(() => {
+      deleteExpenseById(expenseId);
       dispatch(getExpenseRequest());
     });
   };
