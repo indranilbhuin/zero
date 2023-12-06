@@ -2,17 +2,36 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
 import {navigate} from '../utils/navigationUtils';
+import {Colors} from '../types/colorType';
+import Debtor from '../schemas/DebtorSchema';
+import Debt from '../schemas/DebtSchema';
 
-const DebtorList = ({colors, debtors, allDebts, currencySymbol}) => {
-  const handleDebtor = (debtorId, debtorName, debtorTotal) => {
+interface DebtorListProps {
+  currencySymbol: string;
+  colors: Colors;
+  debtors: Array<Debtor>;
+  allDebts: Array<Debt>;
+}
+
+const DebtorList: React.FC<DebtorListProps> = ({
+  colors,
+  debtors,
+  allDebts,
+  currencySymbol,
+}) => {
+  const handleDebtor = (
+    debtorId: string,
+    debtorName: string,
+    debtorTotal: number,
+  ) => {
     navigate('IndividualDebtsScreen', {debtorId, debtorName, debtorTotal});
   };
 
-  const handleLongPress = debtorId => {
+  const handleLongPress = (debtorId: string) => {
     console.log(debtorId);
   };
 
-  const calculateTotalDebt = debtorId => {
+  const calculateTotalDebt = (debtorId: string) => {
     const debtorDebts = allDebts.filter(
       debt => debt.debtor._id.toString() === debtorId,
     );
@@ -35,7 +54,7 @@ const DebtorList = ({colors, debtors, allDebts, currencySymbol}) => {
             marginBottom: '4%',
             width: '20%',
           }}
-          key={debtor._id}>
+          key={String(debtor._id)}>
           <TouchableOpacity
             onPress={() =>
               handleDebtor(
@@ -51,7 +70,7 @@ const DebtorList = ({colors, debtors, allDebts, currencySymbol}) => {
                 styles.debtorContainer,
                 {
                   backgroundColor: colors.primaryText,
-                  borderColor: debtor.color,
+                  borderColor: debtor.color ?? colors.primaryText,
                 },
               ]}>
               <View>

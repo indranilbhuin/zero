@@ -1,7 +1,20 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
+import {Colors} from '../types/colorType';
 
-const SecondaryButton = ({onPress, buttonText, colors, width}) => {
+interface SecondaryButtonProps {
+  onPress(): void;
+  colors: Colors;
+  buttonText: string;
+  width: number;
+}
+
+const SecondaryButton: React.FC<SecondaryButtonProps> = ({
+  onPress,
+  buttonText,
+  colors,
+  width,
+}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View
