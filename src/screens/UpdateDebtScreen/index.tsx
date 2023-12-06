@@ -1,58 +1,57 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import AppHeader from '../../components/AppHeader';
-import useThemeColors from '../../hooks/useThemeColors';
 import {goBack} from '../../utils/navigationUtils';
+import useThemeColors from '../../hooks/useThemeColors';
 import CustomInput from '../../components/CustomInput';
-import PrimaryButton from '../../components/PrimaryButton';
-import {useRoute} from '@react-navigation/native';
-import {createDebt} from '../../services/DebtService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import moment from 'moment';
 import Icon from '../../components/Icons';
+import moment from 'moment';
+import PrimaryButton from '../../components/PrimaryButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { getAllDebtRequest } from '../../redux/slice/allDebtDataSlice';
-import { getDebtRequest } from '../../redux/slice/debtDataSlice';
+import {updateDebtById} from '../../services/DebtService';
+import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
+import {useDispatch} from 'react-redux';
+import {useRoute} from '@react-navigation/native';
+import {getDebtRequest} from '../../redux/slice/debtDataSlice';
 
-const AddDebtsScreen = () => {
+const UpdateDebtScreen = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const [debtName, setDebtName] = useState('');
-  const [debtAmount, setDebtAmount] = useState('');
   const route = useRoute();
-  const userId = useSelector(selectUserId);
-  const [createdAt, setCreatedAt] = useState(new Date());
+  const {debtId, debtDescription, amount, debtorName, debtDate, debtorId} =
+    route.params;
+
+  const [debtName, setDebtName] = useState(debtDescription);
+  const [debtAmount, setDebtAmount] = useState(String(amount));
+  const [createdAt, setCreatedAt] = useState(new Date(debtDate));
   const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const {debtorName, debtorId} = route.params;
-  console.log(debtorId);
-
-  const handleAddDebt = () => {
-    if (debtName.trim() === '' || debtAmount === null) {
-      return;
-    }
-    try {
-      createDebt(
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        Number(debtAmount),
-        debtName,
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
-        createdAt,
-      );
-      dispatch(getAllDebtRequest());
-      dispatch(getDebtRequest(debtorId));
-      goBack();
-    } catch (error) {
-      console.error('Error creating expense:', error);
-    }
-  };
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || createdAt;
     const utcDate = moment(currentDate).utc().toDate();
     setCreatedAt(utcDate);
     setShowDatePicker(false);
+  };
+
+  const handleUpdateDebt = () => {
+    if (debtName.trim() === '' || debtAmount === null) {
+      return;
+    }
+    try {
+      updateDebtById(
+        Realm.BSON.ObjectID.createFromHexString(debtId),
+        Realm.BSON.ObjectID.createFromHexString(debtorId),
+        Number(debtAmount),
+        debtDescription,
+        createdAt,
+      );
+
+      dispatch(getAllDebtRequest());
+      dispatch(getDebtRequest(debtorId));
+      goBack();
+    } catch (error) {
+      console.error('Error updating expense:', error);
+    }
   };
 
   return (
@@ -62,7 +61,11 @@ const AddDebtsScreen = () => {
         {backgroundColor: colors.primaryBackground},
       ]}>
       <View style={styles.headerContainer}>
-        <AppHeader onPress={goBack} colors={colors} text={`Add Debts | Account: ${debtorName}`} />
+        <AppHeader
+          onPress={goBack}
+          colors={colors}
+          text={`Update Debt | ${debtorName}`}
+        />
       </View>
 
       <CustomInput
@@ -118,16 +121,16 @@ const AddDebtsScreen = () => {
       </View>
       <View style={styles.submitButtonContainer}>
         <PrimaryButton
-          onPress={handleAddDebt}
+          onPress={handleUpdateDebt}
           colors={colors}
-          buttonTitle="Add"
+          buttonTitle="Update"
         />
       </View>
     </View>
   );
 };
 
-export default AddDebtsScreen;
+export default UpdateDebtScreen;
 
 const styles = StyleSheet.create({
   mainContainer: {

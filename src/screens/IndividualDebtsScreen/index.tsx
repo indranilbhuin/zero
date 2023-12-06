@@ -1,4 +1,5 @@
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,13 +11,17 @@ import AppHeader from '../../components/AppHeader';
 import {goBack, navigate} from '../../utils/navigationUtils';
 import useThemeColors from '../../hooks/useThemeColors';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import CustomInput from '../../components/CustomInput';
-import PrimaryButton from '../../components/PrimaryButton';
 import homeStyles from '../HomeScreen/style';
 import Icon from '../../components/Icons';
-import categories from '../../../assets/jsons/defaultCategories.json';
-import { useDispatch, useSelector } from 'react-redux';
-import { getDebtRequest, selectDebtData } from '../../redux/slice/debtDataSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  getDebtRequest,
+  selectDebtData,
+  selectDebtError,
+  selectDebtLoading,
+} from '../../redux/slice/debtDataSlice';
+import {deleteDebtById} from '../../services/DebtService';
+import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 
 type IndividualDebtsScreenRouteProp = RouteProp<
   {
@@ -31,19 +36,57 @@ type IndividualDebtsScreenRouteProp = RouteProp<
 const IndividualDebtsScreen = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
+  const [refreshing, setRefreshing] = useState(false);
+  const individualDebts = useSelector(selectDebtData);
+  const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts));
+  const debtLoading = useSelector(selectDebtLoading);
+  const debtError = useSelector(selectDebtError);
   const route = useRoute<IndividualDebtsScreenRouteProp>();
   const {debtorName, debtorId, debtorTotal} = route.params;
   console.log(debtorId);
 
   console.log(route.params);
 
-  const handleEditDebt = () => {};
+  const onRefresh = () => {
+    setRefreshing(true);
+  };
+
+  const handleEditDebt = (debtId, debtDescription, amount, debtDate) => {
+    navigate('UpdateDebtScreen', {
+      debtId,
+      debtDescription,
+      amount,
+      debtorName,
+      debtDate,
+      debtorId
+    });
+  };
+
+  const handleDeleteDebt = debtId => {
+    deleteDebtById(Realm.BSON.ObjectID.createFromHexString(debtId));
+    dispatch(getDebtRequest(debtorId));
+    dispatch(getAllDebtRequest());
+    setRefreshing(true);
+  };
 
   useEffect(() => {
     dispatch(getDebtRequest(debtorId));
   }, [debtorId]);
 
-  const individualDebts = useSelector(selectDebtData);
+  useEffect(() => {
+    if (refreshing) {
+      dispatch(getDebtRequest(debtorId));
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+
+  if (debtLoading) {
+    return <Text>Loading ...</Text>;
+  }
+
+  if (debtError) {
+    return <Text>Error</Text>;
+  }
 
   return (
     <View
@@ -75,10 +118,13 @@ const IndividualDebtsScreen = () => {
           Total: {debtorTotal}
         </Text>
       </View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <View style={styles.debtsMainContainer}>
-          {individualDebts?.map(debt => (
-            <TouchableOpacity key={debt._id} onPress={handleEditDebt}>
+          {individualDebtsCopy?.map(debt => (
+            <View key={debt._id}>
               <View
                 style={[
                   styles.categoryContainer,
@@ -87,28 +133,40 @@ const IndividualDebtsScreen = () => {
                     borderColor: colors.secondaryText,
                   },
                 ]}>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.buttonText, fontSize: 13, marginRight: 5},
-                  ]}>
-                  {debt.description}: {debt.amount}
-                </Text>
-                <Icon
-                  name={'delete-empty'}
-                  size={20}
-                  color={colors.accentOrange}
-                  type={'MaterialCommunityIcons'}
-                />
+                <TouchableOpacity
+                  onPress={() =>
+                    handleEditDebt(
+                      debt._id,
+                      debt.description,
+                      debt.amount,
+                      debt.date,
+                    )
+                  }>
+                  <Text
+                    style={[
+                      styles.subtitleText,
+                      {color: colors.buttonText, fontSize: 13, marginRight: 5},
+                    ]}>
+                    {debt.description}: {debt.amount}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleDeleteDebt(debt._id)}>
+                  <Icon
+                    name={'delete-empty'}
+                    size={20}
+                    color={colors.accentOrange}
+                    type={'MaterialCommunityIcons'}
+                  />
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </ScrollView>
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
           style={[homeStyles.addButton, {backgroundColor: colors.primaryText}]}
-          onPress={() => navigate('AddDebtsScreen', {debtorId})}>
+          onPress={() => navigate('AddDebtsScreen', {debtorId, debtorName})}>
           <Icon
             name={'assignment-add'}
             size={30}

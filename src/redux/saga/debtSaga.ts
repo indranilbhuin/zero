@@ -28,7 +28,7 @@ function* fetchAllDebtsbyDebtor(action: any): Generator<any, void, any> {
   }
 }
 
-function* fetchAllDebts(action: any): Generator<any, void, any> {
+function* fetchAllDebts(): Generator<any, void, any> {
   try {
     const userId = yield select(selectUserId);
     const allDebts = yield call(getAllDebtsByUserId, userId);
