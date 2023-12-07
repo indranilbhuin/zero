@@ -1,59 +1,29 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import AppHeader from '../../components/AppHeader';
-import useThemeColors from '../../hooks/useThemeColors';
 import {goBack} from '../../utils/navigationUtils';
 import CustomInput from '../../components/CustomInput';
 import PrimaryButton from '../../components/PrimaryButton';
-import {useRoute} from '@react-navigation/native';
-import {createDebt} from '../../services/DebtService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
 import moment from 'moment';
 import Icon from '../../components/Icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { getAllDebtRequest } from '../../redux/slice/allDebtDataSlice';
-import { getDebtRequest } from '../../redux/slice/debtDataSlice';
+import useAddDebts from './useAddDebts';
+import styles from './style';
 
 const AddDebtsScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [debtName, setDebtName] = useState('');
-  const [debtAmount, setDebtAmount] = useState('');
-  const route = useRoute();
-  const userId = useSelector(selectUserId);
-  const [createdAt, setCreatedAt] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const {debtorName, debtorId} = route.params;
-  console.log(debtorId);
-
-  const handleAddDebt = () => {
-    if (debtName.trim() === '' || debtAmount === null) {
-      return;
-    }
-    try {
-      createDebt(
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        Number(debtAmount),
-        debtName,
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
-        createdAt,
-      );
-      dispatch(getAllDebtRequest());
-      dispatch(getDebtRequest(debtorId));
-      goBack();
-    } catch (error) {
-      console.error('Error creating expense:', error);
-    }
-  };
-
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || createdAt;
-    const utcDate = moment(currentDate).utc().toDate();
-    setCreatedAt(utcDate);
-    setShowDatePicker(false);
-  };
+  const {
+    colors,
+    debtName,
+    setDebtName,
+    debtAmount,
+    setDebtAmount,
+    showDatePicker,
+    setShowDatePicker,
+    createdAt,
+    handleDateChange,
+    handleAddDebt,
+    debtorName,
+  } = useAddDebts();
 
   return (
     <View
@@ -62,7 +32,11 @@ const AddDebtsScreen = () => {
         {backgroundColor: colors.primaryBackground},
       ]}>
       <View style={styles.headerContainer}>
-        <AppHeader onPress={goBack} colors={colors} text={`Add Debts | Account: ${debtorName}`} />
+        <AppHeader
+          onPress={goBack}
+          colors={colors}
+          text={`Add Debts | Account: ${debtorName}`}
+        />
       </View>
 
       <CustomInput
@@ -128,39 +102,3 @@ const AddDebtsScreen = () => {
 };
 
 export default AddDebtsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  submitButtonContainer: {
-    marginTop: '100%',
-    marginBottom: 15,
-  },
-  dateButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    width: 40,
-    borderRadius: 5,
-    borderWidth: 2,
-    marginRight: 10,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 5,
-  },
-  dateText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

@@ -1,47 +1,23 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import {Text, View} from 'react-native';
+import React from 'react';
 import AppHeader from '../../components/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import useThemeColors from '../../hooks/useThemeColors';
 import CustomInput from '../../components/CustomInput';
 import CategoryContainer from '../../components/CategoryContainer';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
 import PrimaryButton from '../../components/PrimaryButton';
-import {createDebtor} from '../../services/DebtorService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import styles from './style';
+import useAddDebtor from './useAddDebtor';
 
 const AddDebtorScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [debtorTitle, setDebtorTitle] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const userId = useSelector(selectUserId);
-
-  const toggleCategorySelection = category => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories([]);
-    } else {
-      setSelectedCategories([category]);
-    }
-  };
-
-  const handleAddDebtor = () => {
-    try {
-      createDebtor(
-        debtorTitle,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        selectedCategories[0].icon,
-        selectedCategories[0].name,
-        selectedCategories[0].color,
-      );
-      dispatch({type: FETCH_ALL_DEBTOR_DATA});
-      goBack();
-    } catch (error) {
-      console.error('Error creating debtor:', error);
-    }
-  };
+  const {
+    colors,
+    toggleCategorySelection,
+    selectedCategories,
+    debtorTitle,
+    handleAddDebtor,
+    setDebtorTitle,
+  } = useAddDebtor();
 
   return (
     <View
@@ -89,20 +65,3 @@ const AddDebtorScreen = () => {
 };
 
 export default AddDebtorScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  labelText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

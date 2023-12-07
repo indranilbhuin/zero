@@ -5,61 +5,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import styles from './style';
-import useThemeColors from '../../hooks/useThemeColors';
 import Icon from '../../components/Icons';
-import currencies from '../../../assets/jsons/currencies.json';
 import PrimaryButton from '../../components/PrimaryButton';
-import {createCurrency} from '../../services/CurrencyService';
-import {useDispatch, useSelector} from 'react-redux';
-import AsyncStorageService from '../../utils/asyncStorageService';
-import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
-import {selectUserId} from '../../redux/slice/userIdSlice';
+import useChooseCurrency from './useChooseCurrency';
 
 const ChooseCurrencyScreen = () => {
-  const colors = useThemeColors();
-  const [search, setSearch] = useState('');
-  const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
-  const [selectedCurrency, setSelectedCurrency] = useState(null);
-  const userId = useSelector(selectUserId);
-  console.log("in currency screen",userId);
-  const dispatch = useDispatch();
-
-  const handleCurrencySubmit = async () => {
-    if (selectedCurrency) {
-      console.log('second');
-      await createCurrency(
-        selectedCurrency.code,
-        selectedCurrency.symbol,
-        selectedCurrency.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-      );
-
-      await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
-      dispatch(setIsOnboarded(true));
-    }
-  };
-
-  const handleSearch = (text: string) => {
-    setSearch(text);
-    const filtered = currencies.filter(currency => {
-      const {code, name, symbol, symbolNative} = currency;
-      const searchItem = text.toLowerCase();
-
-      return (
-        code.toLowerCase().includes(searchItem) ||
-        name.toLowerCase().includes(searchItem) ||
-        symbol.toLowerCase().includes(searchItem) ||
-        symbolNative.toLowerCase().includes(searchItem)
-      );
-    });
-    setFilteredCurrencies(filtered);
-  };
-
-  const handleCurrencySelect = currency => {
-    setSelectedCurrency(currency);
-  };
+  const {
+    colors,
+    search,
+    filteredCurrencies,
+    selectedCurrency,
+    handleCurrencySubmit,
+    handleSearch,
+    handleCurrencySelect,
+  } = useChooseCurrency();
 
   return (
     <View

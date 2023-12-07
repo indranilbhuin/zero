@@ -1,36 +1,26 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import React from 'react';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import useThemeColors from '../../hooks/useThemeColors';
+import {useRoute} from '@react-navigation/native';
 import AppHeader from '../../components/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
 import moment from 'moment';
 import TransactionList from '../../components/TransactionList';
-import {useSelector} from 'react-redux';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import useEverydayTransaction, {
+  EverydayTransactionRouteProp,
+} from './useEverydayTransaction';
+import styles from './style';
 
-type EverydayTransactionRouteProp = RouteProp<
-  {
-    EverydayTransaction: {
-      dayTransactions: Array<object>;
-      isDate: string;
-    };
-  },
-  'EverydayTransaction'
->;
-
-const EverydayTransaction = () => {
+const EverydayTransactionScreen = () => {
   const route = useRoute<EverydayTransactionRouteProp>();
-  const transactions = route.params.dayTransactions;
-  console.log(route.params.dayTransactions);
-  const date = transactions[0]?.date;
-  console.log(date);
-  const noTransactionDate = route.params.isDate;
-  console.log(noTransactionDate);
-  const formattedDate = moment(date).format('MMM Do YY');
-  const formatDate = moment(noTransactionDate).format('MMM Do YY');
-  const colors = useThemeColors();
-  const currencySymbol = useSelector(selectCurrencySymbol);
+  const {
+    transactions,
+    formatDate,
+    formattedDate,
+    colors,
+    currencySymbol,
+    date,
+    noTransactionDate,
+  } = useEverydayTransaction(route);
 
   return (
     <View
@@ -81,30 +71,4 @@ const EverydayTransaction = () => {
   );
 };
 
-export default EverydayTransaction;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  noTransactionContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '90%',
-  },
-  noImage: {
-    height: 80,
-    width: 80,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});
+export default EverydayTransactionScreen;

@@ -1,62 +1,26 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import HeaderContainer from '../../components/HeaderContainer';
-import useThemeColors from '../../hooks/useThemeColors';
 import homeStyles from '../HomeScreen/style';
 import {navigate} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
 import DebtorList from '../../components/DebtorList';
-import {useDispatch, useSelector} from 'react-redux';
-import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
-import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
-import {
-  getAllDebtRequest,
-  selectAllDebtData,
-} from '../../redux/slice/allDebtDataSlice';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import styles from './style';
+import useDebts from './useDebts';
 
 const DebtsScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const debtors = useSelector(selectDebtorData);
-  const allDebts = useSelector(selectAllDebtData);
-  const allDebtsCopy = JSON.parse(JSON.stringify(allDebts));
-  const [debtorType, setDebtorType] = useState('Person');
-  console.log('this is all debts copy', debtors);
-  console.log(debtors);
-  const currencySymbol = useSelector(selectCurrencySymbol);
-
-  const personDebtors = debtors.filter(debtor => debtor.type === 'Person');
-  const otherAccountsDebtors = debtors.filter(
-    debtor => debtor.type !== 'Person',
-  );
-
-  const totalDebts = allDebtsCopy.reduce(
-    (total, debt) => total + debt.amount,
-    0,
-  );
-
-  let personTotalDebts = 0;
-  let otherTotalDebts = 0;
-
-  allDebtsCopy.forEach(debt => {
-    if (debt.debtor.type === 'Person') {
-      personTotalDebts += debt.amount;
-    } else {
-      otherTotalDebts += debt.amount;
-    }
-  });
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-    dispatch(getAllDebtRequest());
-  }, []);
+  const {
+    colors,
+    allDebtsCopy,
+    debtorType,
+    setDebtorType,
+    currencySymbol,
+    personDebtors,
+    otherAccountsDebtors,
+    totalDebts,
+    personTotalDebts,
+    otherTotalDebts,
+  } = useDebts();
 
   return (
     <View
@@ -264,25 +228,3 @@ const DebtsScreen = () => {
 };
 
 export default DebtsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  categoryContainer: {
-    height: 40,
-    padding: 3,
-    marginRight: 5,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

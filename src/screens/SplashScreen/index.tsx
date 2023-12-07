@@ -1,17 +1,11 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
-import useThemeColors from '../../hooks/useThemeColors';
-import {navigate} from '../../utils/navigationUtils';
-import styles from "./style"
+import styles from './style';
+import useSplash from './useSplash';
 
 const SplashScreen = () => {
-  const handleClick = () => {
-    navigate('PersonalizeScreen');
-  };
-  
-  const colors = useThemeColors();
-  console.log(colors)
+  const {handleClick, colors} = useSplash();
 
   return (
     <View

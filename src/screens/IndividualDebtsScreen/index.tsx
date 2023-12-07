@@ -1,84 +1,36 @@
 import {
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import AppHeader from '../../components/AppHeader';
 import {goBack, navigate} from '../../utils/navigationUtils';
-import useThemeColors from '../../hooks/useThemeColors';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import homeStyles from '../HomeScreen/style';
 import Icon from '../../components/Icons';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  getDebtRequest,
-  selectDebtData,
-  selectDebtError,
-  selectDebtLoading,
-} from '../../redux/slice/debtDataSlice';
-import {deleteDebtById} from '../../services/DebtService';
-import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
-
-type IndividualDebtsScreenRouteProp = RouteProp<
-  {
-    IndividualDebtsScreen: {
-      debtorName: string;
-      debtorId: string;
-    };
-  },
-  'IndividualDebtsScreen'
->;
+import styles from './style';
+import useIndividualDebts, {
+  IndividualDebtsScreenRouteProp,
+} from './useIndividualDebts';
 
 const IndividualDebtsScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [refreshing, setRefreshing] = useState(false);
-  const individualDebts = useSelector(selectDebtData);
-  const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts));
-  const debtLoading = useSelector(selectDebtLoading);
-  const debtError = useSelector(selectDebtError);
   const route = useRoute<IndividualDebtsScreenRouteProp>();
-  const {debtorName, debtorId, debtorTotal} = route.params;
-  console.log(debtorId);
-
-  console.log(route.params);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-  };
-
-  const handleEditDebt = (debtId, debtDescription, amount, debtDate) => {
-    navigate('UpdateDebtScreen', {
-      debtId,
-      debtDescription,
-      amount,
-      debtorName,
-      debtDate,
-      debtorId
-    });
-  };
-
-  const handleDeleteDebt = debtId => {
-    deleteDebtById(Realm.BSON.ObjectID.createFromHexString(debtId));
-    dispatch(getDebtRequest(debtorId));
-    dispatch(getAllDebtRequest());
-    setRefreshing(true);
-  };
-
-  useEffect(() => {
-    dispatch(getDebtRequest(debtorId));
-  }, [debtorId]);
-
-  useEffect(() => {
-    if (refreshing) {
-      dispatch(getDebtRequest(debtorId));
-      setRefreshing(false);
-    }
-  }, [refreshing]);
+  const {
+    colors,
+    refreshing,
+    individualDebtsCopy,
+    debtLoading,
+    debtError,
+    debtorName,
+    debtorId,
+    debtorTotal,
+    onRefresh,
+    handleEditDebt,
+    handleDeleteDebt,
+  } = useIndividualDebts(route);
 
   if (debtLoading) {
     return <Text>Loading ...</Text>;
@@ -180,39 +132,3 @@ const IndividualDebtsScreen = () => {
 };
 
 export default IndividualDebtsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  submitButtonContainer: {
-    marginTop: 5,
-    marginBottom: 15,
-  },
-  categoryContainer: {
-    height: 35,
-    padding: 5,
-    marginRight: 5,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 5,
-    flexDirection: 'row',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-  debtsMainContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-});

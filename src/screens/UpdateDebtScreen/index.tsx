@@ -1,58 +1,31 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import AppHeader from '../../components/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import useThemeColors from '../../hooks/useThemeColors';
 import CustomInput from '../../components/CustomInput';
 import Icon from '../../components/Icons';
 import moment from 'moment';
 import PrimaryButton from '../../components/PrimaryButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {updateDebtById} from '../../services/DebtService';
-import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
-import {useDispatch} from 'react-redux';
 import {useRoute} from '@react-navigation/native';
-import {getDebtRequest} from '../../redux/slice/debtDataSlice';
+import useUpdateDebt from './useUpdateDebt';
+import styles from './style';
 
 const UpdateDebtScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
   const route = useRoute();
-  const {debtId, debtDescription, amount, debtorName, debtDate, debtorId} =
-    route.params;
-
-  const [debtName, setDebtName] = useState(debtDescription);
-  const [debtAmount, setDebtAmount] = useState(String(amount));
-  const [createdAt, setCreatedAt] = useState(new Date(debtDate));
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || createdAt;
-    const utcDate = moment(currentDate).utc().toDate();
-    setCreatedAt(utcDate);
-    setShowDatePicker(false);
-  };
-
-  const handleUpdateDebt = () => {
-    if (debtName.trim() === '' || debtAmount === null) {
-      return;
-    }
-    try {
-      updateDebtById(
-        Realm.BSON.ObjectID.createFromHexString(debtId),
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
-        Number(debtAmount),
-        debtDescription,
-        createdAt,
-      );
-
-      dispatch(getAllDebtRequest());
-      dispatch(getDebtRequest(debtorId));
-      goBack();
-    } catch (error) {
-      console.error('Error updating expense:', error);
-    }
-  };
+  const {
+    colors,
+    debtorName,
+    debtName,
+    setDebtName,
+    debtAmount,
+    setDebtAmount,
+    createdAt,
+    showDatePicker,
+    setShowDatePicker,
+    handleDateChange,
+    handleUpdateDebt,
+  } = useUpdateDebt(route);
 
   return (
     <View
@@ -131,39 +104,3 @@ const UpdateDebtScreen = () => {
 };
 
 export default UpdateDebtScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  submitButtonContainer: {
-    marginTop: '100%',
-    marginBottom: 15,
-  },
-  dateButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    width: 40,
-    borderRadius: 5,
-    borderWidth: 2,
-    marginRight: 10,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 5,
-  },
-  dateText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

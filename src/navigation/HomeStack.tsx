@@ -13,11 +13,11 @@ import UpdateTransactionScreen from '../screens/UpdateTransactionScreen';
 import CategoryScreen from '../screens/CategoryScreen';
 import AddCategoryScreen from '../screens/AddCategoryScreen';
 import UpdateCategoryScreen from '../screens/UpdateCategoryScreen';
-import EverydayTransaction from '../screens/EverydayTransaction';
 import AddDebtorScreen from '../screens/AddDebtorScreen';
 import IndividualDebtsScreen from '../screens/IndividualDebtsScreen';
 import AddDebtsScreen from '../screens/AddDebtsScreen';
 import UpdateDebtScreen from '../screens/UpdateDebtScreen';
+import EverydayTransactionScreen from '../screens/EverydayTransactionScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -149,8 +149,8 @@ const HomeStack = () => {
         component={UpdateCategoryScreen}
       />
       <Stack.Screen
-        name="EverydayTransaction"
-        component={EverydayTransaction}
+        name="EverydayTransactionScreen"
+        component={EverydayTransactionScreen}
       />
       <Stack.Screen name="AddDebtorScreen" component={AddDebtorScreen} />
       <Stack.Screen

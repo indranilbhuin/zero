@@ -1,55 +1,19 @@
 import {Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
-import useThemeColors from '../../hooks/useThemeColors';
 import styles from './style';
-import {navigate} from '../../utils/navigationUtils';
 import defaultCategories from '../../../assets/jsons/defaultCategories.json';
-import {createCategory} from '../../services/CategoryService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
 import CategoryContainer from '../../components/CategoryContainer';
-import {FETCH_ALL_USER_DATA} from '../../redux/actionTypes';
+import useOnboarding from './useOnboarding';
 
 const OnboardingScreen = () => {
-  const colors = useThemeColors();
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const userId = useSelector(selectUserId);
-
-  const dispatch = useDispatch();
-  const handleSkip = () => {
-    navigate('ChooseCurrencyScreen');
-  };
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_USER_DATA});
-  }, []);
-
-  console.log('outaise', userId);
-
-  const handleSubmit = async () => {
-    for (const category of selectedCategories) {
-      await createCategory(
-        category.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        category.icon,
-        category.color,
-      );
-    }
-    navigate('ChooseCurrencyScreen');
-  };
-
-  const toggleCategorySelection = category => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter(item => item !== category),
-      );
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
-  };
-
-  console.log(selectedCategories);
+  const {
+    colors,
+    selectedCategories,
+    handleSkip,
+    handleSubmit,
+    toggleCategorySelection,
+  } = useOnboarding();
 
   return (
     <View

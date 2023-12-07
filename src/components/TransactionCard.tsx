@@ -5,7 +5,7 @@ import useThemeColors from '../hooks/useThemeColors';
 interface TransactionCardProps {
   currencySymbol: string;
   day: string;
-  totalSpent: string;
+  totalSpent: number;
 }
 
 const TransactionCard: React.FC<TransactionCardProps> = ({

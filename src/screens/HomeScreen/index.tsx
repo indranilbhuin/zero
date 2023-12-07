@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   Image,
   RefreshControl,
@@ -8,58 +8,27 @@ import {
   View,
 } from 'react-native';
 import styles from './style';
-import useThemeColors from '../../hooks/useThemeColors';
-import {useDispatch, useSelector} from 'react-redux';
 import Icon from '../../components/Icons';
 import {navigate} from '../../utils/navigationUtils';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import TransactionCard from '../../components/TransactionCard';
 import TransactionList from '../../components/TransactionList';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import {selectUserName} from '../../redux/slice/userNameSlice';
-import {
-  FETCH_ALL_USER_DATA,
-  FETCH_CURRENCY_DATA,
-} from '../../redux/actionTypes';
-import {
-  getExpenseRequest,
-  selectExpenseData,
-  selectExpenseError,
-  selectExpenseLoading,
-} from '../../redux/slice/expenseDataSlice';
-import moment from 'moment';
 import HeaderContainer from '../../components/HeaderContainer';
+import useHome from './useHome';
 
 const HomeScreen = () => {
-  const colors = useThemeColors();
-  const [refreshing, setRefreshing] = useState(false);
-  const dispatch = useDispatch();
-  const allTransactions = useSelector(selectExpenseData);
-  const expenseLoading = useSelector(selectExpenseLoading);
-  const expenseError = useSelector(selectExpenseError);
-  const userName = useSelector(selectUserName);
-  const userId = useSelector(selectUserId);
-  const currencySymbol = useSelector(selectCurrencySymbol);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-  };
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_USER_DATA});
-    dispatch({type: FETCH_CURRENCY_DATA});
-  }, [userId, userName, currencySymbol]);
-
-  useEffect(() => {
-    dispatch(getExpenseRequest());
-  }, [userId]);
-
-  useEffect(() => {
-    if (refreshing) {
-      dispatch(getExpenseRequest());
-      setRefreshing(false);
-    }
-  }, [refreshing]);
+  const {
+    colors,
+    refreshing,
+    allTransactions,
+    expenseLoading,
+    expenseError,
+    userName,
+    currencySymbol,
+    onRefresh,
+    todaySpent,
+    yesterdaySpent,
+    thisMonthSpent,
+  } = useHome();
 
   if (expenseLoading) {
     return <Text>Loading ...</Text>;
@@ -69,33 +38,6 @@ const HomeScreen = () => {
     return <Text>Error</Text>;
   }
 
-  console.log('in home screen', allTransactions);
-
-  const calculateSpent = (unit, subtract = 0) => {
-    const currentDate = moment().utc();
-    console.log(currentDate);
-    if (unit === 'day') {
-      currentDate.subtract(subtract, 'days');
-    } else if (unit === 'month') {
-      currentDate.startOf('month');
-    }
-
-    const filteredTransactions = allTransactions.filter(transaction =>
-      moment(transaction.date).isSameOrAfter(currentDate, unit),
-    );
-
-    const totalSpent = filteredTransactions.reduce(
-      (sum, transaction) => sum + transaction.amount,
-      0,
-    );
-
-    return totalSpent;
-  };
-  const todaySpent = calculateSpent('day', 0);
-  const yesterdaySpent = calculateSpent('day', 1);
-  const thisMonthSpent = calculateSpent('month');
-  console.log(currencySymbol);
-
   return (
     <>
       <View
@@ -103,7 +45,7 @@ const HomeScreen = () => {
           styles.mainContainer,
           {backgroundColor: colors.primaryBackground},
         ]}>
-        <HeaderContainer headerText={`Hey, ${userName}`}/>
+        <HeaderContainer headerText={`Hey, ${userName}`} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}

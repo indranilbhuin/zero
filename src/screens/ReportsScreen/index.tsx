@@ -1,65 +1,29 @@
-import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import useThemeColors from '../../hooks/useThemeColors';
+import {Modal, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/HeaderContainer';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  getExpenseRequest,
-  selectExpenseData,
-} from '../../redux/slice/expenseDataSlice';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import moment from 'moment';
 import {navigate} from '../../utils/navigationUtils';
+import styles from './style';
+import useReports from './useReports';
 
 const ReportsScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [selectedYear, setSelectedYear] = useState(2023);
-  const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
-  const [showYearPicker, setShowYearPicker] = useState(false);
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
-  const allTransactions = useSelector(selectExpenseData);
-  const currencySymbol = useSelector(selectCurrencySymbol);
-
-  const dayNames = moment.weekdaysShort();
-
-  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
-  console.log('copy', allTransactionsCopy, 'real', allTransactions);
-
-  const filterTransactions = (year, month) => {
-    const filtered = allTransactionsCopy?.filter(item => {
-      const transactionYear = moment(item.date).year();
-      const transactionMonth = moment(item.date).format('MMMM');
-      return transactionYear === year && (!month || transactionMonth === month);
-    });
-
-    setFilteredTransactions(filtered.length > 0 ? filtered : []);
-  };
-
-  console.log('this is filtered', filteredTransactions);
-
-  useEffect(() => {
-    dispatch(getExpenseRequest());
-    filterTransactions(selectedYear, selectedMonth);
-  }, [selectedYear, selectedMonth, allTransactionsCopy?.length]);
-
-  const handleYearPicker = () => {
-    setShowYearPicker(true);
-  };
-
-  const handleYearPickerClose = () => {
-    setShowYearPicker(false);
-  };
-
-  const years = Array.from({length: 101}, (_, index) => 2000 + index);
+  const {
+    colors,
+    selectedYear,
+    selectedMonth,
+    showYearPicker,
+    filteredTransactions,
+    currencySymbol,
+    dayNames,
+    handleYearPicker,
+    handleYearPickerClose,
+    years,
+    handleYearSelect,
+    handleMonthSelect,
+    totalAmountForMonth,
+    daysInMonth,
+  } = useReports();
 
   const renderYearPickerItems = () => {
     return (
@@ -240,25 +204,6 @@ const ReportsScreen = () => {
     );
   };
 
-  const handleYearSelect = (year: number) => {
-    setSelectedYear(year);
-    setShowYearPicker(false);
-  };
-
-  const handleMonthSelect = (month: string) => {
-    setSelectedMonth(month);
-  };
-
-  const totalAmountForMonth = filteredTransactions.reduce(
-    (sum, transaction) => sum + transaction.amount,
-    0,
-  );
-
-  const daysInMonth = moment(
-    `${selectedYear}-${moment().month(selectedMonth).format('MM')}`,
-    'YYYY-MM',
-  ).daysInMonth();
-
   const Labels = ({slices}) => {
     return (
       <View
@@ -337,7 +282,6 @@ const ReportsScreen = () => {
       </View>
     );
   };
-  console.log(selectedMonth, selectedYear);
 
   const renderCalendar = () => {
     const firstDayOfMonth = moment(
@@ -385,7 +329,7 @@ const ReportsScreen = () => {
           key={index}
           style={[styles.calendarDay, {backgroundColor}]}
           onPress={() =>
-            navigate('EverydayTransaction', {dayTransactions, isDate})
+            navigate('EverydayTransactionScreen', {dayTransactions, isDate})
           }>
           <Text
             style={[
@@ -512,76 +456,3 @@ const ReportsScreen = () => {
 };
 
 export default ReportsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  categoryContainer: {
-    height: 35,
-    padding: 5,
-    marginRight: 5,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  innerContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  toastContainer: {
-    height: 500,
-    width: '80%',
-  },
-  buttonContainer: {
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    paddingTop: 10,
-    borderTopWidth: 0.8,
-  },
-  buttonText: {},
-  yearContainer: {
-    padding: 3,
-    borderRadius: 5,
-    margin: 10,
-  },
-  selectedYearContainer: {
-    paddingBottom: 10,
-    borderBottomWidth: 0.8,
-  },
-  chartContainer: {
-    marginTop: '12%',
-    marginBottom: '12%',
-  },
-  dotContainer: {
-    height: 8,
-    width: 8,
-    borderRadius: 40,
-    marginRight: 3,
-  },
-  calendarContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-  },
-  calendarDay: {
-    width: '14.28%',
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

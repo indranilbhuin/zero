@@ -1,33 +1,11 @@
 import {Text, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
-import useThemeColors from '../../hooks/useThemeColors';
 import styles from './style';
-import {navigate} from '../../utils/navigationUtils';
-import { createUser } from '../../services/UserService';
+import usePersonalize from './usePersonalize';
 
 const PersonalizeScreen = () => {
-  const colors = useThemeColors();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState("null");
-
-  const handleSubmit = async () => {
-    if (!name || !email) {
-      return;
-    }
-  
-    try {
-      await createUser(name, email);
-      navigate('OnboardingScreen');
-    } catch (error) {
-      console.error('Error saving user data to Realm:', error);
-    }
-  };
-
-  const handleSkip = () => {
-    navigate('OnboardingScreen');
-  };
-
+  const {colors, setName, name, handleSubmit, handleSkip} = usePersonalize();
   return (
     <View
       style={[

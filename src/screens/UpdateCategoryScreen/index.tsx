@@ -8,10 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useMemo, useState} from 'react';
-import useThemeColors from '../../hooks/useThemeColors';
-import {useDispatch} from 'react-redux';
-import {updateCategoryById} from '../../services/CategoryService';
+import React from 'react';
 import {goBack} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
 import AppHeader from '../../components/AppHeader';
@@ -19,69 +16,33 @@ import CustomInput from '../../components/CustomInput';
 import addTransactionStyles from '../AddTransactionsScreen/style';
 import PrimaryButton from '../../components/PrimaryButton';
 import addCategoryStyles from '../AddCategoryScreen/style';
-import allIcons from '../../../assets/jsons/categoryIcons.json';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import allColors from '../../../assets/jsons/categoryColors.json';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-
-type UpdateCategoryScreenRouteProp = RouteProp<
-  {
-    UpdateCategoryScreen: {
-      categoryId: string;
-      categoryName: string;
-      categoryIcon: string;
-      categoryColor: string;
-    };
-  },
-  'UpdateCategoryScreen'
->;
+import useUpdateCategory, {
+  UpdateCategoryScreenRouteProp,
+} from './useUpdateCategory';
 
 const UpdateCategoryScreen = () => {
   const route = useRoute<UpdateCategoryScreenRouteProp>();
-  const categoryData = route.params;
-
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [categoryName, setCategoryName] = useState(categoryData.categoryName);
-  const [isIconModalVisible, setIsIconModalVisible] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState(categoryData.categoryIcon);
-  const [searchText, setSearchText] = useState('');
-  const [isColorModalVisible, setIsColorModalVisible] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(
-    categoryData.categoryColor,
-  );
-
-  const handleUpdateCategory = () => {
-    try {
-      updateCategoryById(
-        Realm.BSON.ObjectID.createFromHexString(categoryData.categoryId),
-        categoryName,
-        selectedIcon,
-        selectedColor,
-      );
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
-      goBack();
-    } catch (error) {
-      console.error('Error creating category:', error);
-    }
-  };
-
-  const handleIconModalClose = () => {
-    setIsIconModalVisible(false);
-  };
-
-  const handleColorModalClose = () => {
-    setIsColorModalVisible(false);
-  };
-
-  console.log('this is the selectedicon', selectedIcon);
-
-  const filteredIcons = useMemo(() => {
-    const lowerCaseSearch = searchText.toLowerCase();
-    return Object.keys(allIcons).filter(iconName =>
-      iconName.toLowerCase().includes(lowerCaseSearch),
-    );
-  }, [searchText]);
+  const {
+    colors,
+    categoryName,
+    setCategoryName,
+    isIconModalVisible,
+    setIsIconModalVisible,
+    selectedIcon,
+    setSelectedIcon,
+    searchText,
+    setSearchText,
+    isColorModalVisible,
+    setIsColorModalVisible,
+    selectedColor,
+    setSelectedColor,
+    handleUpdateCategory,
+    handleIconModalClose,
+    handleColorModalClose,
+    filteredIcons,
+  } = useUpdateCategory(route);
 
   const renderIcons = () => {
     const handleSelectIcon = iconName => {
@@ -353,5 +314,3 @@ const UpdateCategoryScreen = () => {
 };
 
 export default UpdateCategoryScreen;
-
-const styles = StyleSheet.create({});
