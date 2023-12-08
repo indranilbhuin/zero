@@ -1,10 +1,11 @@
-import {TextInput, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import PrimaryButton from '../../components/PrimaryButton';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import styles from './style';
 import usePersonalize from './usePersonalize';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import CustomInput from '../../components/atoms/CustomInput';
 
 const PersonalizeScreen = () => {
   const {colors, setName, name, handleSubmit, handleSkip} = usePersonalize();
@@ -17,12 +18,8 @@ const PersonalizeScreen = () => {
       </TouchableOpacity>
 
       <View style={styles.titleTextContainer}>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
-          Let's Personlize your
-        </PrimaryText>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
-          experience
-        </PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>Let's Personlize your</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>experience</PrimaryText>
       </View>
 
       <View style={styles.subtitleTextContainer}>
@@ -35,19 +32,12 @@ const PersonalizeScreen = () => {
       </View>
 
       <View style={styles.textInputContainer}>
-        <TextInput
-          style={[
-            styles.textInput,
-            {
-              borderColor: colors.primaryText,
-              color: colors.primaryText,
-              backgroundColor: colors.secondaryBackground,
-            },
-          ]}
-          value={name}
-          onChangeText={setName}
-          placeholder="Name"
-          placeholderTextColor={colors.secondaryText}
+        <CustomInput
+          input={name}
+          label={'Name'}
+          colors={colors}
+          placeholder={'eg. John Doe'}
+          setInput={setName}
         />
       </View>
 

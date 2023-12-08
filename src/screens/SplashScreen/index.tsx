@@ -1,5 +1,5 @@
 import React from 'react';
-import PrimaryButton from '../../components/PrimaryButton';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import useSplash from './useSplash';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';

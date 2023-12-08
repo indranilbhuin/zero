@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 import React from 'react';
 import {goBack} from '../../utils/navigationUtils';
-import Icon from '../../components/Icons';
-import AppHeader from '../../components/AppHeader';
-import CustomInput from '../../components/CustomInput';
+import Icon from '../../components/atoms/Icons';
+import AppHeader from '../../components/atoms/AppHeader';
+import CustomInput from '../../components/atoms/CustomInput';
 import addTransactionStyles from '../AddTransactionsScreen/style';
-import PrimaryButton from '../../components/PrimaryButton';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import addCategoryStyles from '../AddCategoryScreen/style';
 import {useRoute} from '@react-navigation/native';
 import allColors from '../../../assets/jsons/categoryColors.json';
@@ -21,6 +21,7 @@ import useUpdateCategory, {
 } from './useUpdateCategory';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import textInputStyles from '../../styles/textInput';
 
 const UpdateCategoryScreen = () => {
   const route = useRoute<UpdateCategoryScreenRouteProp>();
@@ -126,9 +127,7 @@ const UpdateCategoryScreen = () => {
         label="Category Name"
       />
 
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 10}}>
-        Change icon or color
-      </PrimaryText>
+      <PrimaryText style={{marginBottom: 10}}>Change icon or color</PrimaryText>
       <View style={addTransactionStyles.dateContainer}>
         <TouchableOpacity
           style={[
@@ -156,9 +155,7 @@ const UpdateCategoryScreen = () => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsIconModalVisible(true)}>
-          <PrimaryText style={{color: colors.primaryText}}>
-            Tap to change icon
-          </PrimaryText>
+          <PrimaryText>Tap to change icon</PrimaryText>
         </TouchableOpacity>
       </View>
 
@@ -189,9 +186,7 @@ const UpdateCategoryScreen = () => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsColorModalVisible(true)}>
-          <PrimaryText style={{color: colors.primaryText}}>
-            Tap to Change Color
-          </PrimaryText>
+          <PrimaryText>Tap to Change Color</PrimaryText>
         </TouchableOpacity>
       </View>
       <View style={{marginTop: '110%'}}>
@@ -224,20 +219,34 @@ const UpdateCategoryScreen = () => {
                 }}>
                 Select Icon
               </PrimaryText>
-              <TextInput
+
+              <View
                 style={[
-                  addCategoryStyles.textInput,
+                  textInputStyles.textInputContainer,
                   {
                     borderColor: colors.primaryText,
-                    color: colors.primaryText,
                     backgroundColor: colors.secondaryBackground,
                   },
-                ]}
-                placeholder="Search Icons"
-                value={searchText}
-                onChangeText={setSearchText}
-              />
-
+                ]}>
+                <Icon
+                  name="search"
+                  size={20}
+                  color={colors.primaryText}
+                  type="Feather"
+                />
+                <TextInput
+                  style={[
+                    textInputStyles.textInputWithIcon,
+                    {
+                      color: colors.primaryText,
+                    },
+                  ]}
+                  value={searchText}
+                  onChangeText={setSearchText}
+                  placeholder={'Search Icons'}
+                  placeholderTextColor={colors.secondaryText}
+                />
+              </View>
               <View
                 style={{
                   flexDirection: 'row',

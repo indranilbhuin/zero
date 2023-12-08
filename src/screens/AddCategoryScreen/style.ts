@@ -24,16 +24,6 @@ const addCategoryStyles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 5,
   },
-  textInput: {
-    height: 60,
-    borderWidth: 2,
-    marginTop: 5,
-    marginBottom: 10,
-    borderRadius: 15,
-    padding: 20,
-    fontFamily: 'FiraCode-Medium',
-    includeFontPadding: false,
-  },
   colorCircle: {
     height: 25,
     width: 25,

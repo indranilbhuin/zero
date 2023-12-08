@@ -1,22 +1,22 @@
 import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import moment from 'moment';
-import AppHeader from '../../components/AppHeader';
-import CategoryContainer from '../../components/CategoryContainer';
-import CustomInput from '../../components/CustomInput';
-import PrimaryButton from '../../components/PrimaryButton';
-import SecondaryButton from '../../components/SecondaryButton';
+import AppHeader from '../../components/atoms/AppHeader';
+import CategoryContainer from '../../components/molecules/CategoryContainer';
+import CustomInput from '../../components/atoms/CustomInput';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
+import SecondaryButton from '../../components/molecules/SecondaryButton';
 import {goBack} from '../../utils/navigationUtils';
-import Icon from '../../components/Icons';
+import Icon from '../../components/atoms/Icons';
 import addTransactionStyles from '../AddTransactionsScreen/style';
 import {useRoute} from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import useUpdateTransaction, {
   UpdateTransactionScreenRouteProp,
 } from './useUpdateTransaction';
-import styles from './style';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import textInputStyles from '../../styles/textInput';
 
 const UpdateTransactionScreen = () => {
   const route = useRoute<UpdateTransactionScreenRouteProp>();
@@ -65,23 +65,19 @@ const UpdateTransactionScreen = () => {
         label="Expense Description"
       />
 
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
-        Expense Amount
-      </PrimaryText>
+      <PrimaryText style={{marginBottom: 5}}>Expense Amount</PrimaryText>
       <View
         style={[
-          styles.textInputContainer,
+          textInputStyles.textInputContainer,
           {
             borderColor: colors.primaryText,
             backgroundColor: colors.secondaryBackground,
           },
         ]}>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 15}}>
-          {currencySymbol}
-        </PrimaryText>
+        <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>
         <TextInput
           style={[
-            styles.textInput,
+            textInputStyles.textInputWithIcon,
             {
               color: colors.primaryText,
             },
@@ -112,9 +108,7 @@ const UpdateTransactionScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <PrimaryText style={{color: colors.primaryText}}>
-          {moment(createdAt).format('Do MMM YYYY')}
-        </PrimaryText>
+        <PrimaryText>{moment(createdAt).format('Do MMM YYYY')}</PrimaryText>
 
         <View>
           {showDatePicker && (
@@ -129,9 +123,7 @@ const UpdateTransactionScreen = () => {
           )}
         </View>
       </View>
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
-        Select any category
-      </PrimaryText>
+      <PrimaryText style={{marginBottom: 5}}>Select any category</PrimaryText>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CategoryContainer
           categories={categories}

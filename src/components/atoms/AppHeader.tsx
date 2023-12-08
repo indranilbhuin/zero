@@ -1,8 +1,8 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
-import {Colors} from '../types/colorType';
-import PrimaryText from './atoms/PrimaryText';
+import {Colors} from '../../types/colorType';
+import PrimaryText from './PrimaryText';
 
 interface AppHeaderProps {
   onPress(): void;
@@ -24,7 +24,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({onPress, colors, text}) => {
         </TouchableOpacity>
       </View>
 
-      <PrimaryText style={{color: colors.primaryText}}>{text}</PrimaryText>
+      <PrimaryText>{text}</PrimaryText>
     </View>
   );
 };

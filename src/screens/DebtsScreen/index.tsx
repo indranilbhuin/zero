@@ -1,10 +1,10 @@
 import {ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import HeaderContainer from '../../components/HeaderContainer';
+import HeaderContainer from '../../components/molecules/HeaderContainer';
 import homeStyles from '../HomeScreen/style';
 import {navigate} from '../../utils/navigationUtils';
-import Icon from '../../components/Icons';
-import DebtorList from '../../components/DebtorList';
+import Icon from '../../components/atoms/Icons';
+import DebtorList from '../../components/molecules/DebtorList';
 import styles from './style';
 import useDebts from './useDebts';
 import PrimaryView from '../../components/atoms/PrimaryView';

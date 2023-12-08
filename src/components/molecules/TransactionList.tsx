@@ -1,18 +1,18 @@
 import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useRef} from 'react';
-import useThemeColors from '../hooks/useThemeColors';
-import Icon from './Icons';
+import useThemeColors from '../../hooks/useThemeColors';
+import Icon from '../atoms/Icons';
 import moment from 'moment';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
-import {navigate} from '../utils/navigationUtils';
-import Category from '../schemas/CategorySchema';
-import {deleteExpenseById} from '../services/ExpenseService';
+import {navigate} from '../../utils/navigationUtils';
+import Category from '../../schemas/CategorySchema';
+import {deleteExpenseById} from '../../services/ExpenseService';
 import {useDispatch} from 'react-redux';
-import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
-import Expense from '../schemas/ExpenseSchema';
-import {Colors} from '../types/colorType';
+import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
+import Expense from '../../schemas/ExpenseSchema';
+import {Colors} from '../../types/colorType';
 import {Dispatch} from 'redux';
-import PrimaryText from './atoms/PrimaryText';
+import PrimaryText from '../atoms/PrimaryText';
 
 interface TransactionListProps {
   currencySymbol: string;
@@ -169,9 +169,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               />
             </View>
             <View>
-              <PrimaryText style={{color: colors.primaryText}}>
-                {expense.title}
-              </PrimaryText>
+              <PrimaryText>{expense.title}</PrimaryText>
               <View style={styles.descriptionContainer}>
                 <PrimaryText
                   style={{
@@ -201,7 +199,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
             </View>
           </View>
           <View>
-            <PrimaryText style={{color: colors.primaryText}}>
+            <PrimaryText>
               {currencySymbol} {expense.amount}
             </PrimaryText>
           </View>

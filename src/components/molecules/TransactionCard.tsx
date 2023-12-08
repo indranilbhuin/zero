@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
-import useThemeColors from '../hooks/useThemeColors';
-import PrimaryText from './atoms/PrimaryText';
+import useThemeColors from '../../hooks/useThemeColors';
+import PrimaryText from '../atoms/PrimaryText';
 
 interface TransactionCardProps {
   currencySymbol: string;
@@ -18,17 +18,15 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
   return (
     <View style={[styles.card, {backgroundColor: colors.containerColor}]}>
       <View>
-        <PrimaryText style={{color: colors.primaryText}}>{day}'s</PrimaryText>
-        <PrimaryText style={{color: colors.primaryText}}>
-          Transactions
-        </PrimaryText>
+        <PrimaryText>{day}'s</PrimaryText>
+        <PrimaryText>Transactions</PrimaryText>
       </View>
       <View
         style={[
           styles.transactionContainer,
           {backgroundColor: colors.secondaryBackground},
         ]}>
-        <PrimaryText style={{color: colors.primaryText}}>
+        <PrimaryText>
           {currencySymbol} {totalSpent}
         </PrimaryText>
       </View>

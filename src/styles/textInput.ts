@@ -1,6 +1,16 @@
 import {StyleSheet} from 'react-native';
 
-const updateTransactionStyles = StyleSheet.create({
+const textInputStyles = StyleSheet.create({
+  textInput: {
+    height: 60,
+    borderWidth: 2,
+    marginTop: 5,
+    marginBottom: 10,
+    borderRadius: 15,
+    padding: 20,
+    fontFamily: 'FiraCode-Medium',
+    includeFontPadding: false,
+  },
   textInputContainer: {
     height: 60,
     alignItems: 'center',
@@ -12,7 +22,7 @@ const updateTransactionStyles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
   },
-  textInput: {
+  textInputWithIcon: {
     padding: 20,
     height: 60,
     width: '100%',
@@ -21,4 +31,4 @@ const updateTransactionStyles = StyleSheet.create({
   },
 });
 
-export default updateTransactionStyles;
+export default textInputStyles;

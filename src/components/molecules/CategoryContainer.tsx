@@ -1,9 +1,9 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Icon from './Icons';
-import {Colors} from '../types/colorType';
-import Category from '../schemas/CategorySchema';
-import PrimaryText from './atoms/PrimaryText';
+import Icon from '../atoms/Icons';
+import {Colors} from '../../types/colorType';
+import Category from '../../schemas/CategorySchema';
+import PrimaryText from '../atoms/PrimaryText';
 
 interface CategoryContainerProps {
   categories: Array<Category>;

@@ -1,11 +1,11 @@
 import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/atoms/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import CustomInput from '../../components/CustomInput';
-import Icon from '../../components/Icons';
+import CustomInput from '../../components/atoms/CustomInput';
+import Icon from '../../components/atoms/Icons';
 import moment from 'moment';
-import PrimaryButton from '../../components/PrimaryButton';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {useRoute} from '@react-navigation/native';
 import useUpdateDebt from './useUpdateDebt';
@@ -72,9 +72,7 @@ const UpdateDebtScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <PrimaryText style={{color: colors.primaryText}}>
-          {moment(createdAt).format('Do MMM YYYY')}
-        </PrimaryText>
+        <PrimaryText>{moment(createdAt).format('Do MMM YYYY')}</PrimaryText>
 
         <View>
           {showDatePicker && (

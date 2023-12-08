@@ -1,10 +1,10 @@
 import {Image, View} from 'react-native';
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/atoms/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
 import moment from 'moment';
-import TransactionList from '../../components/TransactionList';
+import TransactionList from '../../components/molecules/TransactionList';
 import useEverydayTransaction, {
   EverydayTransactionRouteProp,
 } from './useEverydayTransaction';

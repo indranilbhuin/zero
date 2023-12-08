@@ -6,11 +6,11 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/atoms/AppHeader';
 import {goBack, navigate} from '../../utils/navigationUtils';
 import {useRoute} from '@react-navigation/native';
 import homeStyles from '../HomeScreen/style';
-import Icon from '../../components/Icons';
+import Icon from '../../components/atoms/Icons';
 import styles from './style';
 import useIndividualDebts, {
   IndividualDebtsScreenRouteProp,

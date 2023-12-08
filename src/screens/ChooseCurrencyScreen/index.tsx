@@ -1,11 +1,12 @@
 import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import styles from './style';
-import Icon from '../../components/Icons';
-import PrimaryButton from '../../components/PrimaryButton';
+import Icon from '../../components/atoms/Icons';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import useChooseCurrency from './useChooseCurrency';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import textInputStyles from '../../styles/textInput';
 
 const ChooseCurrencyScreen = () => {
   const {
@@ -21,13 +22,9 @@ const ChooseCurrencyScreen = () => {
   return (
     <PrimaryView colors={colors}>
       <View style={styles.titleTextContainer}>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
-          Your money,
-        </PrimaryText>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
-          your currency.
-        </PrimaryText>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
+        <PrimaryText style={{fontSize: 24}}>Your money,</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>your currency.</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>
           Pick the one you prefer
         </PrimaryText>
       </View>
@@ -38,36 +35,32 @@ const ChooseCurrencyScreen = () => {
         </PrimaryText>
       </View>
 
-      <View style={styles.textInputContainer}>
+      <View
+        style={[
+          textInputStyles.textInputContainer,
+          {
+            borderColor: colors.primaryText,
+            backgroundColor: colors.secondaryBackground,
+          },
+        ]}>
+        <Icon
+          name="search"
+          size={20}
+          color={colors.primaryText}
+          type="Feather"
+        />
         <TextInput
           style={[
-            styles.textInput,
+            textInputStyles.textInputWithIcon,
             {
-              borderColor: colors.primaryText,
               color: colors.primaryText,
-              backgroundColor: colors.secondaryBackground,
             },
           ]}
           value={search}
           onChangeText={handleSearch}
-          placeholder="eg. INR"
+          placeholder={'eg. INR'}
           placeholderTextColor={colors.secondaryText}
         />
-        <TouchableOpacity
-          style={[
-            styles.addButton,
-            {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
-            },
-          ]}>
-          <Icon
-            name="search"
-            size={25}
-            color={colors.buttonText}
-            type="Feather"
-          />
-        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>

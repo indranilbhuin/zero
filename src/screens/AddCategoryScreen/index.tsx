@@ -2,16 +2,15 @@ import {
   Dimensions,
   Modal,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
 import {goBack} from '../../utils/navigationUtils';
-import AppHeader from '../../components/AppHeader';
-import CustomInput from '../../components/CustomInput';
-import PrimaryButton from '../../components/PrimaryButton';
-import Icon from '../../components/Icons';
+import AppHeader from '../../components/atoms/AppHeader';
+import CustomInput from '../../components/atoms/CustomInput';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
+import Icon from '../../components/atoms/Icons';
 import addTransactionStyles from '../AddTransactionsScreen/style';
 import allIcons from '../../../assets/jsons/categoryIcons.json';
 import allColors from '../../../assets/jsons/categoryColors.json';
@@ -120,7 +119,7 @@ const AddCategoryScreen = () => {
         label="Category Name"
       />
 
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 10}}>
+      <PrimaryText style={{marginBottom: 10}}>
         Pick your own icon and color
       </PrimaryText>
       <View style={addTransactionStyles.dateContainer}>
@@ -150,9 +149,7 @@ const AddCategoryScreen = () => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsIconModalVisible(true)}>
-          <PrimaryText style={{color: colors.primaryText}}>
-            Tap to select icon
-          </PrimaryText>
+          <PrimaryText>Tap to select icon</PrimaryText>
         </TouchableOpacity>
       </View>
 
@@ -180,9 +177,7 @@ const AddCategoryScreen = () => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsColorModalVisible(true)}>
-          <PrimaryText style={{color: colors.primaryText}}>
-            Tap to select Color
-          </PrimaryText>
+          <PrimaryText>Tap to select Color</PrimaryText>
         </TouchableOpacity>
       </View>
       <View style={{marginTop: '110%'}}>
@@ -212,18 +207,12 @@ const AddCategoryScreen = () => {
                 }}>
                 Select Icon
               </PrimaryText>
-              <TextInput
-                style={[
-                  styles.textInput,
-                  {
-                    borderColor: colors.primaryText,
-                    color: colors.primaryText,
-                    backgroundColor: colors.secondaryBackground,
-                  },
-                ]}
-                placeholder="Search Icons"
-                value={searchText}
-                onChangeText={setSearchText}
+              <CustomInput
+                input={searchText}
+                label={undefined}
+                colors={colors}
+                placeholder={'Search Icons'}
+                setInput={setSearchText}
               />
 
               <View

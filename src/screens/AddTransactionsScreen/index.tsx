@@ -1,18 +1,13 @@
-import {
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import CustomInput from '../../components/CustomInput';
-import AppHeader from '../../components/AppHeader';
+import CustomInput from '../../components/atoms/CustomInput';
+import AppHeader from '../../components/atoms/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import CategoryContainer from '../../components/CategoryContainer';
-import SecondaryButton from '../../components/SecondaryButton';
-import PrimaryButton from '../../components/PrimaryButton';
+import CategoryContainer from '../../components/molecules/CategoryContainer';
+import SecondaryButton from '../../components/molecules/SecondaryButton';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Icon from '../../components/Icons';
+import Icon from '../../components/atoms/Icons';
 import moment from 'moment';
 import useAddTransaction from './useAddTransaction';
 import styles from './style';
@@ -20,6 +15,7 @@ import {useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import textInputStyles from '../../styles/textInput';
 
 const AddTransactionsScreen = () => {
   const {
@@ -63,23 +59,19 @@ const AddTransactionsScreen = () => {
         placeholder="eg. From Aroma's"
         label="Expense Description"
       />
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
-        Expense Amount
-      </PrimaryText>
+      <PrimaryText style={{marginBottom: 5}}>Expense Amount</PrimaryText>
       <View
         style={[
-          styles.textInputContainer,
+          textInputStyles.textInputContainer,
           {
             borderColor: colors.primaryText,
             backgroundColor: colors.secondaryBackground,
           },
         ]}>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 15}}>
-          {currencySymbol}
-        </PrimaryText>
+        <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>
         <TextInput
           style={[
-            styles.textInput,
+            textInputStyles.textInputWithIcon,
             {
               color: colors.primaryText,
             },
@@ -109,9 +101,7 @@ const AddTransactionsScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <PrimaryText style={{color: colors.primaryText}}>
-          {moment(createdAt).format('Do MMM YYYY')}
-        </PrimaryText>
+        <PrimaryText>{moment(createdAt).format('Do MMM YYYY')}</PrimaryText>
 
         <View>
           {showDatePicker && (
@@ -126,9 +116,7 @@ const AddTransactionsScreen = () => {
           )}
         </View>
       </View>
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
-        Select any category
-      </PrimaryText>
+      <PrimaryText style={{marginBottom: 5}}>Select any category</PrimaryText>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CategoryContainer
           categories={categories}

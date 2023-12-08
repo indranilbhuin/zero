@@ -1,9 +1,9 @@
 import {RefreshControl, ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {navigate} from '../../utils/navigationUtils';
-import Icon from '../../components/Icons';
+import Icon from '../../components/atoms/Icons';
 import homeStyles from '../HomeScreen/style';
-import HeaderContainer from '../../components/HeaderContainer';
+import HeaderContainer from '../../components/molecules/HeaderContainer';
 import styles from './style';
 import useCategory from './useCategory';
 import PrimaryView from '../../components/atoms/PrimaryView';
@@ -48,9 +48,7 @@ const CategoryScreen = () => {
                     />
                   </View>
                   <View>
-                    <PrimaryText style={{color: colors.primaryText}}>
-                      {category.name}
-                    </PrimaryText>
+                    <PrimaryText>{category.name}</PrimaryText>
                   </View>
                 </View>
                 <View style={styles.buttonContainer}>

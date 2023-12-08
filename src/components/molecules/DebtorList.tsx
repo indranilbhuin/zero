@@ -1,11 +1,11 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Icon from './Icons';
-import {navigate} from '../utils/navigationUtils';
-import {Colors} from '../types/colorType';
-import Debtor from '../schemas/DebtorSchema';
-import Debt from '../schemas/DebtSchema';
-import PrimaryText from './atoms/PrimaryText';
+import Icon from '../atoms/Icons';
+import {navigate} from '../../utils/navigationUtils';
+import {Colors} from '../../types/colorType';
+import Debtor from '../../schemas/DebtorSchema';
+import Debt from '../../schemas/DebtSchema';
+import PrimaryText from '../atoms/PrimaryText';
 
 interface DebtorListProps {
   currencySymbol: string;

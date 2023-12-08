@@ -1,11 +1,11 @@
 import {View} from 'react-native';
 import React from 'react';
-import AppHeader from '../../components/AppHeader';
+import AppHeader from '../../components/atoms/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import CustomInput from '../../components/CustomInput';
-import CategoryContainer from '../../components/CategoryContainer';
+import CustomInput from '../../components/atoms/CustomInput';
+import CategoryContainer from '../../components/molecules/CategoryContainer';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
-import PrimaryButton from '../../components/PrimaryButton';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import styles from './style';
 import useAddDebtor from './useAddDebtor';
 import PrimaryView from '../../components/atoms/PrimaryView';
@@ -26,9 +26,7 @@ const AddDebtorScreen = () => {
       <View style={styles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text="Add Debtor" />
       </View>
-      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
-        Select Debt Category
-      </PrimaryText>
+      <PrimaryText style={{marginBottom: 5}}>Select Debt Category</PrimaryText>
 
       <View style={{marginBottom: 10}}>
         <CategoryContainer

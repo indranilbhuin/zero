@@ -1,7 +1,7 @@
 import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {PieChart} from 'react-native-svg-charts';
-import HeaderContainer from '../../components/HeaderContainer';
+import HeaderContainer from '../../components/molecules/HeaderContainer';
 import moment from 'moment';
 import {navigate} from '../../utils/navigationUtils';
 import styles from './style';
@@ -173,9 +173,7 @@ const ReportsScreen = () => {
                     {borderColor: colors.secondaryText},
                   ]}>
                   <TouchableOpacity onPress={handleYearPickerClose}>
-                    <PrimaryText style={{color: colors.primaryText}}>
-                      CANCEL
-                    </PrimaryText>
+                    <PrimaryText>CANCEL</PrimaryText>
                   </TouchableOpacity>
                 </View>
               </View>

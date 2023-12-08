@@ -8,11 +8,11 @@ import {
   View,
 } from 'react-native';
 import styles from './style';
-import Icon from '../../components/Icons';
+import Icon from '../../components/atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
-import TransactionCard from '../../components/TransactionCard';
-import TransactionList from '../../components/TransactionList';
-import HeaderContainer from '../../components/HeaderContainer';
+import TransactionCard from '../../components/molecules/TransactionCard';
+import TransactionList from '../../components/molecules/TransactionList';
+import HeaderContainer from '../../components/molecules/HeaderContainer';
 import useHome from './useHome';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';

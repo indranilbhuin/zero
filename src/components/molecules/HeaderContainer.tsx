@@ -1,11 +1,11 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Icon from './Icons';
-import useThemeColors from '../hooks/useThemeColors';
+import Icon from '../atoms/Icons';
+import useThemeColors from '../../hooks/useThemeColors';
 import {useSelector} from 'react-redux';
-import {selectUserName} from '../redux/slice/userNameSlice';
-import {navigate} from '../utils/navigationUtils';
-import PrimaryText from './atoms/PrimaryText';
+import {selectUserName} from '../../redux/slice/userNameSlice';
+import {navigate} from '../../utils/navigationUtils';
+import PrimaryText from '../atoms/PrimaryText';
 
 interface HeaderContainerProps {
   headerText: string;
@@ -30,9 +30,7 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
               .join('')}
           </PrimaryText>
         </View>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 15}}>
-          {headerText}
-        </PrimaryText>
+        <PrimaryText style={{fontSize: 15}}>{headerText}</PrimaryText>
       </View>
       <View>
         <TouchableOpacity onPress={() => navigate('SettingsScreen')}>

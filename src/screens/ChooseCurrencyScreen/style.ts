@@ -8,21 +8,6 @@ const chooseCurrencyStyles = StyleSheet.create({
     paddingTop: '5%',
     paddingBottom: '5%',
   },
-  textInput: {
-    height: 60,
-    borderWidth: 2,
-    marginBottom: 15,
-    borderRadius: 15,
-    padding: 20,
-    width: '80%',
-    marginRight: 5,
-    fontFamily: 'FiraCode-Medium',
-    includeFontPadding: false,
-  },
-  textInputContainer: {
-    flexDirection: 'row',
-    width: '100%',
-  },
   skipButtonContainer: {
     alignSelf: 'flex-end',
     paddingTop: '5%',
