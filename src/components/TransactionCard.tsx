@@ -1,6 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import useThemeColors from '../hooks/useThemeColors';
+import PrimaryText from './atoms/PrimaryText';
 
 interface TransactionCardProps {
   currencySymbol: string;
@@ -16,34 +17,20 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
   const colors = useThemeColors();
   return (
     <View style={[styles.card, {backgroundColor: colors.containerColor}]}>
-      <View style={styles.textContainer}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.primaryText, fontSize: 14},
-          ]}>
-          {day}'s
-        </Text>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.primaryText, fontSize: 14},
-          ]}>
+      <View>
+        <PrimaryText style={{color: colors.primaryText}}>{day}'s</PrimaryText>
+        <PrimaryText style={{color: colors.primaryText}}>
           Transactions
-        </Text>
+        </PrimaryText>
       </View>
       <View
         style={[
           styles.transactionContainer,
           {backgroundColor: colors.secondaryBackground},
         ]}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.primaryText, fontSize: 14},
-          ]}>
+        <PrimaryText style={{color: colors.primaryText}}>
           {currencySymbol} {totalSpent}
-        </Text>
+        </PrimaryText>
       </View>
     </View>
   );
@@ -64,7 +51,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     flexDirection: 'row',
   },
-  textContainer: {},
   transactionContainer: {
     height: '40%',
     borderRadius: 10,
@@ -73,10 +59,5 @@ const styles = StyleSheet.create({
   },
   transactionListContainer: {
     marginTop: 20,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
 });

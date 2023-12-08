@@ -1,10 +1,11 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
 import useThemeColors from '../hooks/useThemeColors';
 import {useSelector} from 'react-redux';
 import {selectUserName} from '../redux/slice/userNameSlice';
 import {navigate} from '../utils/navigationUtils';
+import PrimaryText from './atoms/PrimaryText';
 
 interface HeaderContainerProps {
   headerText: string;
@@ -22,16 +23,16 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
             styles.initialsContainer,
             {backgroundColor: colors.primaryText},
           ]}>
-          <Text style={[styles.initialsText, {color: colors.buttonText}]}>
+          <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
             {userName
               .split(' ')
               .map((name: string) => name.charAt(0))
               .join('')}
-          </Text>
+          </PrimaryText>
         </View>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 15}}>
           {headerText}
-        </Text>
+        </PrimaryText>
       </View>
       <View>
         <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
@@ -71,15 +72,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
-  },
-  initialsText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 20,
-    includeFontPadding: false,
-  },
-  titleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
 });

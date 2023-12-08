@@ -1,4 +1,4 @@
-import {Animated, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useRef} from 'react';
 import useThemeColors from '../hooks/useThemeColors';
 import Icon from './Icons';
@@ -12,6 +12,7 @@ import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
 import Expense from '../schemas/ExpenseSchema';
 import {Colors} from '../types/colorType';
 import {Dispatch} from 'redux';
+import PrimaryText from './atoms/PrimaryText';
 
 interface TransactionListProps {
   currencySymbol: string;
@@ -168,30 +169,41 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               />
             </View>
             <View>
-              <Text
-                style={[styles.transactionText, {color: colors.primaryText}]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 {expense.title}
-              </Text>
+              </PrimaryText>
               <View style={styles.descriptionContainer}>
-                <Text
-                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                <PrimaryText
+                  style={{
+                    color: colors.primaryText,
+                    fontSize: 10,
+                    marginRight: 5,
+                  }}>
                   {expense.category.name} .
-                </Text>
-                <Text
-                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                </PrimaryText>
+                <PrimaryText
+                  style={{
+                    color: colors.primaryText,
+                    fontSize: 10,
+                    marginRight: 5,
+                  }}>
                   {expense.description} .
-                </Text>
-                <Text
-                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                </PrimaryText>
+                <PrimaryText
+                  style={{
+                    color: colors.primaryText,
+                    fontSize: 10,
+                    marginRight: 5,
+                  }}>
                   {moment(expense.date).format('Do MMM')}
-                </Text>
+                </PrimaryText>
               </View>
             </View>
           </View>
           <View>
-            <Text style={[styles.transactionText, {color: colors.primaryText}]}>
+            <PrimaryText style={{color: colors.primaryText}}>
               {currencySymbol} {expense.amount}
-            </Text>
+            </PrimaryText>
           </View>
         </Animated.View>
       </Swipeable>
@@ -251,17 +263,6 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     flexDirection: 'row',
-  },
-  descriptionText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 10,
-    includeFontPadding: false,
-    marginRight: 5,
-  },
-  transactionText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 14,
-    includeFontPadding: false,
   },
   swipeView: {
     justifyContent: 'center',

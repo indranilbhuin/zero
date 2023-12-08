@@ -1,10 +1,12 @@
-import {Text, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
 import styles from './style';
 import defaultCategories from '../../../assets/jsons/defaultCategories.json';
 import CategoryContainer from '../../components/CategoryContainer';
 import useOnboarding from './useOnboarding';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const OnboardingScreen = () => {
   const {
@@ -16,37 +18,29 @@ const OnboardingScreen = () => {
   } = useOnboarding();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <TouchableOpacity style={styles.skipButtonContainer} onPress={handleSkip}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.accentGreen, fontSize: 12},
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 12}}>
           skip
-        </Text>
+        </PrimaryText>
       </TouchableOpacity>
 
       <View style={styles.titleTextContainer}>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           Default categories are
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        </PrimaryText>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           here, but how about
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        </PrimaryText>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           your unique ones?
-        </Text>
+        </PrimaryText>
       </View>
 
       <View style={styles.subtitleTextContainer}>
-        <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
           Select your categories you want track
-        </Text>
+        </PrimaryText>
       </View>
       <CategoryContainer
         categories={defaultCategories}
@@ -61,7 +55,7 @@ const OnboardingScreen = () => {
           buttonTitle={'Continue'}
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

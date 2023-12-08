@@ -1,23 +1,8 @@
 import {StyleSheet} from 'react-native';
 
 const chooseCurrencyStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   titleTextContainer: {
     paddingTop: '15%',
-  },
-  titleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 24,
-    includeFontPadding: false,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   subtitleTextContainer: {
     paddingTop: '5%',
@@ -70,13 +55,13 @@ const chooseCurrencyStyles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     padding: 5,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
   },
   symbolContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', 
-    alignItems: 'center'
-  }
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 });
 
 export default chooseCurrencyStyles;

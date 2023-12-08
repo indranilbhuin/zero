@@ -2,7 +2,6 @@ import {
   Dimensions,
   Modal,
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -18,6 +17,8 @@ import allIcons from '../../../assets/jsons/categoryIcons.json';
 import allColors from '../../../assets/jsons/categoryColors.json';
 import styles from './style';
 import useAddCategory from './useAddCategory';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const AddCategoryScreen = () => {
   const {
@@ -106,11 +107,7 @@ const AddCategoryScreen = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text="Add Category" />
       </View>
@@ -123,13 +120,9 @@ const AddCategoryScreen = () => {
         label="Category Name"
       />
 
-      <Text
-        style={[
-          styles.subtitleText,
-          {color: colors.primaryText, marginBottom: 10},
-        ]}>
+      <PrimaryText style={{color: colors.primaryText, marginBottom: 10}}>
         Pick your own icon and color
-      </Text>
+      </PrimaryText>
       <View style={addTransactionStyles.dateContainer}>
         <TouchableOpacity
           style={[
@@ -157,13 +150,9 @@ const AddCategoryScreen = () => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsIconModalVisible(true)}>
-          <Text
-            style={[
-              addTransactionStyles.dateText,
-              {color: colors.primaryText, fontSize: 14},
-            ]}>
+          <PrimaryText style={{color: colors.primaryText}}>
             Tap to select icon
-          </Text>
+          </PrimaryText>
         </TouchableOpacity>
       </View>
 
@@ -191,13 +180,9 @@ const AddCategoryScreen = () => {
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsColorModalVisible(true)}>
-          <Text
-            style={[
-              addTransactionStyles.dateText,
-              {color: colors.primaryText, fontSize: 14},
-            ]}>
+          <PrimaryText style={{color: colors.primaryText}}>
             Tap to select Color
-          </Text>
+          </PrimaryText>
         </TouchableOpacity>
       </View>
       <View style={{marginTop: '110%'}}>
@@ -217,19 +202,16 @@ const AddCategoryScreen = () => {
           <View
             style={[styles.modal, {backgroundColor: colors.containerColor}]}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color: colors.primaryText,
-                    fontSize: 17,
-                    marginTop: 10,
-                    marginBottom: 30,
-                    fontFamily: 'FiraCode-SemiBold',
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 17,
+                  marginTop: 10,
+                  marginBottom: 30,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
                 Select Icon
-              </Text>
+              </PrimaryText>
               <TextInput
                 style={[
                   styles.textInput,
@@ -267,19 +249,16 @@ const AddCategoryScreen = () => {
           <View
             style={[styles.modal, {backgroundColor: colors.containerColor}]}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color: colors.primaryText,
-                    fontSize: 17,
-                    marginTop: 10,
-                    marginBottom: 30,
-                    fontFamily: 'FiraCode-SemiBold',
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 17,
+                  marginTop: 10,
+                  marginBottom: 30,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
                 Select Color
-              </Text>
+              </PrimaryText>
               <View
                 style={{
                   flexDirection: 'row',
@@ -293,7 +272,7 @@ const AddCategoryScreen = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </PrimaryView>
   );
 };
 

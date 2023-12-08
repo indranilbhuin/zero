@@ -1,21 +1,11 @@
 import {StyleSheet} from 'react-native';
 
 const settingsStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: '5%',
     justifyContent: 'space-between',
-  },
-  titleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 25,
-    includeFontPadding: false,
   },
   greetingsContainer: {
     flexDirection: 'row',
@@ -39,11 +29,6 @@ const settingsStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
     justifyContent: 'flex-end',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   modal: {
     borderTopLeftRadius: 15,

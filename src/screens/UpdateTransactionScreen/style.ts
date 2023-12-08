@@ -19,11 +19,6 @@ const updateTransactionStyles = StyleSheet.create({
     fontFamily: 'FiraCode-Medium',
     includeFontPadding: false,
   },
-  labelText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
 });
 
 export default updateTransactionStyles;

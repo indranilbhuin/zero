@@ -1,19 +1,9 @@
 import {StyleSheet} from 'react-native';
 
 const addTransactionStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   headerContainer: {
     marginBottom: 20,
     marginTop: 20,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   addButtonContainer: {
     marginBottom: 10,
@@ -36,11 +26,6 @@ const addTransactionStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  dateText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
   textInputContainer: {
     height: 60,
     alignItems: 'center',
@@ -57,11 +42,6 @@ const addTransactionStyles = StyleSheet.create({
     height: 60,
     width: '100%',
     fontFamily: 'FiraCode-Medium',
-    includeFontPadding: false,
-  },
-  labelText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
     includeFontPadding: false,
   },
 });

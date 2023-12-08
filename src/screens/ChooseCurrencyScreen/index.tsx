@@ -1,15 +1,11 @@
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import styles from './style';
 import Icon from '../../components/Icons';
 import PrimaryButton from '../../components/PrimaryButton';
 import useChooseCurrency from './useChooseCurrency';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const ChooseCurrencyScreen = () => {
   const {
@@ -23,27 +19,23 @@ const ChooseCurrencyScreen = () => {
   } = useChooseCurrency();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.titleTextContainer}>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           Your money,
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        </PrimaryText>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           your currency.
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        </PrimaryText>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           Pick the one you prefer
-        </Text>
+        </PrimaryText>
       </View>
 
       <View style={styles.subtitleTextContainer}>
-        <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
           Select your currency
-        </Text>
+        </PrimaryText>
       </View>
 
       <View style={styles.textInputContainer}>
@@ -96,28 +88,16 @@ const ChooseCurrencyScreen = () => {
                   },
                 ]}>
                 <View style={styles.symbolContainer}>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {color: colors.buttonText, fontSize: 20},
-                    ]}>
+                  <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
                     {currency.symbolNative}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {color: colors.buttonText, fontSize: 13},
-                    ]}>
+                  </PrimaryText>
+                  <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
                     {currency.code}
-                  </Text>
+                  </PrimaryText>
                 </View>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.buttonText, fontSize: 10},
-                  ]}>
+                <PrimaryText style={{color: colors.buttonText, fontSize: 10}}>
                   {currency.name}
-                </Text>
+                </PrimaryText>
               </View>
             </TouchableOpacity>
           ))}
@@ -131,7 +111,7 @@ const ChooseCurrencyScreen = () => {
           buttonTitle={'Continue'}
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

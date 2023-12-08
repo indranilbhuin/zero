@@ -1,6 +1,7 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {Colors} from '../types/colorType';
+import PrimaryText from './atoms/PrimaryText';
 
 interface PrimaryButtonProps {
   onPress(): void;
@@ -20,9 +21,9 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
           styles.touchableButtonContainer,
           {backgroundColor: colors.primaryText},
         ]}>
-        <Text style={[styles.buttonText, {color: colors.buttonText}]}>
+        <PrimaryText style={{color: colors.buttonText, fontSize: 16}}>
           {buttonTitle}
-        </Text>
+        </PrimaryText>
       </View>
     </TouchableOpacity>
   );
@@ -38,9 +39,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontFamily: 'FiraCode-Medium',
   },
 });

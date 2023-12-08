@@ -75,7 +75,6 @@ const useSettings = () => {
 
   const handleCurrencyModalClose = () => {
     setIsCurrencyModalVisible(false);
-    currencyName;
   };
 
   const handleCurrencySelect = currency => {

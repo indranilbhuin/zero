@@ -14,6 +14,8 @@ import TransactionCard from '../../components/TransactionCard';
 import TransactionList from '../../components/TransactionList';
 import HeaderContainer from '../../components/HeaderContainer';
 import useHome from './useHome';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const HomeScreen = () => {
   const {
@@ -40,11 +42,7 @@ const HomeScreen = () => {
 
   return (
     <>
-      <View
-        style={[
-          styles.mainContainer,
-          {backgroundColor: colors.primaryBackground},
-        ]}>
+      <PrimaryView colors={colors}>
         <HeaderContainer headerText={`Hey, ${userName}`} />
 
         <ScrollView
@@ -75,13 +73,10 @@ const HomeScreen = () => {
               </View>
             </ScrollView>
             <View style={styles.transactionListContainer}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.accentGreen, fontSize: 14},
-                ]}>
+              <PrimaryText style={{color: colors.accentGreen}}>
                 All Transactions
-              </Text>
+              </PrimaryText>
+
               <View>
                 {allTransactions?.length === 0 ? (
                   <View style={styles.noTransactionContainer}>
@@ -96,13 +91,14 @@ const HomeScreen = () => {
                         style={styles.noImage}
                       />
                     )}
-                    <Text
-                      style={[
-                        styles.subtitleText,
-                        {color: colors.primaryText, fontSize: 13, marginTop: 5},
-                      ]}>
+                    <PrimaryText
+                      style={{
+                        color: colors.primaryText,
+                        fontSize: 13,
+                        marginTop: 5,
+                      }}>
                       No Transactions Yet
-                    </Text>
+                    </PrimaryText>
                   </View>
                 ) : (
                   <TransactionList
@@ -114,7 +110,7 @@ const HomeScreen = () => {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </PrimaryView>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={[styles.addButton, {backgroundColor: colors.primaryText}]}

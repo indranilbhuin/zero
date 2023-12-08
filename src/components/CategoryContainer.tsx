@@ -1,8 +1,9 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
 import {Colors} from '../types/colorType';
 import Category from '../schemas/CategorySchema';
+import PrimaryText from './atoms/PrimaryText';
 
 interface CategoryContainerProps {
   categories: Array<Category>;
@@ -45,13 +46,9 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
               </View>
             ) : null}
 
-            <Text
-              style={[
-                styles.subtitleText,
-                {color: colors.buttonText, fontSize: 13},
-              ]}>
+            <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
               {category.name}
-            </Text>
+            </PrimaryText>
           </View>
         </TouchableOpacity>
       ))}
@@ -65,11 +62,6 @@ const styles = StyleSheet.create({
   categoryMainContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   categoryContainer: {
     height: 45,

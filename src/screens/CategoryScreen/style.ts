@@ -1,11 +1,6 @@
 import {StyleSheet} from 'react-native';
 
 const categoryStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   headerContainer: {
     marginBottom: 20,
     marginTop: 20,
@@ -35,17 +30,6 @@ const categoryStyles = StyleSheet.create({
   },
   descriptionContainer: {
     flexDirection: 'row',
-  },
-  descriptionText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 10,
-    includeFontPadding: false,
-    marginRight: 5,
-  },
-  transactionText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 14,
-    includeFontPadding: false,
   },
   swipeView: {
     justifyContent: 'center',

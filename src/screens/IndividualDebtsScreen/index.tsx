@@ -15,6 +15,8 @@ import styles from './style';
 import useIndividualDebts, {
   IndividualDebtsScreenRouteProp,
 } from './useIndividualDebts';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const IndividualDebtsScreen = () => {
   const route = useRoute<IndividualDebtsScreenRouteProp>();
@@ -41,11 +43,7 @@ const IndividualDebtsScreen = () => {
   }
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text={debtorName} />
       </View>
@@ -58,17 +56,14 @@ const IndividualDebtsScreen = () => {
             width: '100%',
           },
         ]}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            },
-          ]}>
+        <PrimaryText
+          style={{
+            color: colors.buttonText,
+            fontSize: 13,
+            fontFamily: 'FiraCode-SemiBold',
+          }}>
           Total: {debtorTotal}
-        </Text>
+        </PrimaryText>
       </View>
       <ScrollView
         refreshControl={
@@ -94,13 +89,14 @@ const IndividualDebtsScreen = () => {
                       debt.date,
                     )
                   }>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {color: colors.buttonText, fontSize: 13, marginRight: 5},
-                    ]}>
+                  <PrimaryText
+                    style={{
+                      color: colors.buttonText,
+                      fontSize: 13,
+                      marginRight: 5,
+                    }}>
                     {debt.description}: {debt.amount}
-                  </Text>
+                  </PrimaryText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleDeleteDebt(debt._id)}>
                   <Icon
@@ -127,7 +123,7 @@ const IndividualDebtsScreen = () => {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

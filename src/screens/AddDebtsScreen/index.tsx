@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import AppHeader from '../../components/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
@@ -9,6 +9,8 @@ import Icon from '../../components/Icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import useAddDebts from './useAddDebts';
 import styles from './style';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const AddDebtsScreen = () => {
   const {
@@ -26,11 +28,7 @@ const AddDebtsScreen = () => {
   } = useAddDebts();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <AppHeader
           onPress={goBack}
@@ -72,10 +70,9 @@ const AddDebtsScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <Text
-          style={[styles.dateText, {color: colors.primaryText, fontSize: 14}]}>
+        <PrimaryText style={{color: colors.primaryText}}>
           {moment(createdAt).format('Do MMM YYYY')}
-        </Text>
+        </PrimaryText>
 
         <View>
           {showDatePicker && (
@@ -97,7 +94,7 @@ const AddDebtsScreen = () => {
           buttonTitle="Add"
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

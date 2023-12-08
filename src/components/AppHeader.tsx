@@ -1,7 +1,8 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
 import {Colors} from '../types/colorType';
+import PrimaryText from './atoms/PrimaryText';
 
 interface AppHeaderProps {
   onPress(): void;
@@ -23,9 +24,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({onPress, colors, text}) => {
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.buttonText, {color: colors.primaryText}]}>
-        {text}
-      </Text>
+      <PrimaryText style={{color: colors.primaryText}}>{text}</PrimaryText>
     </View>
   );
 };
@@ -37,10 +36,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-  },
-  buttonText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 14,
   },
   iconButtonContainer: {
     marginRight: 10,

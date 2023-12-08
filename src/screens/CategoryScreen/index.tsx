@@ -1,10 +1,4 @@
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {RefreshControl, ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {navigate} from '../../utils/navigationUtils';
 import Icon from '../../components/Icons';
@@ -12,6 +6,8 @@ import homeStyles from '../HomeScreen/style';
 import HeaderContainer from '../../components/HeaderContainer';
 import styles from './style';
 import useCategory from './useCategory';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const CategoryScreen = () => {
   const {colors, refreshing, onRefresh, categories, handleEdit, handleDelete} =
@@ -19,11 +15,7 @@ const CategoryScreen = () => {
 
   return (
     <>
-      <View
-        style={[
-          styles.mainContainer,
-          {backgroundColor: colors.primaryBackground},
-        ]}>
+      <PrimaryView colors={colors}>
         <View style={{marginBottom: 15}}>
           <HeaderContainer headerText={'Categories'} />
         </View>
@@ -56,13 +48,9 @@ const CategoryScreen = () => {
                     />
                   </View>
                   <View>
-                    <Text
-                      style={[
-                        styles.transactionText,
-                        {color: colors.primaryText},
-                      ]}>
+                    <PrimaryText style={{color: colors.primaryText}}>
                       {category.name}
-                    </Text>
+                    </PrimaryText>
                   </View>
                 </View>
                 <View style={styles.buttonContainer}>
@@ -98,7 +86,7 @@ const CategoryScreen = () => {
             ))}
           </View>
         </ScrollView>
-      </View>
+      </PrimaryView>
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
           style={[homeStyles.addButton, {backgroundColor: colors.primaryText}]}

@@ -1,4 +1,4 @@
-import {Modal, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/HeaderContainer';
@@ -6,6 +6,8 @@ import moment from 'moment';
 import {navigate} from '../../utils/navigationUtils';
 import styles from './style';
 import useReports from './useReports';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const ReportsScreen = () => {
   const {
@@ -47,19 +49,16 @@ const ReportsScreen = () => {
                   borderColor: colors.secondaryText,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color:
-                      year === selectedYear
-                        ? colors.buttonText
-                        : colors.primaryText,
-                    fontSize: 13,
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color:
+                    year === selectedYear
+                      ? colors.buttonText
+                      : colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {year}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
         ))}
@@ -100,13 +99,9 @@ const ReportsScreen = () => {
                   borderColor: colors.secondaryText,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.buttonText, fontSize: 13},
-                ]}>
+              <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
                 {month}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
         ))}
@@ -134,17 +129,14 @@ const ReportsScreen = () => {
                 borderColor: colors.secondaryText,
               },
             ]}>
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.buttonText,
-                  fontSize: 13,
-                  fontFamily: 'FiraCode-SemiBold',
-                },
-              ]}>
+            <PrimaryText
+              style={{
+                color: colors.buttonText,
+                fontSize: 13,
+                fontFamily: 'FiraCode-SemiBold',
+              }}>
               {selectedYear}
-            </Text>
+            </PrimaryText>
           </View>
         </TouchableOpacity>
         <Modal
@@ -164,16 +156,13 @@ const ReportsScreen = () => {
                     styles.selectedYearContainer,
                     {borderColor: colors.secondaryText},
                   ]}>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {
-                        color: colors.primaryText,
-                        fontSize: 20,
-                      },
-                    ]}>
+                  <PrimaryText
+                    style={{
+                      color: colors.primaryText,
+                      fontSize: 20,
+                    }}>
                     {selectedYear}
-                  </Text>
+                  </PrimaryText>
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {renderYearPickerItems()}
@@ -184,16 +173,9 @@ const ReportsScreen = () => {
                     {borderColor: colors.secondaryText},
                   ]}>
                   <TouchableOpacity onPress={handleYearPickerClose}>
-                    <Text
-                      style={[
-                        styles.subtitleText,
-                        {
-                          color: colors.primaryText,
-                          fontSize: 14,
-                        },
-                      ]}>
+                    <PrimaryText style={{color: colors.primaryText}}>
                       CANCEL
-                    </Text>
+                    </PrimaryText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -220,18 +202,15 @@ const ReportsScreen = () => {
             <View
               style={[styles.dotContainer, {backgroundColor: slice.svg.fill}]}
             />
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.primaryText,
-                  fontSize: 10,
-                  marginRight: 5,
-                },
-              ]}
+            <PrimaryText
+              style={{
+                color: colors.primaryText,
+                fontSize: 10,
+                marginRight: 5,
+              }}
               key={slice.key}>
               {slice?.label} |
-            </Text>
+            </PrimaryText>
           </View>
         ))}
       </View>
@@ -331,40 +310,30 @@ const ReportsScreen = () => {
           onPress={() =>
             navigate('EverydayTransactionScreen', {dayTransactions, isDate})
           }>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.primaryText,
-                fontSize: 13,
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+            }}>
             {day !== 0 ? day : ''}
-          </Text>
+          </PrimaryText>
         </TouchableOpacity>
       ) : (
         <View key={index} style={[styles.calendarDay, {backgroundColor}]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.primaryText,
-                fontSize: 13,
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+            }}>
             {''}
-          </Text>
+          </PrimaryText>
         </View>
       );
     });
   };
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <HeaderContainer headerText={'Reports'} />
       <View
         style={{
@@ -396,17 +365,14 @@ const ReportsScreen = () => {
               width: '48.5%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Total: {totalAmountForMonth}
-          </Text>
+          </PrimaryText>
         </View>
         <View
           style={[
@@ -417,17 +383,14 @@ const ReportsScreen = () => {
               width: '48.5%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Avg/Day: {(totalAmountForMonth / daysInMonth).toFixed(2)}
-          </Text>
+          </PrimaryText>
         </View>
       </View>
 
@@ -436,22 +399,19 @@ const ReportsScreen = () => {
         <View style={styles.calendarContainer}>
           {dayNames.map((day, index) => (
             <View key={index} style={styles.calendarDay}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color: colors.primaryText,
-                    fontSize: 13,
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {day}
-              </Text>
+              </PrimaryText>
             </View>
           ))}
         </View>
         <View style={styles.calendarContainer}>{renderCalendar()}</View>
       </ScrollView>
-    </View>
+    </PrimaryView>
   );
 };
 

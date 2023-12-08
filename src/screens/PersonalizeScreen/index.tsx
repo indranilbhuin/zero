@@ -1,43 +1,37 @@
-import {Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import PrimaryButton from '../../components/PrimaryButton';
 import styles from './style';
 import usePersonalize from './usePersonalize';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const PersonalizeScreen = () => {
   const {colors, setName, name, handleSubmit, handleSkip} = usePersonalize();
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <TouchableOpacity style={styles.skipButtonContainer} onPress={handleSkip}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.accentGreen, fontSize: 12},
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 12}}>
           skip
-        </Text>
+        </PrimaryText>
       </TouchableOpacity>
 
       <View style={styles.titleTextContainer}>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           Let's Personlize your
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        </PrimaryText>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 24}}>
           experience
-        </Text>
+        </PrimaryText>
       </View>
 
       <View style={styles.subtitleTextContainer}>
-        <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
           Hi, It's zero! What Do Your Friends
-        </Text>
-        <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
+        </PrimaryText>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
           Call You?
-        </Text>
+        </PrimaryText>
       </View>
 
       <View style={styles.textInputContainer}>
@@ -62,7 +56,7 @@ const PersonalizeScreen = () => {
         colors={colors}
         buttonTitle={'Continue'}
       />
-    </View>
+    </PrimaryView>
   );
 };
 

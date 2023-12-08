@@ -1,11 +1,6 @@
 import {StyleSheet} from 'react-native';
 
 const addDebtsStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   headerContainer: {
     marginBottom: 20,
     marginTop: 20,
@@ -28,11 +23,6 @@ const addDebtsStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     marginTop: 5,
-  },
-  dateText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
 });
 

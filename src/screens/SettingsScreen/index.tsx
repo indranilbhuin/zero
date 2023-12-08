@@ -16,6 +16,8 @@ import Icon from '../../components/Icons';
 import {goBack} from '../../utils/navigationUtils';
 import useSettings from './useSettings';
 import styles from './style';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const SettingsScreen = () => {
   const {
@@ -54,13 +56,7 @@ const SettingsScreen = () => {
     return themes.map(theme => (
       <TouchableOpacity key={theme} onPress={() => onThemeSelect(theme)}>
         <View style={styles.radioButtonContainer}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {color: colors.primaryText, fontSize: 15},
-            ]}>
-            {theme}
-          </Text>
+          <PrimaryText style={{color: colors.primaryText}}>{theme}</PrimaryText>
           <View style={[styles.radioButton, {borderColor: colors.primaryText}]}>
             {selectedTheme === theme && (
               <View
@@ -95,28 +91,16 @@ const SettingsScreen = () => {
                 },
               ]}>
               <View style={chooseCurrencyStyles.symbolContainer}>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.buttonText, fontSize: 20},
-                  ]}>
+                <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
                   {currency.symbolNative}
-                </Text>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.buttonText, fontSize: 13},
-                  ]}>
+                </PrimaryText>
+                <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
                   {currency.code}
-                </Text>
+                </PrimaryText>
               </View>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.buttonText, fontSize: 10},
-                ]}>
+              <PrimaryText style={{color: colors.buttonText, fontSize: 10}}>
                 {currency.name}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
         ))}
@@ -125,11 +109,7 @@ const SettingsScreen = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <View style={styles.greetingsContainer}>
           <View style={styles.iconButtonContainer}>
@@ -142,19 +122,15 @@ const SettingsScreen = () => {
               />
             </TouchableOpacity>
           </View>
-          <Text style={[styles.titleText, {color: colors.primaryText}]}>
+          <PrimaryText style={{color: colors.primaryText, fontSize: 25}}>
             zero
-          </Text>
+          </PrimaryText>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.accentGreen, fontSize: 14, marginTop: 15},
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
           Appearance & Personalization
-        </Text>
+        </PrimaryText>
         <View
           style={[
             styles.settingsContainer,
@@ -171,20 +147,12 @@ const SettingsScreen = () => {
                   borderColor: colors.secondaryText,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 Choose Theme
-              </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
+              </PrimaryText>
+              <PrimaryText style={{color: colors.primaryText}}>
                 {selectedTheme}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsNameModalVisible(true)}>
@@ -196,20 +164,12 @@ const SettingsScreen = () => {
                   borderColor: colors.secondaryText,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 Change Name
-              </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
+              </PrimaryText>
+              <PrimaryText style={{color: colors.primaryText}}>
                 {userName}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsCurrencyModalVisible(true)}>
@@ -223,40 +183,24 @@ const SettingsScreen = () => {
                   borderBottomRightRadius: 8,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14, width: '50%'},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText, width: '50%'}}>
                 Change Currency Symbol
-              </Text>
+              </PrimaryText>
               <View style={{alignItems: 'flex-end'}}>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.primaryText, fontSize: 14},
-                  ]}>
+                <PrimaryText style={{color: colors.primaryText}}>
                   {currencySymbol}
-                </Text>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.primaryText, fontSize: 14},
-                  ]}>
+                </PrimaryText>
+                <PrimaryText style={{color: colors.primaryText}}>
                   {currencyName}
-                </Text>
+                </PrimaryText>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.accentGreen, fontSize: 14, marginTop: 15},
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
           Help & Feedback
-        </Text>
+        </PrimaryText>
         <View
           style={[
             styles.settingsContainer,
@@ -276,20 +220,12 @@ const SettingsScreen = () => {
                   alignItems: 'flex-start',
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 Rate the app
-              </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 11},
-                ]}>
+              </PrimaryText>
+              <PrimaryText style={{color: colors.primaryText, fontSize: 11}}>
                 Enjoying Expense Tracker? Your feedback helps us improve!
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleGithub}>
@@ -303,20 +239,12 @@ const SettingsScreen = () => {
                   alignItems: 'flex-start',
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 Github
-              </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 11},
-                ]}>
+              </PrimaryText>
+              <PrimaryText style={{color: colors.primaryText, fontSize: 11}}>
                 Explore the Source Code
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handlePrivacyPolicy}>
@@ -330,20 +258,12 @@ const SettingsScreen = () => {
                   alignItems: 'flex-start',
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14, width: '50%'},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 Privacy Policy
-              </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 11},
-                ]}>
+              </PrimaryText>
+              <PrimaryText style={{color: colors.primaryText, fontSize: 11}}>
                 Your Data, Your Device: zero Servers, zero Access.
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableWithoutFeedback>
@@ -359,49 +279,35 @@ const SettingsScreen = () => {
                   borderBottomRightRadius: 8,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 14, width: '50%'},
-                ]}>
+              <PrimaryText style={{color: colors.primaryText}}>
                 Version
-              </Text>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.primaryText, fontSize: 11},
-                ]}>
+              </PrimaryText>
+              <PrimaryText style={{color: colors.primaryText, fontSize: 11}}>
                 v{appVersion}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableWithoutFeedback>
         </View>
-        <Text
-          style={[
-            styles.subtitleText,
-            {
-              color: colors.primaryText,
-              fontSize: 12,
-              alignSelf: 'center',
-              textAlign: 'center',
-              marginTop: 15,
-            },
-          ]}>
+        <PrimaryText
+          style={{
+            color: colors.primaryText,
+            fontSize: 12,
+            alignSelf: 'center',
+            textAlign: 'center',
+            marginTop: 15,
+          }}>
           Embrace the simplicity of zero
-        </Text>
-        <Text
-          style={[
-            styles.subtitleText,
-            {
-              color: colors.primaryText,
-              fontSize: 12,
-              alignSelf: 'center',
-              textAlign: 'center',
-            },
-          ]}>
+        </PrimaryText>
+        <PrimaryText
+          style={{
+            color: colors.primaryText,
+            fontSize: 12,
+            alignSelf: 'center',
+            textAlign: 'center',
+          }}>
           Developed with{' '}
           <Text style={{color: colors.accentGreen}}>passion</Text> in India.
-        </Text>
+        </PrimaryText>
       </ScrollView>
 
       <Modal
@@ -412,19 +318,16 @@ const SettingsScreen = () => {
         <View style={[styles.modalContainer]}>
           <View
             style={[styles.modal, {backgroundColor: colors.containerColor}]}>
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.primaryText,
-                  fontSize: 17,
-                  marginTop: 10,
-                  marginBottom: 30,
-                  fontFamily: 'FiraCode-SemiBold',
-                },
-              ]}>
+            <PrimaryText
+              style={{
+                color: colors.primaryText,
+                fontSize: 17,
+                marginTop: 10,
+                marginBottom: 30,
+                fontFamily: 'FiraCode-SemiBold',
+              }}>
               Select Theme
-            </Text>
+            </PrimaryText>
             {renderRadioButtons(handleThemeSelection)}
           </View>
         </View>
@@ -438,19 +341,16 @@ const SettingsScreen = () => {
         <View style={[styles.modalContainer]}>
           <View
             style={[styles.modal, {backgroundColor: colors.containerColor}]}>
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.primaryText,
-                  fontSize: 17,
-                  marginTop: 10,
-                  marginBottom: 30,
-                  fontFamily: 'FiraCode-SemiBold',
-                },
-              ]}>
+            <PrimaryText
+              style={{
+                color: colors.primaryText,
+                fontSize: 17,
+                marginTop: 10,
+                marginBottom: 30,
+                fontFamily: 'FiraCode-SemiBold',
+              }}>
               Change Name
-            </Text>
+            </PrimaryText>
             <CustomInput
               colors={colors}
               input={name}
@@ -475,19 +375,16 @@ const SettingsScreen = () => {
           <View
             style={[styles.modal, {backgroundColor: colors.containerColor}]}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color: colors.primaryText,
-                    fontSize: 17,
-                    marginTop: 10,
-                    marginBottom: 30,
-                    fontFamily: 'FiraCode-SemiBold',
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 17,
+                  marginTop: 10,
+                  marginBottom: 30,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
                 Select Currency Symbol
-              </Text>
+              </PrimaryText>
               <TextInput
                 style={[
                   addCategoryStyles.textInput,
@@ -511,7 +408,7 @@ const SettingsScreen = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </PrimaryView>
   );
 };
 

@@ -1,19 +1,9 @@
 import {StyleSheet} from 'react-native';
 
 const addCategoryStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   headerContainer: {
     marginBottom: 20,
     marginTop: 20,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 14,
-    includeFontPadding: false,
   },
   modalContainer: {
     width: '100%',
@@ -30,9 +20,9 @@ const addCategoryStyles = StyleSheet.create({
     height: 30,
     width: 30,
     margin: 12,
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5
+    borderRadius: 5,
   },
   textInput: {
     height: 60,
@@ -47,8 +37,8 @@ const addCategoryStyles = StyleSheet.create({
   colorCircle: {
     height: 25,
     width: 25,
-    borderRadius: 50
-  }
+    borderRadius: 50,
+  },
 });
 
 export default addCategoryStyles;

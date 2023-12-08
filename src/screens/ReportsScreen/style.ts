@@ -1,11 +1,6 @@
 import {StyleSheet} from 'react-native';
 
 const reportsStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   categoryContainer: {
     height: 35,
     padding: 5,
@@ -14,11 +9,6 @@ const reportsStyles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   modalContainer: {
     flex: 1,
@@ -40,7 +30,6 @@ const reportsStyles = StyleSheet.create({
     paddingTop: 10,
     borderTopWidth: 0.8,
   },
-  buttonText: {},
   yearContainer: {
     padding: 3,
     borderRadius: 5,

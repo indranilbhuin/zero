@@ -1,6 +1,5 @@
 import {
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -19,6 +18,8 @@ import useAddTransaction from './useAddTransaction';
 import styles from './style';
 import {useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const AddTransactionsScreen = () => {
   const {
@@ -41,14 +42,9 @@ const AddTransactionsScreen = () => {
   } = useAddTransaction();
 
   const currencySymbol = useSelector(selectCurrencySymbol);
-  console.log("hehehe", categories)
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text="Transaction Screen" />
       </View>
@@ -67,13 +63,9 @@ const AddTransactionsScreen = () => {
         placeholder="eg. From Aroma's"
         label="Expense Description"
       />
-      <Text
-        style={[
-          styles.labelText,
-          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
-        ]}>
+      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
         Expense Amount
-      </Text>
+      </PrimaryText>
       <View
         style={[
           styles.textInputContainer,
@@ -82,13 +74,9 @@ const AddTransactionsScreen = () => {
             backgroundColor: colors.secondaryBackground,
           },
         ]}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.primaryText, fontSize: 15},
-          ]}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 15}}>
           {currencySymbol}
-        </Text>
+        </PrimaryText>
         <TextInput
           style={[
             styles.textInput,
@@ -121,10 +109,9 @@ const AddTransactionsScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <Text
-          style={[styles.dateText, {color: colors.primaryText, fontSize: 14}]}>
+        <PrimaryText style={{color: colors.primaryText}}>
           {moment(createdAt).format('Do MMM YYYY')}
-        </Text>
+        </PrimaryText>
 
         <View>
           {showDatePicker && (
@@ -139,13 +126,9 @@ const AddTransactionsScreen = () => {
           )}
         </View>
       </View>
-      <Text
-        style={[
-          styles.subtitleText,
-          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
-        ]}>
+      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
         Select any category
-      </Text>
+      </PrimaryText>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CategoryContainer
           categories={categories}
@@ -169,7 +152,7 @@ const AddTransactionsScreen = () => {
           buttonTitle="Add"
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

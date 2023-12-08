@@ -1,4 +1,4 @@
-import {Image, Text, View} from 'react-native';
+import {Image, View} from 'react-native';
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
 import AppHeader from '../../components/AppHeader';
@@ -9,6 +9,8 @@ import useEverydayTransaction, {
   EverydayTransactionRouteProp,
 } from './useEverydayTransaction';
 import styles from './style';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const EverydayTransactionScreen = () => {
   const route = useRoute<EverydayTransactionRouteProp>();
@@ -23,11 +25,7 @@ const EverydayTransactionScreen = () => {
   } = useEverydayTransaction(route);
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <AppHeader
           onPress={goBack}
@@ -49,16 +47,13 @@ const EverydayTransactionScreen = () => {
                 style={styles.noImage}
               />
             )}
-            <Text
-              style={[
-                styles.subtitleText,
-                {color: colors.primaryText, fontSize: 13, marginTop: 5},
-              ]}>
+            <PrimaryText
+              style={{color: colors.primaryText, fontSize: 13, marginTop: 5}}>
               No Transactions on{' '}
               {formattedDate === undefined
                 ? moment(date).format('Do MMM YY')
                 : moment(noTransactionDate).format('Do MMM YY')}
-            </Text>
+            </PrimaryText>
           </View>
         ) : (
           <TransactionList
@@ -67,7 +62,7 @@ const EverydayTransactionScreen = () => {
           />
         )}
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

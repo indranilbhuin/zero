@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import AppHeader from '../../components/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
@@ -10,6 +10,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {useRoute} from '@react-navigation/native';
 import useUpdateDebt from './useUpdateDebt';
 import styles from './style';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const UpdateDebtScreen = () => {
   const route = useRoute();
@@ -28,11 +30,7 @@ const UpdateDebtScreen = () => {
   } = useUpdateDebt(route);
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.headerContainer}>
         <AppHeader
           onPress={goBack}
@@ -74,10 +72,9 @@ const UpdateDebtScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <Text
-          style={[styles.dateText, {color: colors.primaryText, fontSize: 14}]}>
+        <PrimaryText style={{color: colors.primaryText}}>
           {moment(createdAt).format('Do MMM YYYY')}
-        </Text>
+        </PrimaryText>
 
         <View>
           {showDatePicker && (
@@ -99,7 +96,7 @@ const UpdateDebtScreen = () => {
           buttonTitle="Update"
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

@@ -1,11 +1,6 @@
 import {StyleSheet} from 'react-native';
 
 const individualDebtsStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   headerContainer: {
     marginBottom: 20,
     marginTop: 20,
@@ -24,11 +19,6 @@ const individualDebtsStyles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 5,
     flexDirection: 'row',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   debtsMainContainer: {
     flexDirection: 'row',

@@ -1,10 +1,4 @@
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import moment from 'moment';
 import AppHeader from '../../components/AppHeader';
@@ -21,6 +15,8 @@ import useUpdateTransaction, {
   UpdateTransactionScreenRouteProp,
 } from './useUpdateTransaction';
 import styles from './style';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const UpdateTransactionScreen = () => {
   const route = useRoute<UpdateTransactionScreenRouteProp>();
@@ -45,11 +41,7 @@ const UpdateTransactionScreen = () => {
   } = useUpdateTransaction(route);
 
   return (
-    <View
-      style={[
-        addTransactionStyles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={addTransactionStyles.headerContainer}>
         <AppHeader
           onPress={goBack}
@@ -73,13 +65,9 @@ const UpdateTransactionScreen = () => {
         label="Expense Description"
       />
 
-      <Text
-        style={[
-          styles.labelText,
-          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
-        ]}>
+      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
         Expense Amount
-      </Text>
+      </PrimaryText>
       <View
         style={[
           styles.textInputContainer,
@@ -88,13 +76,9 @@ const UpdateTransactionScreen = () => {
             backgroundColor: colors.secondaryBackground,
           },
         ]}>
-        <Text
-          style={[
-            addTransactionStyles.subtitleText,
-            {color: colors.primaryText, fontSize: 15},
-          ]}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 15}}>
           {currencySymbol}
-        </Text>
+        </PrimaryText>
         <TextInput
           style={[
             styles.textInput,
@@ -128,13 +112,9 @@ const UpdateTransactionScreen = () => {
           </View>
         </TouchableOpacity>
 
-        <Text
-          style={[
-            addTransactionStyles.dateText,
-            {color: colors.primaryText, fontSize: 14},
-          ]}>
+        <PrimaryText style={{color: colors.primaryText}}>
           {moment(createdAt).format('Do MMM YYYY')}
-        </Text>
+        </PrimaryText>
 
         <View>
           {showDatePicker && (
@@ -149,13 +129,9 @@ const UpdateTransactionScreen = () => {
           )}
         </View>
       </View>
-      <Text
-        style={[
-          addTransactionStyles.subtitleText,
-          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
-        ]}>
+      <PrimaryText style={{color: colors.primaryText, marginBottom: 5}}>
         Select any category
-      </Text>
+      </PrimaryText>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CategoryContainer
           categories={categories}
@@ -179,7 +155,7 @@ const UpdateTransactionScreen = () => {
           buttonTitle="Update"
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 
