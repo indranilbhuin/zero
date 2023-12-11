@@ -17,6 +17,7 @@ import useIndividualDebts, {
 } from './useIndividualDebts';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import mainStyles from '../../styles/main';
 
 const IndividualDebtsScreen = () => {
   const route = useRoute<IndividualDebtsScreenRouteProp>();
@@ -44,7 +45,7 @@ const IndividualDebtsScreen = () => {
 
   return (
     <PrimaryView colors={colors}>
-      <View style={styles.headerContainer}>
+      <View style={mainStyles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text={debtorName} />
       </View>
       <View

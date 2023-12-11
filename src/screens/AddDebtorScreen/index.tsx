@@ -6,10 +6,10 @@ import CustomInput from '../../components/atoms/CustomInput';
 import CategoryContainer from '../../components/molecules/CategoryContainer';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
-import styles from './style';
 import useAddDebtor from './useAddDebtor';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import mainStyles from '../../styles/main';
 
 const AddDebtorScreen = () => {
   const {
@@ -23,7 +23,7 @@ const AddDebtorScreen = () => {
 
   return (
     <PrimaryView colors={colors}>
-      <View style={styles.headerContainer}>
+      <View style={mainStyles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text="Add Debtor" />
       </View>
       <PrimaryText style={{marginBottom: 5}}>Select Debt Category</PrimaryText>

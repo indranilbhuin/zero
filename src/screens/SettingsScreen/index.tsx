@@ -10,7 +10,6 @@ import {
 import React from 'react';
 import CustomInput from '../../components/atoms/CustomInput';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
-import chooseCurrencyStyles from '../ChooseCurrencyScreen/style';
 import Icon from '../../components/atoms/Icons';
 import {goBack} from '../../utils/navigationUtils';
 import useSettings from './useSettings';
@@ -18,6 +17,7 @@ import styles from './style';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import textInputStyles from '../../styles/textInput';
+import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
 
 const SettingsScreen = () => {
   const {
@@ -70,42 +70,6 @@ const SettingsScreen = () => {
         </View>
       </TouchableOpacity>
     ));
-  };
-
-  const renderCurrencySymbol = () => {
-    return (
-      <View style={chooseCurrencyStyles.currencyMainContainer}>
-        {filteredCurrencies.map(currency => (
-          <TouchableOpacity
-            key={currency.code}
-            onPress={() => handleCurrencySelect(currency)}>
-            <View
-              style={[
-                chooseCurrencyStyles.currencyContainer,
-                {
-                  backgroundColor:
-                    selectedCurrency?.code === currency.code
-                      ? colors.accentGreen
-                      : colors.primaryText,
-                  borderColor: colors.secondaryText,
-                },
-              ]}>
-              <View style={chooseCurrencyStyles.symbolContainer}>
-                <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
-                  {currency.symbolNative}
-                </PrimaryText>
-                <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
-                  {currency.code}
-                </PrimaryText>
-              </View>
-              <PrimaryText style={{color: colors.buttonText, fontSize: 10}}>
-                {currency.name}
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
   };
 
   return (
@@ -389,7 +353,11 @@ const SettingsScreen = () => {
                   placeholderTextColor={colors.secondaryText}
                 />
               </View>
-              {renderCurrencySymbol()}
+              <CurrencySymbolPicker
+                filteredCurrencies={filteredCurrencies}
+                selectedCurrency={selectedCurrency}
+                handleCurrencySelect={handleCurrencySelect}
+              />
               <PrimaryButton
                 onPress={handleCurrencyUpdate}
                 colors={colors}

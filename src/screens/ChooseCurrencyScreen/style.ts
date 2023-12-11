@@ -24,14 +24,6 @@ const chooseCurrencyStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  currencyMainContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
   currencyContainer: {
     width: 95.5,
     height: 80,
@@ -41,11 +33,6 @@ const chooseCurrencyStyles = StyleSheet.create({
     borderWidth: 2,
     padding: 5,
     justifyContent: 'space-evenly',
-  },
-  symbolContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
 });
 

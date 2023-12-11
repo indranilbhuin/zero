@@ -1,10 +1,6 @@
 import {StyleSheet} from 'react-native';
 
 const categoryStyles = StyleSheet.create({
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
   transactionContainer: {
     height: 60,
     width: '100%',
@@ -30,18 +26,6 @@ const categoryStyles = StyleSheet.create({
   },
   descriptionContainer: {
     flexDirection: 'row',
-  },
-  swipeView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 60,
-    width: 60,
-  },
-  stretchView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 60,
-    width: 250,
   },
   buttonContainer: {
     flexDirection: 'row',

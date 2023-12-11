@@ -1,10 +1,6 @@
 import {StyleSheet} from 'react-native';
 
 const individualDebtsStyles = StyleSheet.create({
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
   submitButtonContainer: {
     marginTop: 5,
     marginBottom: 15,

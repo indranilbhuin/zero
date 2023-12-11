@@ -11,6 +11,7 @@ import useEverydayTransaction, {
 import styles from './style';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import mainStyles from '../../styles/main';
 
 const EverydayTransactionScreen = () => {
   const route = useRoute<EverydayTransactionRouteProp>();
@@ -26,7 +27,7 @@ const EverydayTransactionScreen = () => {
 
   return (
     <PrimaryView colors={colors}>
-      <View style={styles.headerContainer}>
+      <View style={mainStyles.headerContainer}>
         <AppHeader
           onPress={goBack}
           colors={colors}
