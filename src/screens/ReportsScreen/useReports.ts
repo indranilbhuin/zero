@@ -23,12 +23,16 @@ const useReports = () => {
   const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
   console.log('copy', allTransactionsCopy, 'real', allTransactions);
 
-  const filterTransactions = (year, month) => {
-    const filtered = allTransactionsCopy?.filter(item => {
-      const transactionYear = moment(item.date).year();
-      const transactionMonth = moment(item.date).format('MMMM');
-      return transactionYear === year && (!month || transactionMonth === month);
-    });
+  const filterTransactions = (year: number, month: string) => {
+    const filtered = allTransactionsCopy?.filter(
+      (item: {date: moment.MomentInput}) => {
+        const transactionYear = moment(item.date).year();
+        const transactionMonth = moment(item.date).format('MMMM');
+        return (
+          transactionYear === year && (!month || transactionMonth === month)
+        );
+      },
+    );
 
     setFilteredTransactions(filtered.length > 0 ? filtered : []);
   };
@@ -59,7 +63,7 @@ const useReports = () => {
   };
 
   const totalAmountForMonth = filteredTransactions.reduce(
-    (sum, transaction) => sum + transaction.amount,
+    (sum, transaction: {amount: number}) => sum + transaction.amount,
     0,
   );
 

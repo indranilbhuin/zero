@@ -8,6 +8,7 @@ import {
 import {useEffect, useState} from 'react';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import Debtor from '../../schemas/DebtorSchema';
 
 const useDebts = () => {
   const colors = useThemeColors();
@@ -20,20 +21,22 @@ const useDebts = () => {
   console.log(debtors);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const personDebtors = debtors.filter(debtor => debtor.type === 'Person');
+  const personDebtors = debtors.filter(
+    (debtor: Debtor) => debtor.type === 'Person',
+  );
   const otherAccountsDebtors = debtors.filter(
-    debtor => debtor.type !== 'Person',
+    (debtor: Debtor) => debtor.type !== 'Person',
   );
 
   const totalDebts = allDebtsCopy.reduce(
-    (total, debt) => total + debt.amount,
+    (total: number, debt: {amount: number}) => total + debt.amount,
     0,
   );
 
   let personTotalDebts = 0;
   let otherTotalDebts = 0;
 
-  allDebtsCopy.forEach(debt => {
+  allDebtsCopy.forEach((debt: {debtor: {type: string}; amount: number}) => {
     if (debt.debtor.type === 'Person') {
       personTotalDebts += debt.amount;
     } else {
@@ -45,7 +48,7 @@ const useDebts = () => {
     dispatch({type: FETCH_ALL_DEBTOR_DATA});
     dispatch(getAllDebtRequest());
   }, []);
-  
+
   return {
     colors,
     debtors,

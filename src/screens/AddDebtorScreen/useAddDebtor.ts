@@ -5,22 +5,25 @@ import {selectUserId} from '../../redux/slice/userIdSlice';
 import {createDebtor} from '../../services/DebtorService';
 import {goBack} from '../../utils/navigationUtils';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import Category from '../../schemas/CategorySchema';
 
 const useAddDebtor = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const [debtorTitle, setDebtorTitle] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
+    [],
+  );
   const userId = useSelector(selectUserId);
 
-  const toggleCategorySelection = category => {
+  const toggleCategorySelection = (category: Category) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories([]);
     } else {
       setSelectedCategories([category]);
     }
   };
-
+  console.log('tshsjkakka', selectedCategories);
   const handleAddDebtor = () => {
     try {
       createDebtor(
@@ -36,7 +39,7 @@ const useAddDebtor = () => {
       console.error('Error creating debtor:', error);
     }
   };
-  
+
   return {
     colors,
     toggleCategorySelection,

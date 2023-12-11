@@ -1,12 +1,12 @@
 import {TextInput, View} from 'react-native';
 import React from 'react';
-import {Colors} from '../../types/colorType';
 import PrimaryText from './PrimaryText';
 import textInputStyles from '../../styles/textInput';
+import {Colors} from '../../hooks/useThemeColors';
 
 interface CustomInputProps {
   input: string;
-  label: string;
+  label?: string;
   colors: Colors;
   placeholder: string;
   setInput: (value: string) => void;

@@ -40,7 +40,12 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     setRefreshing(true);
   };
 
-  const handleEditDebt = (debtId, debtDescription, amount, debtDate) => {
+  const handleEditDebt = (
+    debtId: string,
+    debtDescription: string,
+    amount: number,
+    debtDate: Date,
+  ) => {
     navigate('UpdateDebtScreen', {
       debtId,
       debtDescription,
@@ -51,7 +56,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     });
   };
 
-  const handleDeleteDebt = debtId => {
+  const handleDeleteDebt = (debtId: string) => {
     deleteDebtById(Realm.BSON.ObjectID.createFromHexString(debtId));
     dispatch(getDebtRequest(debtorId));
     dispatch(getAllDebtRequest());

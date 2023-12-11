@@ -1,6 +1,6 @@
 import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useRef} from 'react';
-import useThemeColors from '../../hooks/useThemeColors';
+import useThemeColors, {Colors} from '../../hooks/useThemeColors';
 import Icon from '../atoms/Icons';
 import moment from 'moment';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
@@ -10,7 +10,6 @@ import {deleteExpenseById} from '../../services/ExpenseService';
 import {useDispatch} from 'react-redux';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import Expense from '../../schemas/ExpenseSchema';
-import {Colors} from '../../types/colorType';
 import {Dispatch} from 'redux';
 import PrimaryText from '../atoms/PrimaryText';
 

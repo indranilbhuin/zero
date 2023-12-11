@@ -5,10 +5,13 @@ import {selectUserId} from '../../redux/slice/userIdSlice';
 import {navigate} from '../../utils/navigationUtils';
 import {FETCH_ALL_USER_DATA} from '../../redux/actionTypes';
 import {createCategory} from '../../services/CategoryService';
+import Category from '../../schemas/CategorySchema';
 
 const useOnboarding = () => {
   const colors = useThemeColors();
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
+    [],
+  );
   const userId = useSelector(selectUserId);
 
   const dispatch = useDispatch();
@@ -34,7 +37,7 @@ const useOnboarding = () => {
     navigate('ChooseCurrencyScreen');
   };
 
-  const toggleCategorySelection = category => {
+  const toggleCategorySelection = (category: Category) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(
         selectedCategories.filter(item => item !== category),

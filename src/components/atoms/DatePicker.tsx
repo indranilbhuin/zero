@@ -3,18 +3,30 @@ import React from 'react';
 import Icon from './Icons';
 import PrimaryText from './PrimaryText';
 import moment from 'moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import useThemeColors from '../../hooks/useThemeColors';
 
-const DatePicker = ({
+interface DatePickerProps {
+  createdAt: Date;
+  showDatePicker: boolean;
+  setCreatedAt: (value: Date) => void;
+  setShowDatePicker: (value: boolean) => void;
+}
+
+const DatePicker: React.FC<DatePickerProps> = ({
   setShowDatePicker,
   createdAt,
   showDatePicker,
   setCreatedAt,
 }) => {
   const colors = useThemeColors();
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || createdAt;
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date | undefined,
+  ) => {
+    const currentDate = selectedDate ?? createdAt;
     const utcDate = moment(currentDate).utc().toDate();
     setCreatedAt(utcDate);
     setShowDatePicker(false);

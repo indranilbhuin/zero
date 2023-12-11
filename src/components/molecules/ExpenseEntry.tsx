@@ -111,7 +111,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     }
   };
 
-  const toggleCategorySelection = category => {
+  const toggleCategorySelection = (category: any) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories([]);
     } else {

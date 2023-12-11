@@ -1,9 +1,23 @@
 import React from 'react';
 import DebtEntry from '../../components/molecules/DebtEntry';
-import {useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+export type DebtsScreenProp = RouteProp<
+  {
+    DebtsScreen: {
+      debtorId: string;
+      debtorName: string;
+      debtId: string;
+      debtDescription: string;
+      amount: number;
+      debtDate: string;
+    };
+  },
+  'DebtsScreen'
+>;
 
 const AddDebtsScreen = () => {
-  const route = useRoute();
+  const route = useRoute<DebtsScreenProp>();
 
   return <DebtEntry route={route} buttonText="Add" />;
 };

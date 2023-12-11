@@ -98,7 +98,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   }, [searchText]);
 
   const renderIcons = () => {
-    const handleSelectIcon = iconName => {
+    const handleSelectIcon = (iconName: string) => {
       setSelectedIcon(iconName);
       setIsIconModalVisible(false);
     };
@@ -107,9 +107,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     const iconsPerRow = 6;
     const iconSize = (screenWidth * 0.7) / iconsPerRow;
 
-    return filteredIcons.map((iconName, index) => (
+    return filteredIcons.map(iconName => (
       <TouchableOpacity
-        key={index}
+        key={iconName}
         style={[
           styles.iconItem,
           {
@@ -135,7 +135,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   };
 
   const renderColors = () => {
-    const handleSelectColor = color => {
+    const handleSelectColor = (color: string) => {
       setSelectedColor(color);
       setIsColorModalVisible(false);
     };
@@ -145,9 +145,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     const colorSize = (screenWidth * 0.7) / colorsPerRow;
     console.log(allColors);
 
-    return Object.keys(allColors).map((color, index) => (
+    return Object.keys(allColors).map(color => (
       <TouchableOpacity
-        key={index}
+        key={color}
         style={[
           styles.iconItem,
           {
@@ -356,5 +356,19 @@ const styles = StyleSheet.create({
   submitButtonContainer: {
     marginTop: 5,
     marginBottom: 15,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  dateButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+    width: 40,
+    borderRadius: 5,
+    borderWidth: 2,
+    marginRight: 10,
   },
 });

@@ -51,7 +51,10 @@ const SettingsScreen = () => {
     handlePrivacyPolicy,
   } = useSettings();
 
-  const renderRadioButtons = onThemeSelect => {
+  const renderRadioButtons = (onThemeSelect: {
+    (theme: any): Promise<void>;
+    (arg0: string): void;
+  }) => {
     const themes = ['light', 'dark', 'system'];
     return themes.map(theme => (
       <TouchableOpacity key={theme} onPress={() => onThemeSelect(theme)}>

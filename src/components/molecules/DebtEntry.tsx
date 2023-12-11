@@ -13,13 +13,15 @@ import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 import {getDebtRequest} from '../../redux/slice/debtDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
+import {DebtsScreenProp} from '../../screens/AddDebtsScreen';
 
 interface DebtEntryProps {
   buttonText: string;
-  route: any;
+  route: DebtsScreenProp;
 }
 
 const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
+  console.log('the app', route);
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const {debtId, debtDescription, amount, debtorName, debtDate, debtorId} =

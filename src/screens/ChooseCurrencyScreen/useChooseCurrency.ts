@@ -6,12 +6,15 @@ import {createCurrency} from '../../services/CurrencyService';
 import AsyncStorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import currencies from '../../../assets/jsons/currencies.json';
+import Currency from '../../schemas/CurrencySchema';
 
 const useChooseCurrency = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
-  const [selectedCurrency, setSelectedCurrency] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(
+    null,
+  );
   const userId = useSelector(selectUserId);
   const dispatch = useDispatch();
 
@@ -46,7 +49,7 @@ const useChooseCurrency = () => {
     setFilteredCurrencies(filtered);
   };
 
-  const handleCurrencySelect = currency => {
+  const handleCurrencySelect = (currency: any) => {
     setSelectedCurrency(currency);
   };
 

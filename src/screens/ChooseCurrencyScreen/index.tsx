@@ -65,13 +65,11 @@ const ChooseCurrencyScreen = () => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.currencyMainContainer}>
-          <CurrencySymbolPicker
-            filteredCurrencies={filteredCurrencies}
-            selectedCurrency={selectedCurrency}
-            handleCurrencySelect={handleCurrencySelect}
-          />
-        </View>
+        <CurrencySymbolPicker
+          filteredCurrencies={filteredCurrencies}
+          selectedCurrency={selectedCurrency}
+          handleCurrencySelect={handleCurrencySelect}
+        />
       </ScrollView>
 
       <View style={{marginBottom: 20}}>

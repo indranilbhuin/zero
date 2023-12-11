@@ -1,7 +1,7 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {Colors} from '../../types/colorType';
 import PrimaryText from './PrimaryText';
+import {Colors} from '../../hooks/useThemeColors';
 
 interface PrimaryButtonProps {
   onPress(): void;

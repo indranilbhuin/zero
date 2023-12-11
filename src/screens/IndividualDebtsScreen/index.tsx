@@ -18,6 +18,7 @@ import useIndividualDebts, {
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import mainStyles from '../../styles/main';
+import Debt from '../../schemas/DebtSchema';
 
 const IndividualDebtsScreen = () => {
   const route = useRoute<IndividualDebtsScreenRouteProp>();
@@ -71,8 +72,8 @@ const IndividualDebtsScreen = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         <View style={styles.debtsMainContainer}>
-          {individualDebtsCopy?.map(debt => (
-            <View key={debt._id}>
+          {individualDebtsCopy?.map((debt: Debt) => (
+            <View key={String(debt._id)}>
               <View
                 style={[
                   styles.categoryContainer,
@@ -84,7 +85,7 @@ const IndividualDebtsScreen = () => {
                 <TouchableOpacity
                   onPress={() =>
                     handleEditDebt(
-                      debt._id,
+                      String(debt._id),
                       debt.description,
                       debt.amount,
                       debt.date,
@@ -99,7 +100,8 @@ const IndividualDebtsScreen = () => {
                     {debt.description}: {debt.amount}
                   </PrimaryText>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleDeleteDebt(debt._id)}>
+                <TouchableOpacity
+                  onPress={() => handleDeleteDebt(String(debt._id))}>
                   <Icon
                     name={'delete-empty'}
                     size={20}

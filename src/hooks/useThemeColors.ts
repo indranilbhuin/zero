@@ -4,6 +4,18 @@ import useColorScheme from './useColorScheme';
 import {useSelector} from 'react-redux';
 import {selectThemePreference} from '../redux/slice/themePreferenceSlice';
 
+export interface Colors {
+  primaryBackground: string;
+  primaryText: string;
+  secondaryBackground: string;
+  secondaryText: string;
+  accentGreen: string;
+  accentOrange: string;
+  buttonText: string;
+  containerColor: string;
+  cardBackground: string;
+}
+
 const Colors = {
   light: {
     primaryBackground: '#FFFFFF',

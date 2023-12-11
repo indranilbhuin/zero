@@ -43,12 +43,6 @@ const reportsStyles = StyleSheet.create({
     marginTop: '12%',
     marginBottom: '12%',
   },
-  dotContainer: {
-    height: 8,
-    width: 8,
-    borderRadius: 40,
-    marginRight: 3,
-  },
   calendarContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',

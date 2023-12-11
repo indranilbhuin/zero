@@ -81,7 +81,7 @@ const useSettings = () => {
     setSelectedCurrency(currency);
   };
 
-  const handleThemeSelection = async theme => {
+  const handleThemeSelection = async (theme: string) => {
     try {
       if (theme === 'system') {
         dispatch(setThemePreference(null));

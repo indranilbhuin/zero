@@ -8,6 +8,7 @@ import styles from './style';
 import useCategory from './useCategory';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import Category from '../../schemas/CategorySchema';
 
 const CategoryScreen = () => {
   const {colors, refreshing, onRefresh, categories, handleEdit, handleDelete} =
@@ -25,7 +26,7 @@ const CategoryScreen = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <View style={{marginBottom: 65}}>
-            {categories?.map(category => (
+            {categories?.map((category: Category) => (
               <View
                 style={[
                   styles.transactionContainer,
@@ -33,7 +34,7 @@ const CategoryScreen = () => {
                     backgroundColor: colors.containerColor,
                   },
                 ]}
-                key={category._id}>
+                key={String(category._id)}>
                 <View style={styles.iconNameContainer}>
                   <View
                     style={[

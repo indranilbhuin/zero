@@ -15,6 +15,7 @@ import {
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
 import moment from 'moment';
+import Expense from '../../schemas/ExpenseSchema';
 
 const useHome = () => {
   const colors = useThemeColors();
@@ -49,7 +50,7 @@ const useHome = () => {
 
   console.log('in home screen', allTransactions);
 
-  const calculateSpent = (unit, subtract = 0) => {
+  const calculateSpent = (unit: string | null | undefined, subtract = 0) => {
     const currentDate = moment().utc();
     console.log(currentDate);
     if (unit === 'day') {
@@ -58,12 +59,13 @@ const useHome = () => {
       currentDate.startOf('month');
     }
 
-    const filteredTransactions = allTransactions.filter(transaction =>
-      moment(transaction.date).isSameOrAfter(currentDate, unit),
+    const filteredTransactions = allTransactions.filter(
+      (transaction: Expense) =>
+        moment(transaction.date).isSameOrAfter(currentDate, unit),
     );
 
     const totalSpent = filteredTransactions.reduce(
-      (sum, transaction) => sum + transaction.amount,
+      (sum, transaction: {amount: number}) => sum + transaction.amount,
       0,
     );
 

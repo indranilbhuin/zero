@@ -3,7 +3,23 @@ import React from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../atoms/PrimaryText';
 
-const CurrencySymbolPicker = ({
+interface Currency {
+  name: string;
+  symbol: string;
+  symbolNative: string;
+  decimalDigits: number;
+  rounding: number;
+  code: string;
+  namePlural: string;
+}
+
+interface CurrencySymbolPickerProps {
+  filteredCurrencies?: Array<Currency>;
+  selectedCurrency?: Partial<Currency> | null;
+  handleCurrencySelect: (currency: Currency) => void;
+}
+
+const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
   filteredCurrencies,
   selectedCurrency,
   handleCurrencySelect,
@@ -11,7 +27,7 @@ const CurrencySymbolPicker = ({
   const colors = useThemeColors();
   return (
     <View style={styles.currencyMainContainer}>
-      {filteredCurrencies.map(currency => (
+      {filteredCurrencies?.map(currency => (
         <TouchableOpacity
           key={currency.code}
           onPress={() => handleCurrencySelect(currency)}>

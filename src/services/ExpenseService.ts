@@ -86,7 +86,7 @@ export const getAllExpensesByUserId = async (userId: Realm.BSON.ObjectId) => {
   const realm = await getRealm();
   const expenses = realm.objects('Expense');
   const expensesByUserId = Array.from(expenses).filter(expense => {
-    return expense.user && expense.user._id.equals(userId);
+    return expense.user?._id.equals(userId);
   });
 
   return expensesByUserId;

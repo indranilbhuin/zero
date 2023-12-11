@@ -8,6 +8,8 @@ import styles from './style';
 import useReports from './useReports';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import PieChartLabels from '../../components/atoms/PieChartLabels';
+import Expense from '../../schemas/ExpenseSchema';
 
 const ReportsScreen = () => {
   const {
@@ -184,43 +186,12 @@ const ReportsScreen = () => {
     );
   };
 
-  const Labels = ({slices}) => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          marginTop: 15,
-          justifyContent: 'center',
-        }}>
-        {slices.map(slice => (
-          <View
-            key={slice.key}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View
-              style={[styles.dotContainer, {backgroundColor: slice.svg.fill}]}
-            />
-            <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 10,
-                marginRight: 5,
-              }}
-              key={slice.key}>
-              {slice?.label} |
-            </PrimaryText>
-          </View>
-        ))}
-      </View>
-    );
-  };
-
   const renderPieChart = () => {
     const aggregateData: {category: any; amount: any}[] = [];
     const categoryMap = new Map();
     console.log(categoryMap);
 
-    filteredTransactions?.forEach(transaction => {
+    filteredTransactions?.forEach((transaction: any) => {
       const {amount, category} = transaction;
 
       const categoryName = category.name;
@@ -255,7 +226,7 @@ const ReportsScreen = () => {
     return (
       <View>
         <PieChart style={{height: 200}} data={data} />
-        <Labels slices={data} />
+        <PieChartLabels slices={data} colors={colors} />
       </View>
     );
   };
@@ -275,12 +246,12 @@ const ReportsScreen = () => {
         `${selectedYear}-${selectedMonth}-${day}`,
         'YYYY-MMM-D',
       );
-      const dayTransactions = filteredTransactions.filter(item =>
+      const dayTransactions = filteredTransactions.filter((item: Expense) =>
         moment(item.date).isSame(date, 'day'),
       );
 
       const totalAmountForDay = dayTransactions.reduce(
-        (sum, transaction) => sum + transaction.amount,
+        (sum, transaction: {amount: number}) => sum + transaction.amount,
         0,
       );
 

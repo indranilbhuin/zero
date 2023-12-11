@@ -12,8 +12,6 @@ const useCategory = () => {
   const categories = useSelector(selectActiveCategories);
   const [refreshing, setRefreshing] = useState(false);
 
-  console.log(categories);
-
   useEffect(() => {
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
   }, []);
