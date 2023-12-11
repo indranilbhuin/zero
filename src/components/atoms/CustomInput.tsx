@@ -1,10 +1,12 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {TextInput, View} from 'react-native';
 import React from 'react';
-import {Colors} from '../types/colorType';
+import PrimaryText from './PrimaryText';
+import textInputStyles from '../../styles/textInput';
+import {Colors} from '../../hooks/useThemeColors';
 
 interface CustomInputProps {
   input: string;
-  label: string;
+  label?: string;
   colors: Colors;
   placeholder: string;
   setInput: (value: string) => void;
@@ -20,17 +22,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   return (
     <View>
       {label ? (
-        <Text
-          style={[
-            styles.labelText,
-            {color: colors.primaryText, fontSize: 14, marginBottom: 5},
-          ]}>
-          {label}
-        </Text>
+        <PrimaryText style={{marginBottom: 5}}>{label}</PrimaryText>
       ) : null}
       <TextInput
         style={[
-          styles.textInput,
+          textInputStyles.textInput,
           {
             borderColor: colors.primaryText,
             color: colors.primaryText,
@@ -47,21 +43,3 @@ const CustomInput: React.FC<CustomInputProps> = ({
 };
 
 export default CustomInput;
-
-const styles = StyleSheet.create({
-  textInput: {
-    height: 60,
-    borderWidth: 2,
-    marginTop: 5,
-    marginBottom: 10,
-    borderRadius: 15,
-    padding: 20,
-    fontFamily: 'FiraCode-Medium',
-    includeFontPadding: false,
-  },
-  labelText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

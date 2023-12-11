@@ -1,10 +1,11 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Icon from './Icons';
-import {navigate} from '../utils/navigationUtils';
-import {Colors} from '../types/colorType';
-import Debtor from '../schemas/DebtorSchema';
-import Debt from '../schemas/DebtSchema';
+import Icon from '../atoms/Icons';
+import {navigate} from '../../utils/navigationUtils';
+import Debtor from '../../schemas/DebtorSchema';
+import Debt from '../../schemas/DebtSchema';
+import PrimaryText from '../atoms/PrimaryText';
+import {Colors} from '../../hooks/useThemeColors';
 
 interface DebtorListProps {
   currencySymbol: string;
@@ -82,13 +83,14 @@ const DebtorList: React.FC<DebtorListProps> = ({
                 />
               </View>
             </View>
-            <Text
-              style={[
-                styles.subtitleText,
-                {color: colors.primaryText, alignSelf: 'center'},
-              ]}>
+            <PrimaryText
+              style={{
+                color: colors.primaryText,
+                alignSelf: 'center',
+                fontSize: 12,
+              }}>
               {debtor.title}
-            </Text>
+            </PrimaryText>
           </TouchableOpacity>
           <View
             style={{
@@ -98,18 +100,15 @@ const DebtorList: React.FC<DebtorListProps> = ({
               borderRadius: 5,
               marginTop: 5,
             }}>
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.buttonText,
-                  fontSize: 12,
-                  fontFamily: 'FiraCode-SemiBold',
-                },
-              ]}>
+            <PrimaryText
+              style={{
+                color: colors.buttonText,
+                fontSize: 12,
+                fontFamily: 'FiraCode-SemiBold',
+              }}>
               {currencySymbol}
               {calculateTotalDebt(String(debtor._id))}
-            </Text>
+            </PrimaryText>
           </View>
         </View>
       ))}
@@ -129,10 +128,5 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     justifyContent: 'center',
     borderWidth: 2,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 12,
-    includeFontPadding: false,
   },
 });

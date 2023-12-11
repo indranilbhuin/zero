@@ -1,6 +1,7 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {Colors} from '../types/colorType';
+import PrimaryText from '../atoms/PrimaryText';
+import {Colors} from '../../hooks/useThemeColors';
 
 interface SecondaryButtonProps {
   onPress(): void;
@@ -26,13 +27,9 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
             width: width,
           },
         ]}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.buttonText, fontSize: 13},
-          ]}>
+        <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
           {buttonText}
-        </Text>
+        </PrimaryText>
       </View>
     </TouchableOpacity>
   );
@@ -50,10 +47,5 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
 });

@@ -1,80 +1,19 @@
 import {StyleSheet} from 'react-native';
 
 const homeStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  titleTextContainer: {
-    paddingTop: '15%',
-  },
-  titleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-  initialsContainer: {
-    height: 40,
-    width: 40,
-    padding: 2,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  initialsText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 20,
-    includeFontPadding: false,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15,
-    justifyContent: 'space-between',
-  },
-  greetingsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: '-2%',
-    marginRight: '-2%',
-    width: '80%'
-  },
-  settingsContainer: {},
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
   listExpenseContainer: {
     marginTop: '5%',
-    marginBottom: '20%'
-  },
-  card: {
-    height: 150,
-    width: 150,
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: 'space-between',
-    marginRight: 10
+    marginBottom: '20%',
   },
   cardContainer: {
     marginTop: 10,
-    flexDirection: 'row'
-  },
-  textContainer: {},
-  transactionContainer: {
-    height: '40%',
-    borderRadius: 10,
-    justifyContent: 'center',
-    padding: 10,
+    flexDirection: 'row',
   },
   transactionListContainer: {
-    marginTop: 20
+    marginTop: 20,
   },
   addButtonContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 15,
     right: 15,
     zIndex: 1,
@@ -88,13 +27,13 @@ const homeStyles = StyleSheet.create({
   },
   noImage: {
     height: 80,
-    width: 80
+    width: 80,
   },
   noTransactionContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 350
-  }
+    height: 350,
+  },
 });
 
 export default homeStyles;

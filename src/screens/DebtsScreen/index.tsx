@@ -1,69 +1,31 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import HeaderContainer from '../../components/HeaderContainer';
-import useThemeColors from '../../hooks/useThemeColors';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import HeaderContainer from '../../components/molecules/HeaderContainer';
 import homeStyles from '../HomeScreen/style';
 import {navigate} from '../../utils/navigationUtils';
-import Icon from '../../components/Icons';
-import DebtorList from '../../components/DebtorList';
-import {useDispatch, useSelector} from 'react-redux';
-import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
-import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
-import {
-  getAllDebtRequest,
-  selectAllDebtData,
-} from '../../redux/slice/allDebtDataSlice';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import Icon from '../../components/atoms/Icons';
+import DebtorList from '../../components/molecules/DebtorList';
+import styles from './style';
+import useDebts from './useDebts';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const DebtsScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const debtors = useSelector(selectDebtorData);
-  const allDebts = useSelector(selectAllDebtData);
-  const allDebtsCopy = JSON.parse(JSON.stringify(allDebts));
-  const [debtorType, setDebtorType] = useState('Person');
-  console.log('this is all debts copy', debtors);
-  console.log(debtors);
-  const currencySymbol = useSelector(selectCurrencySymbol);
-
-  const personDebtors = debtors.filter(debtor => debtor.type === 'Person');
-  const otherAccountsDebtors = debtors.filter(
-    debtor => debtor.type !== 'Person',
-  );
-
-  const totalDebts = allDebtsCopy.reduce(
-    (total, debt) => total + debt.amount,
-    0,
-  );
-
-  let personTotalDebts = 0;
-  let otherTotalDebts = 0;
-
-  allDebtsCopy.forEach(debt => {
-    if (debt.debtor.type === 'Person') {
-      personTotalDebts += debt.amount;
-    } else {
-      otherTotalDebts += debt.amount;
-    }
-  });
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-    dispatch(getAllDebtRequest());
-  }, []);
+  const {
+    colors,
+    allDebtsCopy,
+    debtorType,
+    setDebtorType,
+    currencySymbol,
+    personDebtors,
+    otherAccountsDebtors,
+    totalDebts,
+    personTotalDebts,
+    otherTotalDebts,
+  } = useDebts();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={{marginBottom: 15}}>
         <HeaderContainer headerText={'Debts'} />
       </View>
@@ -84,29 +46,23 @@ const DebtsScreen = () => {
               width: '32%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Total
-          </Text>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             {currencySymbol}
             {totalDebts}
-          </Text>
+          </PrimaryText>
         </View>
         <View
           style={[
@@ -117,29 +73,24 @@ const DebtsScreen = () => {
               width: '32%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Person
-          </Text>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          </PrimaryText>
+
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             {currencySymbol}
             {personTotalDebts}
-          </Text>
+          </PrimaryText>
         </View>
         <View
           style={[
@@ -150,29 +101,23 @@ const DebtsScreen = () => {
               width: '32%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Other
-          </Text>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             {currencySymbol}
             {otherTotalDebts}
-          </Text>
+          </PrimaryText>
         </View>
       </View>
 
@@ -197,17 +142,14 @@ const DebtsScreen = () => {
               width: '48.5%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Person
-          </Text>
+          </PrimaryText>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setDebtorType('Other')}
@@ -222,17 +164,14 @@ const DebtsScreen = () => {
               width: '48.5%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Other Accounts
-          </Text>
+          </PrimaryText>
         </TouchableOpacity>
       </View>
 
@@ -259,30 +198,8 @@ const DebtsScreen = () => {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 
 export default DebtsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  categoryContainer: {
-    height: 40,
-    padding: 3,
-    marginRight: 5,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

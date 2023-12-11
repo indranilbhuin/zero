@@ -1,64 +1,32 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
-import AppHeader from '../../components/AppHeader';
+import {View} from 'react-native';
+import React from 'react';
+import AppHeader from '../../components/atoms/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import useThemeColors from '../../hooks/useThemeColors';
-import CustomInput from '../../components/CustomInput';
-import CategoryContainer from '../../components/CategoryContainer';
+import CustomInput from '../../components/atoms/CustomInput';
+import CategoryContainer from '../../components/molecules/CategoryContainer';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
-import PrimaryButton from '../../components/PrimaryButton';
-import {createDebtor} from '../../services/DebtorService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
+import useAddDebtor from './useAddDebtor';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
+import mainStyles from '../../styles/main';
 
 const AddDebtorScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [debtorTitle, setDebtorTitle] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const userId = useSelector(selectUserId);
-
-  const toggleCategorySelection = category => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories([]);
-    } else {
-      setSelectedCategories([category]);
-    }
-  };
-
-  const handleAddDebtor = () => {
-    try {
-      createDebtor(
-        debtorTitle,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        selectedCategories[0].icon,
-        selectedCategories[0].name,
-        selectedCategories[0].color,
-      );
-      dispatch({type: FETCH_ALL_DEBTOR_DATA});
-      goBack();
-    } catch (error) {
-      console.error('Error creating debtor:', error);
-    }
-  };
+  const {
+    colors,
+    toggleCategorySelection,
+    selectedCategories,
+    debtorTitle,
+    handleAddDebtor,
+    setDebtorTitle,
+  } = useAddDebtor();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
-      <View style={styles.headerContainer}>
+    <PrimaryView colors={colors}>
+      <View style={mainStyles.headerContainer}>
         <AppHeader onPress={goBack} colors={colors} text="Add Debtor" />
       </View>
-      <Text
-        style={[
-          styles.labelText,
-          {color: colors.primaryText, fontSize: 14, marginBottom: 5},
-        ]}>
-        Select Debt Category
-      </Text>
+      <PrimaryText style={{marginBottom: 5}}>Select Debt Category</PrimaryText>
 
       <View style={{marginBottom: 10}}>
         <CategoryContainer
@@ -84,25 +52,8 @@ const AddDebtorScreen = () => {
           buttonTitle="Add"
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 
 export default AddDebtorScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  headerContainer: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  labelText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-});

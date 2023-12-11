@@ -1,65 +1,33 @@
-import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import useThemeColors from '../../hooks/useThemeColors';
+import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import {PieChart} from 'react-native-svg-charts';
-import HeaderContainer from '../../components/HeaderContainer';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  getExpenseRequest,
-  selectExpenseData,
-} from '../../redux/slice/expenseDataSlice';
-import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import HeaderContainer from '../../components/molecules/HeaderContainer';
 import moment from 'moment';
 import {navigate} from '../../utils/navigationUtils';
+import styles from './style';
+import useReports from './useReports';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
+import PieChartLabels from '../../components/atoms/PieChartLabels';
+import Expense from '../../schemas/ExpenseSchema';
 
 const ReportsScreen = () => {
-  const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const [selectedYear, setSelectedYear] = useState(2023);
-  const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
-  const [showYearPicker, setShowYearPicker] = useState(false);
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
-  const allTransactions = useSelector(selectExpenseData);
-  const currencySymbol = useSelector(selectCurrencySymbol);
-
-  const dayNames = moment.weekdaysShort();
-
-  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
-  console.log('copy', allTransactionsCopy, 'real', allTransactions);
-
-  const filterTransactions = (year, month) => {
-    const filtered = allTransactionsCopy?.filter(item => {
-      const transactionYear = moment(item.date).year();
-      const transactionMonth = moment(item.date).format('MMMM');
-      return transactionYear === year && (!month || transactionMonth === month);
-    });
-
-    setFilteredTransactions(filtered.length > 0 ? filtered : []);
-  };
-
-  console.log('this is filtered', filteredTransactions);
-
-  useEffect(() => {
-    dispatch(getExpenseRequest());
-    filterTransactions(selectedYear, selectedMonth);
-  }, [selectedYear, selectedMonth, allTransactionsCopy?.length]);
-
-  const handleYearPicker = () => {
-    setShowYearPicker(true);
-  };
-
-  const handleYearPickerClose = () => {
-    setShowYearPicker(false);
-  };
-
-  const years = Array.from({length: 101}, (_, index) => 2000 + index);
+  const {
+    colors,
+    selectedYear,
+    selectedMonth,
+    showYearPicker,
+    filteredTransactions,
+    currencySymbol,
+    dayNames,
+    handleYearPicker,
+    handleYearPickerClose,
+    years,
+    handleYearSelect,
+    handleMonthSelect,
+    totalAmountForMonth,
+    daysInMonth,
+  } = useReports();
 
   const renderYearPickerItems = () => {
     return (
@@ -83,19 +51,16 @@ const ReportsScreen = () => {
                   borderColor: colors.secondaryText,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color:
-                      year === selectedYear
-                        ? colors.buttonText
-                        : colors.primaryText,
-                    fontSize: 13,
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color:
+                    year === selectedYear
+                      ? colors.buttonText
+                      : colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {year}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
         ))}
@@ -136,13 +101,9 @@ const ReportsScreen = () => {
                   borderColor: colors.secondaryText,
                 },
               ]}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {color: colors.buttonText, fontSize: 13},
-                ]}>
+              <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
                 {month}
-              </Text>
+              </PrimaryText>
             </View>
           </TouchableOpacity>
         ))}
@@ -170,17 +131,14 @@ const ReportsScreen = () => {
                 borderColor: colors.secondaryText,
               },
             ]}>
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.buttonText,
-                  fontSize: 13,
-                  fontFamily: 'FiraCode-SemiBold',
-                },
-              ]}>
+            <PrimaryText
+              style={{
+                color: colors.buttonText,
+                fontSize: 13,
+                fontFamily: 'FiraCode-SemiBold',
+              }}>
               {selectedYear}
-            </Text>
+            </PrimaryText>
           </View>
         </TouchableOpacity>
         <Modal
@@ -200,16 +158,13 @@ const ReportsScreen = () => {
                     styles.selectedYearContainer,
                     {borderColor: colors.secondaryText},
                   ]}>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {
-                        color: colors.primaryText,
-                        fontSize: 20,
-                      },
-                    ]}>
+                  <PrimaryText
+                    style={{
+                      color: colors.primaryText,
+                      fontSize: 20,
+                    }}>
                     {selectedYear}
-                  </Text>
+                  </PrimaryText>
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {renderYearPickerItems()}
@@ -220,16 +175,7 @@ const ReportsScreen = () => {
                     {borderColor: colors.secondaryText},
                   ]}>
                   <TouchableOpacity onPress={handleYearPickerClose}>
-                    <Text
-                      style={[
-                        styles.subtitleText,
-                        {
-                          color: colors.primaryText,
-                          fontSize: 14,
-                        },
-                      ]}>
-                      CANCEL
-                    </Text>
+                    <PrimaryText>CANCEL</PrimaryText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -240,65 +186,12 @@ const ReportsScreen = () => {
     );
   };
 
-  const handleYearSelect = (year: number) => {
-    setSelectedYear(year);
-    setShowYearPicker(false);
-  };
-
-  const handleMonthSelect = (month: string) => {
-    setSelectedMonth(month);
-  };
-
-  const totalAmountForMonth = filteredTransactions.reduce(
-    (sum, transaction) => sum + transaction.amount,
-    0,
-  );
-
-  const daysInMonth = moment(
-    `${selectedYear}-${moment().month(selectedMonth).format('MM')}`,
-    'YYYY-MM',
-  ).daysInMonth();
-
-  const Labels = ({slices}) => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          marginTop: 15,
-          justifyContent: 'center',
-        }}>
-        {slices.map(slice => (
-          <View
-            key={slice.key}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View
-              style={[styles.dotContainer, {backgroundColor: slice.svg.fill}]}
-            />
-            <Text
-              style={[
-                styles.subtitleText,
-                {
-                  color: colors.primaryText,
-                  fontSize: 10,
-                  marginRight: 5,
-                },
-              ]}
-              key={slice.key}>
-              {slice?.label} |
-            </Text>
-          </View>
-        ))}
-      </View>
-    );
-  };
-
   const renderPieChart = () => {
     const aggregateData: {category: any; amount: any}[] = [];
     const categoryMap = new Map();
     console.log(categoryMap);
 
-    filteredTransactions?.forEach(transaction => {
+    filteredTransactions?.forEach((transaction: any) => {
       const {amount, category} = transaction;
 
       const categoryName = category.name;
@@ -333,11 +226,10 @@ const ReportsScreen = () => {
     return (
       <View>
         <PieChart style={{height: 200}} data={data} />
-        <Labels slices={data} />
+        <PieChartLabels slices={data} colors={colors} />
       </View>
     );
   };
-  console.log(selectedMonth, selectedYear);
 
   const renderCalendar = () => {
     const firstDayOfMonth = moment(
@@ -354,12 +246,12 @@ const ReportsScreen = () => {
         `${selectedYear}-${selectedMonth}-${day}`,
         'YYYY-MMM-D',
       );
-      const dayTransactions = filteredTransactions.filter(item =>
+      const dayTransactions = filteredTransactions.filter((item: Expense) =>
         moment(item.date).isSame(date, 'day'),
       );
 
       const totalAmountForDay = dayTransactions.reduce(
-        (sum, transaction) => sum + transaction.amount,
+        (sum, transaction: {amount: number}) => sum + transaction.amount,
         0,
       );
 
@@ -385,42 +277,32 @@ const ReportsScreen = () => {
           key={index}
           style={[styles.calendarDay, {backgroundColor}]}
           onPress={() =>
-            navigate('EverydayTransaction', {dayTransactions, isDate})
+            navigate('EverydayTransactionScreen', {dayTransactions, isDate})
           }>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.primaryText,
-                fontSize: 13,
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+            }}>
             {day !== 0 ? day : ''}
-          </Text>
+          </PrimaryText>
         </TouchableOpacity>
       ) : (
         <View key={index} style={[styles.calendarDay, {backgroundColor}]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.primaryText,
-                fontSize: 13,
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+            }}>
             {''}
-          </Text>
+          </PrimaryText>
         </View>
       );
     });
   };
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <HeaderContainer headerText={'Reports'} />
       <View
         style={{
@@ -452,17 +334,14 @@ const ReportsScreen = () => {
               width: '48.5%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Total: {totalAmountForMonth}
-          </Text>
+          </PrimaryText>
         </View>
         <View
           style={[
@@ -473,17 +352,14 @@ const ReportsScreen = () => {
               width: '48.5%',
             },
           ]}>
-          <Text
-            style={[
-              styles.subtitleText,
-              {
-                color: colors.buttonText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              },
-            ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
             Avg/Day: {(totalAmountForMonth / daysInMonth).toFixed(2)}
-          </Text>
+          </PrimaryText>
         </View>
       </View>
 
@@ -492,96 +368,20 @@ const ReportsScreen = () => {
         <View style={styles.calendarContainer}>
           {dayNames.map((day, index) => (
             <View key={index} style={styles.calendarDay}>
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    color: colors.primaryText,
-                    fontSize: 13,
-                  },
-                ]}>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {day}
-              </Text>
+              </PrimaryText>
             </View>
           ))}
         </View>
         <View style={styles.calendarContainer}>{renderCalendar()}</View>
       </ScrollView>
-    </View>
+    </PrimaryView>
   );
 };
 
 export default ReportsScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
-  categoryContainer: {
-    height: 35,
-    padding: 5,
-    marginRight: 5,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  innerContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  toastContainer: {
-    height: 500,
-    width: '80%',
-  },
-  buttonContainer: {
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    paddingTop: 10,
-    borderTopWidth: 0.8,
-  },
-  buttonText: {},
-  yearContainer: {
-    padding: 3,
-    borderRadius: 5,
-    margin: 10,
-  },
-  selectedYearContainer: {
-    paddingBottom: 10,
-    borderBottomWidth: 0.8,
-  },
-  chartContainer: {
-    marginTop: '12%',
-    marginBottom: '12%',
-  },
-  dotContainer: {
-    height: 8,
-    width: 8,
-    borderRadius: 40,
-    marginRight: 3,
-  },
-  calendarContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-  },
-  calendarDay: {
-    width: '14.28%',
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

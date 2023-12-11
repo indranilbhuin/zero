@@ -1,166 +1,75 @@
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useState} from 'react';
+import {ScrollView, TextInput, View} from 'react-native';
+import React from 'react';
 import styles from './style';
-import useThemeColors from '../../hooks/useThemeColors';
-import Icon from '../../components/Icons';
-import currencies from '../../../assets/jsons/currencies.json';
-import PrimaryButton from '../../components/PrimaryButton';
-import {createCurrency} from '../../services/CurrencyService';
-import {useDispatch, useSelector} from 'react-redux';
-import AsyncStorageService from '../../utils/asyncStorageService';
-import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
-import {selectUserId} from '../../redux/slice/userIdSlice';
+import Icon from '../../components/atoms/Icons';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
+import useChooseCurrency from './useChooseCurrency';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
+import textInputStyles from '../../styles/textInput';
+import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
 
 const ChooseCurrencyScreen = () => {
-  const colors = useThemeColors();
-  const [search, setSearch] = useState('');
-  const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
-  const [selectedCurrency, setSelectedCurrency] = useState(null);
-  const userId = useSelector(selectUserId);
-  console.log("in currency screen",userId);
-  const dispatch = useDispatch();
-
-  const handleCurrencySubmit = async () => {
-    if (selectedCurrency) {
-      console.log('second');
-      await createCurrency(
-        selectedCurrency.code,
-        selectedCurrency.symbol,
-        selectedCurrency.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-      );
-
-      await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
-      dispatch(setIsOnboarded(true));
-    }
-  };
-
-  const handleSearch = (text: string) => {
-    setSearch(text);
-    const filtered = currencies.filter(currency => {
-      const {code, name, symbol, symbolNative} = currency;
-      const searchItem = text.toLowerCase();
-
-      return (
-        code.toLowerCase().includes(searchItem) ||
-        name.toLowerCase().includes(searchItem) ||
-        symbol.toLowerCase().includes(searchItem) ||
-        symbolNative.toLowerCase().includes(searchItem)
-      );
-    });
-    setFilteredCurrencies(filtered);
-  };
-
-  const handleCurrencySelect = currency => {
-    setSelectedCurrency(currency);
-  };
+  const {
+    colors,
+    search,
+    filteredCurrencies,
+    selectedCurrency,
+    handleCurrencySubmit,
+    handleSearch,
+    handleCurrencySelect,
+  } = useChooseCurrency();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <View style={styles.titleTextContainer}>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
-          Your money,
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
-          your currency.
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
+        <PrimaryText style={{fontSize: 24}}>Your money,</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>your currency.</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>
           Pick the one you prefer
-        </Text>
+        </PrimaryText>
       </View>
 
       <View style={styles.subtitleTextContainer}>
-        <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
           Select your currency
-        </Text>
+        </PrimaryText>
       </View>
 
-      <View style={styles.textInputContainer}>
+      <View
+        style={[
+          textInputStyles.textInputContainer,
+          {
+            borderColor: colors.primaryText,
+            backgroundColor: colors.secondaryBackground,
+          },
+        ]}>
+        <Icon
+          name="search"
+          size={20}
+          color={colors.primaryText}
+          type="Feather"
+        />
         <TextInput
           style={[
-            styles.textInput,
+            textInputStyles.textInputWithIcon,
             {
-              borderColor: colors.primaryText,
               color: colors.primaryText,
-              backgroundColor: colors.secondaryBackground,
             },
           ]}
           value={search}
           onChangeText={handleSearch}
-          placeholder="eg. INR"
+          placeholder={'eg. INR'}
           placeholderTextColor={colors.secondaryText}
         />
-        <TouchableOpacity
-          style={[
-            styles.addButton,
-            {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
-            },
-          ]}>
-          <Icon
-            name="search"
-            size={25}
-            color={colors.buttonText}
-            type="Feather"
-          />
-        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.currencyMainContainer}>
-          {filteredCurrencies.map(currency => (
-            <TouchableOpacity
-              key={currency.code}
-              onPress={() => handleCurrencySelect(currency)}>
-              <View
-                style={[
-                  styles.currencyContainer,
-                  {
-                    backgroundColor:
-                      selectedCurrency === currency
-                        ? colors.accentGreen
-                        : colors.primaryText,
-                    borderColor: colors.secondaryText,
-                  },
-                ]}>
-                <View style={styles.symbolContainer}>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {color: colors.buttonText, fontSize: 20},
-                    ]}>
-                    {currency.symbolNative}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      {color: colors.buttonText, fontSize: 13},
-                    ]}>
-                    {currency.code}
-                  </Text>
-                </View>
-                <Text
-                  style={[
-                    styles.subtitleText,
-                    {color: colors.buttonText, fontSize: 10},
-                  ]}>
-                  {currency.name}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <CurrencySymbolPicker
+          filteredCurrencies={filteredCurrencies}
+          selectedCurrency={selectedCurrency}
+          handleCurrencySelect={handleCurrencySelect}
+        />
       </ScrollView>
 
       <View style={{marginBottom: 20}}>
@@ -170,7 +79,7 @@ const ChooseCurrencyScreen = () => {
           buttonTitle={'Continue'}
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

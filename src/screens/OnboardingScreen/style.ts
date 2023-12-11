@@ -1,23 +1,8 @@
 import {StyleSheet} from 'react-native';
 
 const onboardingStyles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '6%',
-    paddingRight: '6%',
-  },
   titleTextContainer: {
     paddingTop: '15%',
-  },
-  titleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 24,
-    includeFontPadding: false,
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   subtitleTextContainer: {
     paddingTop: '10%',
@@ -30,10 +15,9 @@ const onboardingStyles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     fontFamily: 'FiraCode-Medium',
-    includeFontPadding: false
+    includeFontPadding: false,
   },
-  textInputContainer: {
-  },
+  textInputContainer: {},
   skipButtonContainer: {
     alignSelf: 'flex-end',
     paddingTop: '5%',
@@ -46,11 +30,11 @@ const onboardingStyles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   categoryMainContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   addButton: {
     height: 45,
@@ -62,11 +46,11 @@ const onboardingStyles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: '10%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   buttonContainer: {
-    marginTop: "50%"
-  }
+    marginTop: '50%',
+  },
 });
 
 export default onboardingStyles;
