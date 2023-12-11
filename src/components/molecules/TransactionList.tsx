@@ -1,16 +1,36 @@
-import {Animated, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useRef} from 'react';
-import useThemeColors from '../hooks/useThemeColors';
-import Icon from './Icons';
+import useThemeColors, {Colors} from '../../hooks/useThemeColors';
+import Icon from '../atoms/Icons';
 import moment from 'moment';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
-import {navigate} from '../utils/navigationUtils';
-import Category from '../schemas/CategorySchema';
-import {deleteExpenseById} from '../services/ExpenseService';
+import {navigate} from '../../utils/navigationUtils';
+import Category from '../../schemas/CategorySchema';
+import {deleteExpenseById} from '../../services/ExpenseService';
 import {useDispatch} from 'react-redux';
-import {getExpenseRequest} from '../redux/slice/expenseDataSlice';
+import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
+import Expense from '../../schemas/ExpenseSchema';
+import {Dispatch} from 'redux';
+import PrimaryText from '../atoms/PrimaryText';
 
-const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
+interface TransactionListProps {
+  currencySymbol: string;
+  allExpenses: Array<Expense>;
+}
+
+interface TransactionItemProps {
+  currencySymbol: string;
+  expense: Expense;
+  colors: Colors;
+  dispatch: Dispatch<any>;
+}
+
+const TransactionItem: React.FC<TransactionItemProps> = ({
+  currencySymbol,
+  expense,
+  colors,
+  dispatch,
+}) => {
   const slideAnim = useRef(new Animated.Value(1)).current;
 
   const handleEdit = (
@@ -19,7 +39,7 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
     expenseDescription: string,
     category: Category,
     expenseDate: Date,
-    expenseAmount: string,
+    expenseAmount: number,
   ) => {
     Animated.timing(slideAnim, {
       toValue: 200,
@@ -133,7 +153,7 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
               transform: [{translateX: slideAnim}],
             },
           ]}
-          key={expense._id}>
+          key={String(expense._id)}>
           <View style={styles.iconNameContainer}>
             <View
               style={[
@@ -141,37 +161,46 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
                 {backgroundColor: colors.primaryText},
               ]}>
               <Icon
-                name={expense.category.icon}
+                name={expense.category.icon ?? 'selection-ellipse'}
                 size={20}
-                color={colors.buttonText}
+                color={expense.category.color ?? colors.buttonText}
                 type={'MaterialCommunityIcons'}
               />
             </View>
             <View>
-              <Text
-                style={[styles.transactionText, {color: colors.primaryText}]}>
-                {expense.title}
-              </Text>
+              <PrimaryText>{expense.title}</PrimaryText>
               <View style={styles.descriptionContainer}>
-                <Text
-                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                <PrimaryText
+                  style={{
+                    color: colors.primaryText,
+                    fontSize: 10,
+                    marginRight: 5,
+                  }}>
                   {expense.category.name} .
-                </Text>
-                <Text
-                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                </PrimaryText>
+                <PrimaryText
+                  style={{
+                    color: colors.primaryText,
+                    fontSize: 10,
+                    marginRight: 5,
+                  }}>
                   {expense.description} .
-                </Text>
-                <Text
-                  style={[styles.descriptionText, {color: colors.primaryText}]}>
+                </PrimaryText>
+                <PrimaryText
+                  style={{
+                    color: colors.primaryText,
+                    fontSize: 10,
+                    marginRight: 5,
+                  }}>
                   {moment(expense.date).format('Do MMM')}
-                </Text>
+                </PrimaryText>
               </View>
             </View>
           </View>
           <View>
-            <Text style={[styles.transactionText, {color: colors.primaryText}]}>
+            <PrimaryText>
               {currencySymbol} {expense.amount}
-            </Text>
+            </PrimaryText>
           </View>
         </Animated.View>
       </Swipeable>
@@ -179,15 +208,18 @@ const TransactionItem = ({currencySymbol, expense, colors, dispatch}) => {
   );
 };
 
-const TransactionList = ({currencySymbol, allExpenses}) => {
+const TransactionList: React.FC<TransactionListProps> = ({
+  currencySymbol,
+  allExpenses,
+}) => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
 
   return (
     <View style={styles.mainContainer}>
-      {allExpenses?.map(expense => (
+      {allExpenses?.map((expense: Expense) => (
         <TransactionItem
-          key={expense._id}
+          key={String(expense._id)}
           expense={expense}
           currencySymbol={currencySymbol}
           colors={colors}
@@ -228,17 +260,6 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     flexDirection: 'row',
-  },
-  descriptionText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 10,
-    includeFontPadding: false,
-    marginRight: 5,
-  },
-  transactionText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 14,
-    includeFontPadding: false,
   },
   swipeView: {
     justifyContent: 'center',

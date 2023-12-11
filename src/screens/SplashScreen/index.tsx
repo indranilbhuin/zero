@@ -1,41 +1,35 @@
-import {View, Text} from 'react-native';
 import React from 'react';
-import PrimaryButton from '../../components/PrimaryButton';
-import useThemeColors from '../../hooks/useThemeColors';
-import {navigate} from '../../utils/navigationUtils';
-import styles from "./style"
+import PrimaryButton from '../../components/atoms/PrimaryButton';
+import useSplash from './useSplash';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const SplashScreen = () => {
-  const handleClick = () => {
-    navigate('PersonalizeScreen');
-  };
-  
-  const colors = useThemeColors();
-  console.log(colors)
+  const {handleClick, colors} = useSplash();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
-      <Text style={[styles.titleText, {color: colors.primaryText}]}>zero</Text>
-      <Text style={[styles.subtitleText, {color: colors.secondaryText}]}>
+    <PrimaryView colors={colors}>
+      <PrimaryText
+        style={{color: colors.primaryText, fontSize: 90, paddingTop: '20%'}}>
+        zero
+      </PrimaryText>
+      <PrimaryText style={{color: colors.secondaryText, fontSize: 25}}>
         Count Every
-      </Text>
-      <Text
-        style={[
-          styles.subtitleText,
-          {marginBottom: '120%', color: colors.secondaryText},
-        ]}>
+      </PrimaryText>
+      <PrimaryText
+        style={{
+          marginBottom: '120%',
+          color: colors.secondaryText,
+          fontSize: 25,
+        }}>
         Penny with zero
-      </Text>
+      </PrimaryText>
       <PrimaryButton
         onPress={handleClick}
         colors={colors}
         buttonTitle={'Get Started'}
       />
-    </View>
+    </PrimaryView>
   );
 };
 

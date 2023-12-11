@@ -4,6 +4,7 @@ export const createCategory = async (
   name: string,
   userId: Realm.BSON.ObjectId,
   icon: string | null,
+  color: string | null,
 ) => {
   const realm = await getRealm();
 
@@ -17,6 +18,7 @@ export const createCategory = async (
           categoryStatus: true,
           user: user,
           icon: icon,
+          color: color,
         });
       } else {
         console.error('User not found.');
@@ -51,6 +53,7 @@ export const updateCategoryById = async (
   categoryId?: Realm.BSON.ObjectId,
   newName?: string,
   newIcon?: string,
+  newColor?: string,
 ) => {
   const realm = await getRealm();
 
@@ -63,6 +66,9 @@ export const updateCategoryById = async (
         }
         if (category.icon) {
           category.icon = newIcon;
+        }
+        if (category.color) {
+          category.color = newColor;
         }
       }
     });
@@ -80,7 +86,7 @@ export const getAllCategoriesByUserId = async (userId: Realm.BSON.ObjectId) => {
   const realm = await getRealm();
   const categories = realm.objects('Category');
   const categoriesByUserId = Array.from(categories).filter(category => {
-    return category.user && category.user._id.equals(userId);
+    return category.isValid() && category.user && category.user._id.equals(userId);
   });
 
   return categoriesByUserId;

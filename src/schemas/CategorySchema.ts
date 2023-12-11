@@ -7,6 +7,7 @@ class Category extends Realm.Object<Category> {
   categoryStatus!: boolean;
   user!: User | null;
   icon?: string | null;
+  color!: string | null;
 
   static schema: ObjectSchema = {
     name: 'Category',
@@ -16,6 +17,7 @@ class Category extends Realm.Object<Category> {
       categoryStatus: 'bool',
       user: 'User',
       icon: {type: 'string', optional: true},
+      color: 'string'
     },
     primaryKey: '_id',
   };

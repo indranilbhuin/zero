@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "5f75cddc0ef99a4714df8e6c",
+    "name": "Credit Card",
+    "icon": "credit-card-chip",
+    "color": "#FF6347"
+  },
+  {
+    "_id": "5f75cddc0ef99a3704df8e6d",
+    "name": "Person",
+    "icon": "face-man",
+    "color": "#1E90FF"
+  },
+  {
+    "_id": "5f75cddc0eg99a4704df8e6e",
+    "name": "Emi",
+    "icon": "cash",
+    "color": "#4B0082"
+  },
+  {
+    "_id": "5f75cddc1ef98a4704df8e6f",
+    "name": "Loan",
+    "icon": "bank",
+    "color": "#32CD32"
+  },
+  {
+    "_id": "5f75cddc1ef99a4704df8e6f",
+    "name": "Other",
+    "icon": "contactless-payment-circle",
+    "color": "#FF8C00"
+  }
+]

@@ -1,8 +1,16 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from './Icons';
+import PrimaryText from './PrimaryText';
+import {Colors} from '../../hooks/useThemeColors';
 
-const AppHeader = ({onPress, colors, text}) => {
+interface AppHeaderProps {
+  onPress(): void;
+  text: string;
+  colors: Colors;
+}
+
+const AppHeader: React.FC<AppHeaderProps> = ({onPress, colors, text}) => {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.iconButtonContainer}>
@@ -16,9 +24,7 @@ const AppHeader = ({onPress, colors, text}) => {
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.buttonText, {color: colors.primaryText}]}>
-        {text}
-      </Text>
+      <PrimaryText>{text}</PrimaryText>
     </View>
   );
 };
@@ -30,10 +36,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-  },
-  buttonText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 14,
   },
   iconButtonContainer: {
     marginRight: 10,

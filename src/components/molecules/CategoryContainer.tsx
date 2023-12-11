@@ -1,19 +1,29 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Icon from './Icons';
+import Icon from '../atoms/Icons';
+import Category from '../../schemas/CategorySchema';
+import PrimaryText from '../atoms/PrimaryText';
+import {Colors} from '../../hooks/useThemeColors';
 
-const CategoryContainer = ({
+interface CategoryContainerProps {
+  categories: Array<Category>;
+  toggleCategorySelection(category: Category): void;
+  colors: Colors;
+  selectedCategories: Array<Category>;
+}
+
+const CategoryContainer: React.FC<CategoryContainerProps> = ({
   categories,
   colors,
   toggleCategorySelection,
   selectedCategories,
 }) => {
-  console.log(selectedCategories)
+  console.log(selectedCategories);
   return (
     <View style={styles.categoryMainContainer}>
-      {categories?.map(category => (
+      {categories?.map((category: Category) => (
         <TouchableOpacity
-          key={category._id}
+          key={String(category._id)}
           onPress={() => toggleCategorySelection(category)}>
           <View
             style={[
@@ -25,22 +35,20 @@ const CategoryContainer = ({
                 borderColor: colors.secondaryText,
               },
             ]}>
-            {console.log(selectedCategories?.includes(category))}
-            <View style={styles.iconContainer}>
-              <Icon
-                name={category.icon}
-                size={20}
-                color={colors.buttonText}
-                type="MaterialCommunityIcons"
-              />
-            </View>
-            <Text
-              style={[
-                styles.subtitleText,
-                {color: colors.buttonText, fontSize: 13},
-              ]}>
+            {category.icon !== undefined ? (
+              <View style={styles.iconContainer}>
+                <Icon
+                  name={category.icon}
+                  size={20}
+                  color={category.color}
+                  type="MaterialCommunityIcons"
+                />
+              </View>
+            ) : null}
+
+            <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
               {category.name}
-            </Text>
+            </PrimaryText>
           </View>
         </TouchableOpacity>
       ))}
@@ -54,11 +62,6 @@ const styles = StyleSheet.create({
   categoryMainContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-  },
-  subtitleText: {
-    fontFamily: 'FiraCode-Medium',
-    fontSize: 15,
-    includeFontPadding: false,
   },
   categoryContainer: {
     height: 45,

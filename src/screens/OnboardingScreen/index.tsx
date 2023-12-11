@@ -1,88 +1,40 @@
-import {Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import PrimaryButton from '../../components/PrimaryButton';
-import useThemeColors from '../../hooks/useThemeColors';
+import {TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import PrimaryButton from '../../components/atoms/PrimaryButton';
 import styles from './style';
-import {navigate} from '../../utils/navigationUtils';
-import defaultCategories from '../../../assets/defaultCategories.json';
-import {createCategory} from '../../services/CategoryService';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import CategoryContainer from '../../components/CategoryContainer';
-import {FETCH_ALL_USER_DATA} from '../../redux/actionTypes';
+import defaultCategories from '../../../assets/jsons/defaultCategories.json';
+import CategoryContainer from '../../components/molecules/CategoryContainer';
+import useOnboarding from './useOnboarding';
+import PrimaryView from '../../components/atoms/PrimaryView';
+import PrimaryText from '../../components/atoms/PrimaryText';
 
 const OnboardingScreen = () => {
-  const colors = useThemeColors();
-  const [category, setCategory] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const userId = useSelector(selectUserId);
-
-  const dispatch = useDispatch();
-  const handleSkip = () => {
-    navigate('ChooseCurrencyScreen');
-  };
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_USER_DATA});
-  }, []);
-
-  console.log('outaise', userId);
-
-  const handleSubmit = async () => {
-    for (const category of selectedCategories) {
-      await createCategory(
-        category.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        category.icon,
-      );
-    }
-    navigate('ChooseCurrencyScreen');
-  };
-
-  const toggleCategorySelection = category => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter(item => item !== category),
-      );
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
-  };
-
-  console.log(selectedCategories);
+  const {
+    colors,
+    selectedCategories,
+    handleSkip,
+    handleSubmit,
+    toggleCategorySelection,
+  } = useOnboarding();
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
-      ]}>
+    <PrimaryView colors={colors}>
       <TouchableOpacity style={styles.skipButtonContainer} onPress={handleSkip}>
-        <Text
-          style={[
-            styles.subtitleText,
-            {color: colors.accentGreen, fontSize: 12},
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 12}}>
           skip
-        </Text>
+        </PrimaryText>
       </TouchableOpacity>
 
       <View style={styles.titleTextContainer}>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
-          Default categories are
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
-          here, but how about
-        </Text>
-        <Text style={[styles.titleText, {color: colors.primaryText}]}>
-          your unique ones?
-        </Text>
+        <PrimaryText style={{fontSize: 24}}>Default categories are</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>here, but how about</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>your unique ones?</PrimaryText>
       </View>
 
       <View style={styles.subtitleTextContainer}>
-        <Text style={[styles.subtitleText, {color: colors.accentGreen}]}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
           Select your categories you want track
-        </Text>
+        </PrimaryText>
       </View>
       <CategoryContainer
         categories={defaultCategories}
@@ -97,7 +49,7 @@ const OnboardingScreen = () => {
           buttonTitle={'Continue'}
         />
       </View>
-    </View>
+    </PrimaryView>
   );
 };
 

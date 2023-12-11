@@ -6,12 +6,20 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
-const Icon = ({name, size, color, type}) => {
+interface IconProps {
+  name: string;
+  size: number;
+  color: string;
+  type: string;
+}
+
+const Icon: React.FC<IconProps> = ({name, size, color, type}) => {
   const iconProps = {
     name,
     size,
     color,
   };
+
   switch (type) {
     case 'AntDesign':
       return <AntDesignIcon {...iconProps} />;
