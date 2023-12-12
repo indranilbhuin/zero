@@ -23,6 +23,9 @@ export type EverydayTransactionRouteProp = RouteProp<
 const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   const dispatch = useDispatch();
   const allEverdayTransaction = useSelector(selectEverydayExpenseData);
+  const allEverdayTransactionCopy = JSON.parse(
+    JSON.stringify(allEverdayTransaction),
+  );
   const expenseDate = route.params.isDate;
   console.log('no ', expenseDate);
   const formattedDate = moment(expenseDate).format('MMM Do YY');
@@ -32,7 +35,7 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
 
   useEffect(() => {
     dispatch(getEverydayExpenseRequest(expenseDate));
-  }, []);
+  }, [expenseDate]);
 
   return {
     formatDate,
@@ -41,6 +44,7 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
     currencySymbol,
     expenseDate,
     allEverdayTransaction,
+    allEverdayTransactionCopy,
   };
 };
 

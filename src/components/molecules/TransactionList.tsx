@@ -12,10 +12,12 @@ import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import Expense from '../../schemas/ExpenseSchema';
 import {Dispatch} from 'redux';
 import PrimaryText from '../atoms/PrimaryText';
+import {getEverydayExpenseRequest} from '../../redux/slice/everydayExpenseDataSlice';
 
 interface TransactionListProps {
   currencySymbol: string;
   allExpenses: Array<Expense>;
+  targetDate?: string;
 }
 
 interface TransactionItemProps {
@@ -24,6 +26,7 @@ interface TransactionItemProps {
   colors: Colors;
   dispatch: Dispatch<any>;
   label: string;
+  targetDate?: string;
 }
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -32,6 +35,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   colors,
   dispatch,
   label,
+  targetDate,
 }) => {
   const slideAnim = useRef(new Animated.Value(1)).current;
 
@@ -67,6 +71,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
     }).start(() => {
       deleteExpenseById(Realm.BSON.ObjectID.createFromHexString(expenseId));
       dispatch(getExpenseRequest());
+      dispatch(getEverydayExpenseRequest(targetDate));
     });
   };
 
@@ -155,7 +160,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                 styles.transactionContainer,
                 {
                   backgroundColor: colors.containerColor,
-                  transform: [{translateX: slideAnim}],
+                  // transform: [{translateX: slideAnim}],
                 },
               ]}>
               <View style={styles.iconNameContainer}>
@@ -217,12 +222,13 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
 const TransactionList: React.FC<TransactionListProps> = ({
   currencySymbol,
   allExpenses,
+  targetDate,
 }) => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const groupedExpenses = new Map<string, Array<Expense>>();
 
-  allExpenses.forEach(expense => {
+  allExpenses?.forEach(expense => {
     const date = moment(expense.date).format('YYYY-MM-DD');
     const currentGroup = groupedExpenses.get(date) ?? [];
     currentGroup.push(expense);
@@ -238,6 +244,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
           expense={groupedExpenses.get(date) ?? []}
           colors={colors}
           dispatch={dispatch}
+          targetDate={targetDate}
           label={moment(date).calendar(null, {
             sameDay: '[Today]',
             nextDay: '[Tomorrow]',

@@ -22,6 +22,7 @@ const EverydayTransactionScreen = () => {
     currencySymbol,
     expenseDate,
     allEverdayTransaction,
+    allEverdayTransactionCopy
   } = useEverydayTransaction(route);
 
   return (
@@ -49,16 +50,13 @@ const EverydayTransactionScreen = () => {
             )}
             <PrimaryText
               style={{color: colors.primaryText, fontSize: 13, marginTop: 5}}>
-              No Transactions on{' '}
-              {formattedDate === undefined
-                ? moment(expenseDate).format('Do MMM YY')
-                : moment(expenseDate).format('Do MMM YY')}
+              No Transactions on {moment(expenseDate).format('Do MMM YY')}
             </PrimaryText>
           </View>
         ) : (
           <TransactionList
             currencySymbol={currencySymbol}
-            allExpenses={allEverdayTransaction}
+            allExpenses={allEverdayTransactionCopy}
           />
         )}
       </View>
