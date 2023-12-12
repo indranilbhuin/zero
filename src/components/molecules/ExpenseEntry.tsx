@@ -19,6 +19,7 @@ import {createExpense, updateExpenseById} from '../../services/ExpenseService';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
+import moment from 'moment';
 
 interface ExpenseEntryProps {
   type: string;
@@ -32,7 +33,9 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     isAddButton ? [] : [expenseData?.category],
   );
   const [createdAt, setCreatedAt] = useState(
-    isAddButton ? new Date() : expenseData.expenseDate,
+    isAddButton
+      ? moment().format('YYYY-MM-DDTHH:mm:ss')
+      : expenseData.expenseDate,
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState(
@@ -93,11 +96,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     ) {
       return;
     }
-    const categoryId = selectedCategories[0]._id;
+    const categoryId = String(selectedCategories[0]._id);
     try {
       updateExpenseById(
         Realm.BSON.ObjectID.createFromHexString(expenseData.expenseId),
-        categoryId,
+        Realm.BSON.ObjectID.createFromHexString(categoryId),
         expenseTitle,
         Number(expenseAmount),
         expenseDescription,
@@ -122,7 +125,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   return (
     <PrimaryView colors={colors}>
       <View style={mainStyles.headerContainer}>
-        <AppHeader onPress={goBack} colors={colors} text="Transaction Screen" />
+        <AppHeader
+          onPress={() => goBack(() => dispatch(getExpenseRequest()))}
+          colors={colors}
+          text="Transaction Screen"
+        />
       </View>
 
       <CustomInput

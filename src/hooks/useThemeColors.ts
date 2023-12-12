@@ -48,7 +48,6 @@ const useThemeColors = () => {
 
   async function fetchTheme() {
     const storedTheme = await AsyncStorageService.getItem('themePreference');
-    console.log('this is the async theme', storedTheme);
     setTheme(storedTheme);
   }
 

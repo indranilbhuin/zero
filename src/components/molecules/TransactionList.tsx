@@ -20,9 +20,10 @@ interface TransactionListProps {
 
 interface TransactionItemProps {
   currencySymbol: string;
-  expense: Expense;
+  expense: Array<Expense>;
   colors: Colors;
   dispatch: Dispatch<any>;
+  label: string;
 }
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -30,6 +31,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   expense,
   colors,
   dispatch,
+  label,
 }) => {
   const slideAnim = useRef(new Animated.Value(1)).current;
 
@@ -38,7 +40,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
     expenseTitle: string,
     expenseDescription: string,
     category: Category,
-    expenseDate: Date,
+    expenseDate: string,
     expenseAmount: number,
   ) => {
     Animated.timing(slideAnim, {
@@ -57,18 +59,18 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
     });
   };
 
-  const handleDelete = (expenseId: Realm.BSON.ObjectId) => {
+  const handleDelete = (expenseId: string) => {
     Animated.timing(slideAnim, {
       toValue: -200,
       duration: 250,
       useNativeDriver: true,
     }).start(() => {
-      deleteExpenseById(expenseId);
+      deleteExpenseById(Realm.BSON.ObjectID.createFromHexString(expenseId));
       dispatch(getExpenseRequest());
     });
   };
 
-  const renderLeftActions = () => {
+  const renderLeftActions = (expense: Expense) => {
     return (
       <TouchableOpacity
         onPress={() =>
@@ -108,11 +110,11 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
     );
   };
 
-  const renderRightActions = () => {
+  const renderRightActions = (expense: Expense) => {
     return (
       <TouchableOpacity
         style={{flexDirection: 'row'}}
-        onPress={() => handleDelete(expense._id)}>
+        onPress={() => handleDelete(String(expense._id))}>
         <View
           style={[
             styles.stretchView,
@@ -140,71 +142,75 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   };
 
   return (
-    <GestureHandlerRootView>
-      <Swipeable
-        renderLeftActions={renderLeftActions}
-        renderRightActions={renderRightActions}
-        friction={2}>
-        <Animated.View
-          style={[
-            styles.transactionContainer,
-            {
-              backgroundColor: colors.containerColor,
-              transform: [{translateX: slideAnim}],
-            },
-          ]}
-          key={String(expense._id)}>
-          <View style={styles.iconNameContainer}>
-            <View
+    <View>
+      <PrimaryText style={{fontSize: 12, marginBottom: 5}}>{label}</PrimaryText>
+      {expense.map((expense: Expense) => (
+        <GestureHandlerRootView key={String(expense._id)}>
+          <Swipeable
+            renderLeftActions={() => renderLeftActions(expense)}
+            renderRightActions={() => renderRightActions(expense)}
+            friction={2}>
+            <Animated.View
               style={[
-                styles.iconContainer,
-                {backgroundColor: colors.primaryText},
+                styles.transactionContainer,
+                {
+                  backgroundColor: colors.containerColor,
+                  transform: [{translateX: slideAnim}],
+                },
               ]}>
-              <Icon
-                name={expense.category.icon ?? 'selection-ellipse'}
-                size={20}
-                color={expense.category.color ?? colors.buttonText}
-                type={'MaterialCommunityIcons'}
-              />
-            </View>
-            <View>
-              <PrimaryText>{expense.title}</PrimaryText>
-              <View style={styles.descriptionContainer}>
-                <PrimaryText
-                  style={{
-                    color: colors.primaryText,
-                    fontSize: 10,
-                    marginRight: 5,
-                  }}>
-                  {expense.category.name} .
-                </PrimaryText>
-                <PrimaryText
-                  style={{
-                    color: colors.primaryText,
-                    fontSize: 10,
-                    marginRight: 5,
-                  }}>
-                  {expense.description} .
-                </PrimaryText>
-                <PrimaryText
-                  style={{
-                    color: colors.primaryText,
-                    fontSize: 10,
-                    marginRight: 5,
-                  }}>
-                  {moment(expense.date).format('Do MMM')}
+              <View style={styles.iconNameContainer}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {backgroundColor: colors.primaryText},
+                  ]}>
+                  <Icon
+                    name={expense.category.icon ?? 'selection-ellipse'}
+                    size={20}
+                    color={expense.category.color ?? colors.buttonText}
+                    type={'MaterialCommunityIcons'}
+                  />
+                </View>
+                <View>
+                  <PrimaryText>{expense.title}</PrimaryText>
+                  <View style={styles.descriptionContainer}>
+                    <PrimaryText
+                      style={{
+                        color: colors.primaryText,
+                        fontSize: 10,
+                        marginRight: 5,
+                      }}>
+                      {expense.category.name} .
+                    </PrimaryText>
+                    <PrimaryText
+                      style={{
+                        color: colors.primaryText,
+                        fontSize: 10,
+                        marginRight: 5,
+                      }}>
+                      {expense.description} .
+                    </PrimaryText>
+                    <PrimaryText
+                      style={{
+                        color: colors.primaryText,
+                        fontSize: 10,
+                        marginRight: 5,
+                      }}>
+                      {moment(expense.date).format('Do MMM')}
+                    </PrimaryText>
+                  </View>
+                </View>
+              </View>
+              <View>
+                <PrimaryText>
+                  {currencySymbol} {expense.amount}
                 </PrimaryText>
               </View>
-            </View>
-          </View>
-          <View>
-            <PrimaryText>
-              {currencySymbol} {expense.amount}
-            </PrimaryText>
-          </View>
-        </Animated.View>
-      </Swipeable>
-    </GestureHandlerRootView>
+            </Animated.View>
+          </Swipeable>
+        </GestureHandlerRootView>
+      ))}
+    </View>
   );
 };
 
@@ -214,16 +220,32 @@ const TransactionList: React.FC<TransactionListProps> = ({
 }) => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
+  const groupedExpenses = new Map<string, Array<Expense>>();
+
+  allExpenses.forEach(expense => {
+    const date = moment(expense.date).format('YYYY-MM-DD');
+    const currentGroup = groupedExpenses.get(date) ?? [];
+    currentGroup.push(expense);
+    groupedExpenses.set(date, currentGroup);
+  });
 
   return (
     <View style={styles.mainContainer}>
-      {allExpenses?.map((expense: Expense) => (
+      {Array.from(groupedExpenses.keys()).map(date => (
         <TransactionItem
-          key={String(expense._id)}
-          expense={expense}
+          key={date}
           currencySymbol={currencySymbol}
+          expense={groupedExpenses.get(date) ?? []}
           colors={colors}
           dispatch={dispatch}
+          label={moment(date).calendar(null, {
+            sameDay: '[Today]',
+            nextDay: '[Tomorrow]',
+            nextWeek: 'dddd',
+            lastDay: '[Yesterday]',
+            lastWeek: '[Last] dddd',
+            sameElse: 'MMM YYYY',
+          })}
         />
       ))}
     </View>
@@ -238,7 +260,7 @@ const styles = StyleSheet.create({
   },
   transactionContainer: {
     height: 60,
-    width: '100%',
+    width: '99.5%',
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',

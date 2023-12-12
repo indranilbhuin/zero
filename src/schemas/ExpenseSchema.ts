@@ -9,7 +9,7 @@ class Expense extends Realm.Object<Expense> {
   description!: string;
   category!: Category;
   user!: User;
-  date!: Date;
+  date!: string;
 
   static schema: ObjectSchema = {
     name: 'Expense',
@@ -20,7 +20,7 @@ class Expense extends Realm.Object<Expense> {
       description: 'string',
       category: 'Category',
       user: 'User',
-      date: 'date',
+      date: 'string',
     },
     primaryKey: '_id',
   };

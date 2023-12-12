@@ -30,6 +30,7 @@ const HomeScreen = () => {
     todaySpent,
     yesterdaySpent,
     thisMonthSpent,
+    sortedTransactions
   } = useHome();
 
   if (expenseLoading) {
@@ -103,7 +104,7 @@ const HomeScreen = () => {
                 ) : (
                   <TransactionList
                     currencySymbol={currencySymbol}
-                    allExpenses={allTransactions}
+                    allExpenses={sortedTransactions}
                   />
                 )}
               </View>

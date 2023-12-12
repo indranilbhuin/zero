@@ -29,6 +29,21 @@ const ReportsScreen = () => {
     daysInMonth,
   } = useReports();
 
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   const renderYearPickerItems = () => {
     return (
       <View
@@ -69,21 +84,6 @@ const ReportsScreen = () => {
   };
 
   const renderMonths = () => {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
     return (
       <>
         {months.map(month => (
@@ -265,20 +265,16 @@ const ReportsScreen = () => {
         ? `${colors.accentGreen}${visibility}`
         : 'transparent';
 
-      console.log('this is daytransaction: ', day, dayTransactions);
+      const monthIndex = months.indexOf(selectedMonth);
+      const selectedDate = new Date(selectedYear, monthIndex, day);
 
-      const isDate = moment(
-        `${selectedYear}-${selectedMonth}-${day}`,
-        'YYYY-MMMM-D',
-      ).toISOString();
+      const isDate = moment(selectedDate).format('YYYY-MM-DD');
 
       return day !== 0 ? (
         <TouchableOpacity
           key={index}
           style={[styles.calendarDay, {backgroundColor}]}
-          onPress={() =>
-            navigate('EverydayTransactionScreen', {dayTransactions, isDate})
-          }>
+          onPress={() => navigate('EverydayTransactionScreen', {isDate})}>
           <PrimaryText
             style={{
               color: colors.primaryText,
