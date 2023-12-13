@@ -28,10 +28,26 @@ interface ExpenseEntryProps {
 
 const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const expenseData = route?.params;
+  console.log(expenseData.category.name);
   const isAddButton = type === 'Add';
-  const [selectedCategories, setSelectedCategories] = useState(
-    isAddButton ? [] : [expenseData?.category],
+  const categories = useSelector(selectActiveCategories);
+  const a = categories.filter(
+    category =>
+      category.name.trim().toLowerCase() ===
+      expenseData.category.name.trim().toLowerCase(),
   );
+  console.log('ssssssssssssss', categories);
+  console.log('rrrrrrrrrrrrr', a);
+  const [selectedCategories, setSelectedCategories] = useState(
+    isAddButton
+      ? []
+      : categories.filter(
+          category => category.name === expenseData.category.name,
+        ),
+  );
+
+  console.log("pppppppppppppppp",selectedCategories)
+
   const [createdAt, setCreatedAt] = useState(
     isAddButton
       ? moment().format('YYYY-MM-DDTHH:mm:ss')
@@ -49,7 +65,6 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   );
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const categories = useSelector(selectActiveCategories);
   const dispatch = useDispatch();
 
   const colors = useThemeColors();

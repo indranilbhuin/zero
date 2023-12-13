@@ -16,6 +16,7 @@ import HeaderContainer from '../../components/molecules/HeaderContainer';
 import useHome from './useHome';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import EmptyState from '../../components/atoms/EmptyState';
 
 const HomeScreen = () => {
   const {
@@ -30,7 +31,7 @@ const HomeScreen = () => {
     todaySpent,
     yesterdaySpent,
     thisMonthSpent,
-    sortedTransactions
+    sortedTransactions,
   } = useHome();
 
   if (expenseLoading) {
@@ -80,27 +81,7 @@ const HomeScreen = () => {
 
               <View>
                 {allTransactions?.length === 0 ? (
-                  <View style={styles.noTransactionContainer}>
-                    {colors.primaryText === '#000000' ? (
-                      <Image
-                        source={require('../../../assets/images/lightNoTransaction.png')}
-                        style={styles.noImage}
-                      />
-                    ) : (
-                      <Image
-                        source={require('../../../assets/images/darkNoTransaction.png')}
-                        style={styles.noImage}
-                      />
-                    )}
-                    <PrimaryText
-                      style={{
-                        color: colors.primaryText,
-                        fontSize: 13,
-                        marginTop: 5,
-                      }}>
-                      No Transactions Yet
-                    </PrimaryText>
-                  </View>
+                  <EmptyState colors={colors} type={'Transactions'} />
                 ) : (
                   <TransactionList
                     currencySymbol={currencySymbol}

@@ -1,4 +1,4 @@
-import {ScrollView, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
 import homeStyles from '../HomeScreen/style';
@@ -9,6 +9,7 @@ import styles from './style';
 import useDebts from './useDebts';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import EmptyState from '../../components/atoms/EmptyState';
 
 const DebtsScreen = () => {
   const {
@@ -22,6 +23,7 @@ const DebtsScreen = () => {
     totalDebts,
     personTotalDebts,
     otherTotalDebts,
+    debtorsCopy
   } = useDebts();
 
   return (
@@ -29,163 +31,168 @@ const DebtsScreen = () => {
       <View style={{marginBottom: 15}}>
         <HeaderContainer headerText={'Debts'} />
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 10,
-        }}>
-        <View
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
-              width: '32%',
-            },
-          ]}>
-          <PrimaryText
+      {debtorsCopy.length === 0 ? (
+        <EmptyState colors={colors} type={'Debts'} style={{marginTop: '30%'}} />
+      ) : (
+        <>
+          <View
             style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
+              flexDirection: 'row',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 10,
             }}>
-            Total
-          </PrimaryText>
-          <PrimaryText
-            style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            {currencySymbol}
-            {totalDebts}
-          </PrimaryText>
-        </View>
-        <View
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
-              width: '32%',
-            },
-          ]}>
-          <PrimaryText
-            style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            Person
-          </PrimaryText>
+            <View
+              style={[
+                styles.categoryContainer,
+                {
+                  backgroundColor: colors.primaryText,
+                  borderColor: colors.secondaryText,
+                  width: '32%',
+                },
+              ]}>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                Total
+              </PrimaryText>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                {currencySymbol}
+                {totalDebts}
+              </PrimaryText>
+            </View>
+            <View
+              style={[
+                styles.categoryContainer,
+                {
+                  backgroundColor: colors.primaryText,
+                  borderColor: colors.secondaryText,
+                  width: '32%',
+                },
+              ]}>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                Person
+              </PrimaryText>
 
-          <PrimaryText
-            style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            {currencySymbol}
-            {personTotalDebts}
-          </PrimaryText>
-        </View>
-        <View
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
-              width: '32%',
-            },
-          ]}>
-          <PrimaryText
-            style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            Other
-          </PrimaryText>
-          <PrimaryText
-            style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            {currencySymbol}
-            {otherTotalDebts}
-          </PrimaryText>
-        </View>
-      </View>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                {currencySymbol}
+                {personTotalDebts}
+              </PrimaryText>
+            </View>
+            <View
+              style={[
+                styles.categoryContainer,
+                {
+                  backgroundColor: colors.primaryText,
+                  borderColor: colors.secondaryText,
+                  width: '32%',
+                },
+              ]}>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                Other
+              </PrimaryText>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                {currencySymbol}
+                {otherTotalDebts}
+              </PrimaryText>
+            </View>
+          </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 15,
-        }}>
-        <TouchableOpacity
-          onPress={() => setDebtorType('Person')}
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor:
-                debtorType === 'Person'
-                  ? colors.accentGreen
-                  : colors.primaryText,
-              borderColor: colors.secondaryText,
-              width: '48.5%',
-            },
-          ]}>
-          <PrimaryText
+          <View
             style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
+              flexDirection: 'row',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 15,
             }}>
-            Person
-          </PrimaryText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setDebtorType('Other')}
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor:
-                debtorType === 'Other'
-                  ? colors.accentGreen
-                  : colors.primaryText,
-              borderColor: colors.secondaryText,
-              width: '48.5%',
-            },
-          ]}>
-          <PrimaryText
-            style={{
-              color: colors.buttonText,
-              fontSize: 13,
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            Other Accounts
-          </PrimaryText>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              onPress={() => setDebtorType('Person')}
+              style={[
+                styles.categoryContainer,
+                {
+                  backgroundColor:
+                    debtorType === 'Person'
+                      ? colors.accentGreen
+                      : colors.primaryText,
+                  borderColor: colors.secondaryText,
+                  width: '48.5%',
+                },
+              ]}>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                Person
+              </PrimaryText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setDebtorType('Other')}
+              style={[
+                styles.categoryContainer,
+                {
+                  backgroundColor:
+                    debtorType === 'Other'
+                      ? colors.accentGreen
+                      : colors.primaryText,
+                  borderColor: colors.secondaryText,
+                  width: '48.5%',
+                },
+              ]}>
+              <PrimaryText
+                style={{
+                  color: colors.buttonText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                }}>
+                Other Accounts
+              </PrimaryText>
+            </TouchableOpacity>
+          </View>
 
-      <ScrollView>
-        <DebtorList
-          colors={colors}
-          debtors={
-            debtorType === 'Person' ? personDebtors : otherAccountsDebtors
-          }
-          allDebts={allDebtsCopy}
-          currencySymbol={currencySymbol}
-        />
-      </ScrollView>
-
+          <ScrollView>
+            <DebtorList
+              colors={colors}
+              debtors={
+                debtorType === 'Person' ? personDebtors : otherAccountsDebtors
+              }
+              allDebts={allDebtsCopy}
+              currencySymbol={currencySymbol}
+            />
+          </ScrollView>
+        </>
+      )}
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
           style={[homeStyles.addButton, {backgroundColor: colors.primaryText}]}

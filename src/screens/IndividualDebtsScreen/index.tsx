@@ -34,6 +34,10 @@ const IndividualDebtsScreen = () => {
     onRefresh,
     handleEditDebt,
     handleDeleteDebt,
+    currencySymbol,
+    handleDeleteDebtor,
+    handleMarkAsPaid,
+    handleUpdateDebtor,
   } = useIndividualDebts(route);
 
   if (debtLoading) {
@@ -50,23 +54,93 @@ const IndividualDebtsScreen = () => {
         <AppHeader onPress={goBack} colors={colors} text={debtorName} />
       </View>
       <View
-        style={[
-          styles.categoryContainer,
-          {
-            backgroundColor: colors.primaryText,
-            borderColor: colors.secondaryText,
-            width: '100%',
-          },
-        ]}>
-        <PrimaryText
-          style={{
-            color: colors.buttonText,
-            fontSize: 13,
-            fontFamily: 'FiraCode-SemiBold',
-          }}>
-          Total: {debtorTotal}
-        </PrimaryText>
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View
+          style={[
+            styles.categoryContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+              width: '50%',
+              flexDirection: 'column',
+            },
+          ]}>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
+            Total
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.buttonText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
+            {currencySymbol}
+            {debtorTotal}
+          </PrimaryText>
+        </View>
+        <TouchableOpacity
+          style={[
+            styles.categoryContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+              width: '15%',
+            },
+          ]}
+          onPress={handleMarkAsPaid}>
+          <Icon
+            name={'check-circle'}
+            size={20}
+            color={colors.accentBlue}
+            type={'MaterialIcons'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.categoryContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+              width: '15%',
+            },
+          ]}
+          onPress={handleUpdateDebtor}>
+          <Icon
+            name={'edit'}
+            size={20}
+            color={colors.accentGreen}
+            type={'MaterialIcons'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.categoryContainer,
+            {
+              backgroundColor: colors.primaryText,
+              borderColor: colors.secondaryText,
+              width: '15%',
+            },
+          ]}
+          onPress={handleDeleteDebtor}>
+          <Icon
+            name={'delete-empty'}
+            size={20}
+            color={colors.accentOrange}
+            type={'MaterialCommunityIcons'}
+          />
+        </TouchableOpacity>
       </View>
+
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

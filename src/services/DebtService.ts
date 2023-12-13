@@ -76,6 +76,25 @@ export const deleteDebtById = async (debtId: Realm.BSON.ObjectId) => {
   }
 };
 
+export const deleteAllDebtsbyDebtorId = async (debtorId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  
+  try {
+    realm.write(() => {
+      const debts = realm.objects('Debt');
+      
+      for (let i = debts.length - 1; i >= 0; i--) {
+        const debt = debts[i];
+        if (debt.debtor?._id.equals(debtorId)) {
+          realm.delete(debt);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting debts by debtorId:', error);
+  }
+};
+
 export const getAllDebtsByUserId = async (userId: Realm.BSON.ObjectId) => {
   const realm = await getRealm();
   const debts = realm.objects('Debt');

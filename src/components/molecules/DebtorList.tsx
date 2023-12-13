@@ -23,9 +23,9 @@ const DebtorList: React.FC<DebtorListProps> = ({
   const handleDebtor = (
     debtorId: string,
     debtorName: string,
-    debtorTotal: number,
+    debtorType: string,
   ) => {
-    navigate('IndividualDebtsScreen', {debtorId, debtorName, debtorTotal});
+    navigate('IndividualDebtsScreen', {debtorId, debtorName, debtorType});
   };
 
   const handleLongPress = (debtorId: string) => {
@@ -34,7 +34,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
 
   const calculateTotalDebt = (debtorId: string) => {
     const debtorDebts = allDebts.filter(
-      debt => debt.debtor._id.toString() === debtorId,
+      debt => debt.debtor?._id?.toString() === debtorId,
     );
     const totalDebt = debtorDebts.reduce((acc, curr) => acc + curr.amount, 0);
     return totalDebt;
@@ -58,11 +58,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
           key={String(debtor._id)}>
           <TouchableOpacity
             onPress={() =>
-              handleDebtor(
-                String(debtor._id),
-                debtor.title,
-                calculateTotalDebt(String(debtor._id)),
-              )
+              handleDebtor(String(debtor._id), debtor.title, debtor.type)
             }
             onLongPress={() => handleLongPress(String(debtor._id))}
             delayLongPress={500}>

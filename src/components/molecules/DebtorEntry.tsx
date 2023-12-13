@@ -1,0 +1,115 @@
+import {StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import PrimaryView from '../atoms/PrimaryView';
+import mainStyles from '../../styles/main';
+import {goBack} from '../../utils/navigationUtils';
+import useThemeColors from '../../hooks/useThemeColors';
+import AppHeader from '../atoms/AppHeader';
+import PrimaryText from '../atoms/PrimaryText';
+import CategoryContainer from './CategoryContainer';
+import CustomInput from '../atoms/CustomInput';
+import PrimaryButton from '../atoms/PrimaryButton';
+import {useDispatch, useSelector} from 'react-redux';
+import Category from '../../schemas/CategorySchema';
+import {selectUserId} from '../../redux/slice/userIdSlice';
+import {createDebtor, updateDebtorById} from '../../services/DebtorService';
+import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
+
+interface DebtorEntryProps {
+  type: string;
+  route?: any;
+}
+
+const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
+  const colors = useThemeColors();
+  const {debtorId, debtorName, debtorType} = route.params;
+  const isAddButton = type === 'Add';
+  const dispatch = useDispatch();
+  const [debtorTitle, setDebtorTitle] = useState(isAddButton ? '' : debtorName);
+  const [selectedCategories, setSelectedCategories] = useState<Array<any>>(
+    isAddButton
+      ? []
+      : debtCategories.filter(category => category.name === debtorType),
+  );
+  console.log('selected categories', selectedCategories);
+  const userId = useSelector(selectUserId);
+
+  const toggleCategorySelection = (category: Category) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories([]);
+    } else {
+      setSelectedCategories([category]);
+    }
+  };
+
+  const handleAddDebtor = () => {
+    try {
+      createDebtor(
+        debtorTitle,
+        Realm.BSON.ObjectID.createFromHexString(userId),
+        selectedCategories[0].icon,
+        selectedCategories[0].name,
+        selectedCategories[0].color,
+      );
+      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      goBack();
+    } catch (error) {
+      console.error('Error creating debtor:', error);
+    }
+  };
+
+  const handleUpdateDebtor = () => {
+    try {
+      updateDebtorById(
+        Realm.BSON.ObjectID.createFromHexString(debtorId),
+        debtorTitle,
+        selectedCategories[0].icon,
+        selectedCategories[0].name,
+        selectedCategories[0].color,
+      );
+      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      goBack();
+    } catch (error) {
+      console.error('Error creating debtor:', error);
+    }
+  };
+
+  return (
+    <PrimaryView colors={colors}>
+      <View style={mainStyles.headerContainer}>
+        <AppHeader onPress={goBack} colors={colors} text={`${type} Debtor`} />
+      </View>
+      <PrimaryText style={{marginBottom: 5}}>Select Debt Category</PrimaryText>
+
+      <View style={{marginBottom: 10}}>
+        <CategoryContainer
+          categories={debtCategories}
+          colors={colors}
+          toggleCategorySelection={toggleCategorySelection}
+          selectedCategories={selectedCategories}
+        />
+      </View>
+
+      <CustomInput
+        colors={colors}
+        input={debtorTitle}
+        setInput={setDebtorTitle}
+        placeholder="eg. John Doe or Axis"
+        label="Debtor Name"
+      />
+
+      <View style={{marginTop: '110%'}}>
+        <PrimaryButton
+          onPress={isAddButton ? handleAddDebtor : handleUpdateDebtor}
+          colors={colors}
+          buttonTitle={type}
+        />
+      </View>
+    </PrimaryView>
+  );
+};
+
+export default DebtorEntry;
+
+const styles = StyleSheet.create({});

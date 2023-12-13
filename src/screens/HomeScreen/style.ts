@@ -25,15 +25,6 @@ const homeStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  noImage: {
-    height: 80,
-    width: 80,
-  },
-  noTransactionContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 350,
-  },
 });
 
 export default homeStyles;

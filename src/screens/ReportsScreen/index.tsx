@@ -1,4 +1,4 @@
-import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
+import {Modal, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
@@ -10,6 +10,7 @@ import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PieChartLabels from '../../components/atoms/PieChartLabels';
 import Expense from '../../schemas/ExpenseSchema';
+import EmptyState from '../../components/atoms/EmptyState';
 
 const ReportsScreen = () => {
   const {
@@ -28,6 +29,17 @@ const ReportsScreen = () => {
     totalAmountForMonth,
     daysInMonth,
   } = useReports();
+
+  const daysWithTransactions = filteredTransactions.reduce(
+    (days, transaction) => {
+      const transactionDay = moment(transaction.date).date();
+      if (!days.includes(transactionDay)) {
+        days.push(transactionDay);
+      }
+      return days;
+    },
+    [],
+  );
 
   const months = [
     'January',
@@ -256,14 +268,22 @@ const ReportsScreen = () => {
       );
 
       const hasTransactions = dayTransactions.length > 0;
+      console.log('has', hasTransactions);
       let opacity = hasTransactions
         ? totalAmountForDay / totalAmountForMonth
         : 1;
       let visibility = Math.round(opacity * 100);
 
-      const backgroundColor = hasTransactions
-        ? `${colors.accentGreen}${visibility}`
-        : 'transparent';
+      let backgroundColor;
+      if (hasTransactions) {
+        backgroundColor = `${colors.accentGreen}${visibility}`;
+      } else {
+        backgroundColor = 'transparent';
+      }
+
+      if (totalAmountForDay === totalAmountForMonth) {
+        backgroundColor = `${colors.accentGreen}60`;
+      }
 
       const monthIndex = months.indexOf(selectedMonth);
       const selectedDate = new Date(selectedYear, monthIndex, day);
@@ -354,27 +374,38 @@ const ReportsScreen = () => {
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
             }}>
-            Avg/Day: {(totalAmountForMonth / daysInMonth).toFixed(2)}
+            Avg/Day:{' '}
+            {(totalAmountForMonth / daysWithTransactions.length).toFixed(2)}
           </PrimaryText>
         </View>
       </View>
 
       <ScrollView>
-        <View style={styles.chartContainer}>{renderPieChart()}</View>
-        <View style={styles.calendarContainer}>
-          {dayNames.map((day, index) => (
-            <View key={index} style={styles.calendarDay}>
-              <PrimaryText
-                style={{
-                  color: colors.primaryText,
-                  fontSize: 13,
-                }}>
-                {day}
-              </PrimaryText>
+        {filteredTransactions.length === 0 ? (
+          <EmptyState
+            colors={colors}
+            type={'Insights'}
+            style={{marginTop: '20%'}}
+          />
+        ) : (
+          <>
+            <View style={styles.chartContainer}>{renderPieChart()}</View>
+            <View style={styles.calendarContainer}>
+              {dayNames.map((day, index) => (
+                <View key={index} style={styles.calendarDay}>
+                  <PrimaryText
+                    style={{
+                      color: colors.primaryText,
+                      fontSize: 13,
+                    }}>
+                    {day}
+                  </PrimaryText>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-        <View style={styles.calendarContainer}>{renderCalendar()}</View>
+            <View style={styles.calendarContainer}>{renderCalendar()}</View>
+          </>
+        )}
       </ScrollView>
     </PrimaryView>
   );
