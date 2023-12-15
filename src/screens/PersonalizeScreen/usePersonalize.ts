@@ -21,7 +21,13 @@ const usePersonalize = () => {
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    try {
+      await createUser('User', email);
+      navigate('OnboardingScreen');
+    } catch (error) {
+      console.error('Error saving demo user data to Realm:', error);
+    }
     navigate('OnboardingScreen');
   };
 

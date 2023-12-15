@@ -11,6 +11,7 @@ import {selectUserName} from '../../redux/slice/userNameSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {
+  FETCH_ALL_CATEGORY_DATA,
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
@@ -41,6 +42,7 @@ const useHome = () => {
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
+    dispatch({type: FETCH_ALL_CATEGORY_DATA});
   }, [userId, userName, currencySymbol]);
 
   useEffect(() => {

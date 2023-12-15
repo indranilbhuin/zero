@@ -13,12 +13,14 @@ const lightImages = {
   Transactions: require('../../../assets/images/lightNoTransaction.png'),
   Insights: require('../../../assets/images/lightNoReport.png'),
   Debts: require('../../../assets/images/lightNoDebt.png'),
+  Categories: require('../../../assets/images/lightNoCategory.png'),
 } as Record<string, any>;
 
 const darkImages = {
   Transactions: require('../../../assets/images/darkNoTransaction.png'),
   Insights: require('../../../assets/images/darkNoReport.png'),
   Debts: require('../../../assets/images/darkNoDebt.png'),
+  Categories: require('../../../assets/images/darkNoCategory.png'),
 } as Record<string, any>;
 
 const EmptyState: React.FC<EmptyStateProps> = ({colors, type, style}) => {

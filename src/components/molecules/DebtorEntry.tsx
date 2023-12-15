@@ -23,14 +23,14 @@ interface DebtorEntryProps {
 
 const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const colors = useThemeColors();
-  const {debtorId, debtorName, debtorType} = route.params;
+  const debtorData = route?.params;
   const isAddButton = type === 'Add';
   const dispatch = useDispatch();
-  const [debtorTitle, setDebtorTitle] = useState(isAddButton ? '' : debtorName);
+  const [debtorTitle, setDebtorTitle] = useState(isAddButton ? '' : debtorData.debtorName);
   const [selectedCategories, setSelectedCategories] = useState<Array<any>>(
     isAddButton
       ? []
-      : debtCategories.filter(category => category.name === debtorType),
+      : debtCategories.filter(category => category.name === debtorData.debtorType),
   );
   console.log('selected categories', selectedCategories);
   const userId = useSelector(selectUserId);
@@ -62,7 +62,7 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const handleUpdateDebtor = () => {
     try {
       updateDebtorById(
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
+        Realm.BSON.ObjectID.createFromHexString(debtorData.debtorId),
         debtorTitle,
         selectedCategories[0].icon,
         selectedCategories[0].name,

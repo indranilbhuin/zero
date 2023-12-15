@@ -17,6 +17,7 @@ import {RouteProp} from '@react-navigation/native';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {deleteDebtorById} from '../../services/DebtorService';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import moment from 'moment';
 
 export type IndividualDebtsScreenRouteProp = RouteProp<
   {
@@ -35,6 +36,10 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const [refreshing, setRefreshing] = useState(false);
   const individualDebts = useSelector(selectDebtData);
   const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts));
+  const sortedDebts = individualDebtsCopy.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
   console.log('all debtsss', individualDebtsCopy);
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
@@ -58,7 +63,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     debtId: string,
     debtDescription: string,
     amount: number,
-    debtDate: Date,
+    debtDate: string,
   ) => {
     navigate('UpdateDebtScreen', {
       debtId,
@@ -122,6 +127,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     handleDeleteDebtor,
     handleMarkAsPaid,
     handleUpdateDebtor,
+    sortedDebts,
   };
 };
 

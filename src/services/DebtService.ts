@@ -5,7 +5,7 @@ export const createDebt = async (
   amount: number,
   description: string,
   debtorId: Realm.BSON.ObjectId,
-  date: Date,
+  date: string,
 ) => {
   const realm = await getRealm();
 
@@ -32,7 +32,7 @@ export const updateDebtById = async (
   debtorId?: Realm.BSON.ObjectId,
   newAmount?: number,
   newDescription?: string,
-  newDate?: Date,
+  newDate?: string,
 ) => {
   const realm = await getRealm();
 

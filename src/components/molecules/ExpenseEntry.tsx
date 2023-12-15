@@ -28,25 +28,15 @@ interface ExpenseEntryProps {
 
 const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const expenseData = route?.params;
-  console.log(expenseData.category.name);
   const isAddButton = type === 'Add';
   const categories = useSelector(selectActiveCategories);
-  const a = categories.filter(
-    category =>
-      category.name.trim().toLowerCase() ===
-      expenseData.category.name.trim().toLowerCase(),
-  );
-  console.log('ssssssssssssss', categories);
-  console.log('rrrrrrrrrrrrr', a);
   const [selectedCategories, setSelectedCategories] = useState(
     isAddButton
       ? []
-      : categories.filter(
-          category => category.name === expenseData.category.name,
+      : categories?.filter(
+          category => category?.name === expenseData?.category.name,
         ),
   );
-
-  console.log("pppppppppppppppp",selectedCategories)
 
   const [createdAt, setCreatedAt] = useState(
     isAddButton

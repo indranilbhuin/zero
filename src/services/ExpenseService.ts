@@ -36,7 +36,7 @@ export const updateExpenseById = async (
   newTitle?: string,
   newAmount?: number,
   newDescription?: string,
-  newDate?: Date,
+  newDate?: string,
 ) => {
   const realm = await getRealm();
 

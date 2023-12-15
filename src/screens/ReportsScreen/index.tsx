@@ -1,4 +1,4 @@
-import {Modal, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
@@ -132,7 +132,6 @@ const ReportsScreen = () => {
           borderColor: 'white',
           alignItems: 'center',
           justifyContent: 'center',
-          borderStyle: 'dashed',
         }}>
         <TouchableOpacity onPress={handleYearPicker}>
           <View
