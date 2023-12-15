@@ -109,11 +109,18 @@ const ReportsScreen = () => {
                   backgroundColor:
                     month === selectedMonth
                       ? colors.accentGreen
-                      : colors.primaryText,
-                  borderColor: colors.secondaryText,
+                      : colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                 },
               ]}>
-              <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
+              <PrimaryText
+                style={{
+                  color:
+                    month === selectedMonth
+                      ? colors.buttonText
+                      : colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {month}
               </PrimaryText>
             </View>
@@ -128,8 +135,8 @@ const ReportsScreen = () => {
       <View
         style={{
           marginRight: 5,
-          borderRightWidth: 0.8,
-          borderColor: 'white',
+          borderRightWidth: 2,
+          borderColor: colors.containerColor,
           alignItems: 'center',
           justifyContent: 'center',
         }}>
@@ -138,13 +145,13 @@ const ReportsScreen = () => {
             style={[
               styles.categoryContainer,
               {
-                backgroundColor: colors.primaryText,
-                borderColor: colors.secondaryText,
+                backgroundColor: colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
               },
             ]}>
             <PrimaryText
               style={{
-                color: colors.buttonText,
+                color: colors.primaryText,
                 fontSize: 13,
                 fontFamily: 'FiraCode-SemiBold',
               }}>
@@ -344,14 +351,14 @@ const ReportsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
               width: '48.5%',
             },
           ]}>
           <PrimaryText
             style={{
-              color: colors.buttonText,
+              color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
             }}>
@@ -362,14 +369,14 @@ const ReportsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
               width: '48.5%',
             },
           ]}>
           <PrimaryText
             style={{
-              color: colors.buttonText,
+              color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
             }}>

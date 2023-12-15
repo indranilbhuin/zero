@@ -17,7 +17,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({onPress, colors, text}) => {
         <TouchableOpacity onPress={onPress}>
           <Icon
             name="caret-back-circle"
-            size={25}
+            size={30}
             color={colors.primaryText}
             type={'IonIcons'}
           />

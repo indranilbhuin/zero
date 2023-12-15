@@ -1,4 +1,4 @@
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
 import homeStyles from '../HomeScreen/style';
@@ -23,7 +23,7 @@ const DebtsScreen = () => {
     totalDebts,
     personTotalDebts,
     otherTotalDebts,
-    debtorsCopy
+    debtorsCopy,
   } = useDebts();
 
   return (
@@ -47,14 +47,14 @@ const DebtsScreen = () => {
               style={[
                 styles.categoryContainer,
                 {
-                  backgroundColor: colors.primaryText,
-                  borderColor: colors.secondaryText,
+                  backgroundColor: colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                   width: '32%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color: colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -62,7 +62,7 @@ const DebtsScreen = () => {
               </PrimaryText>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color: colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -74,14 +74,14 @@ const DebtsScreen = () => {
               style={[
                 styles.categoryContainer,
                 {
-                  backgroundColor: colors.primaryText,
-                  borderColor: colors.secondaryText,
+                  backgroundColor: colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                   width: '32%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color: colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -90,7 +90,7 @@ const DebtsScreen = () => {
 
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color: colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -102,14 +102,14 @@ const DebtsScreen = () => {
               style={[
                 styles.categoryContainer,
                 {
-                  backgroundColor: colors.primaryText,
-                  borderColor: colors.secondaryText,
+                  backgroundColor: colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                   width: '32%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color: colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -117,7 +117,7 @@ const DebtsScreen = () => {
               </PrimaryText>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color: colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -143,14 +143,17 @@ const DebtsScreen = () => {
                   backgroundColor:
                     debtorType === 'Person'
                       ? colors.accentGreen
-                      : colors.primaryText,
-                  borderColor: colors.secondaryText,
+                      : colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                   width: '48.5%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color:
+                    debtorType === 'Person'
+                      ? colors.buttonText
+                      : colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -165,14 +168,17 @@ const DebtsScreen = () => {
                   backgroundColor:
                     debtorType === 'Other'
                       ? colors.accentGreen
-                      : colors.primaryText,
-                  borderColor: colors.secondaryText,
+                      : colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                   width: '48.5%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.buttonText,
+                  color:
+                    debtorType === 'Other'
+                      ? colors.buttonText
+                      : colors.primaryText,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -195,12 +201,12 @@ const DebtsScreen = () => {
       )}
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
-          style={[homeStyles.addButton, {backgroundColor: colors.primaryText}]}
+          style={[homeStyles.addButton, {backgroundColor: colors.secondaryBackground}]}
           onPress={() => navigate('AddDebtorScreen')}>
           <Icon
             name={'credit-card-plus'}
             size={30}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'MaterialCommunityIcons'}
           />
         </TouchableOpacity>

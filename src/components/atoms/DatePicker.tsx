@@ -42,14 +42,14 @@ const DatePicker: React.FC<DatePickerProps> = ({
           style={[
             styles.dateButtonContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
             },
           ]}>
           <Icon
             name={'calendar'}
             size={20}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'IonIcons'}
           />
         </View>

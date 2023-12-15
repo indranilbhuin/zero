@@ -112,9 +112,6 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   return {
     colors,
     refreshing,
-    setRefreshing,
-    individualDebts,
-    individualDebtsCopy,
     debtLoading,
     debtError,
     debtorName,

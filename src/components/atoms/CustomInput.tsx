@@ -28,9 +28,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
         style={[
           textInputStyles.textInput,
           {
-            borderColor: colors.primaryText,
+            borderColor: colors.secondaryContainerColor,
             color: colors.primaryText,
-            backgroundColor: colors.secondaryBackground,
+            backgroundColor: colors.secondaryAccent,
           },
         ]}
         value={input}

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Image,
   RefreshControl,
   ScrollView,
   Text,
@@ -95,12 +94,12 @@ const HomeScreen = () => {
       </PrimaryView>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
-          style={[styles.addButton, {backgroundColor: colors.primaryText}]}
+          style={[styles.addButton, {backgroundColor: colors.secondaryBackground}]}
           onPress={() => navigate('AddTransactionsScreen')}>
           <Icon
             name={'wallet-plus'}
             size={30}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'MaterialCommunityIcons'}
           />
         </TouchableOpacity>

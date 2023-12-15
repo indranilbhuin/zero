@@ -50,7 +50,7 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
       <View
         style={[
           styles.transactionContainer,
-          {backgroundColor: colors.secondaryBackground},
+          {backgroundColor: colors.secondaryAccent},
         ]}>
         <PrimaryText>
           {currencySymbol} {totalSpent}

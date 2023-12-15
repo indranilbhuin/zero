@@ -66,7 +66,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
               style={[
                 styles.debtorContainer,
                 {
-                  backgroundColor: colors.primaryText,
+                  backgroundColor: colors.sameWhite,
                   borderColor: debtor.color ?? colors.primaryText,
                 },
               ]}>
@@ -90,7 +90,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
           </TouchableOpacity>
           <View
             style={{
-              backgroundColor: colors.primaryText,
+              backgroundColor: colors.iconContainer,
               width: '100%',
               alignItems: 'center',
               borderRadius: 5,
@@ -98,7 +98,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
             }}>
             <PrimaryText
               style={{
-                color: colors.buttonText,
+                color: colors.primaryText,
                 fontSize: 12,
                 fontFamily: 'FiraCode-SemiBold',
               }}>

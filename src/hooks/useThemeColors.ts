@@ -14,32 +14,47 @@ export interface Colors {
   buttonText: string;
   containerColor: string;
   cardBackground: string;
+  secondaryContainerColor: string;
+  secondaryAccent: string;
+  iconContainer: string;
+  sameBlack: string;
+  sameWhite: string;
 }
 
 const Colors = {
   light: {
     primaryBackground: '#FFFFFF',
     primaryText: '#000000',
-    secondaryBackground: '#ECECEC',
+    secondaryBackground: '#E0E6D3',
     secondaryText: '#333333',
     accentGreen: '#6E8B3D',
     accentOrange: '#FFA500',
     buttonText: '#FFFFFF',
-    containerColor: '#E0E0E0',
+    containerColor: '#F4F4F0',
     cardBackground: '#EFEFEF',
-    accentBlue: '#1E90FF'
+    accentBlue: '#1E90FF',
+    secondaryContainerColor: '#E0E6D3',
+    iconContainer: '#E0E6D3',
+    secondaryAccent: '#FAFBF7',
+    sameBlack: '#000000',
+    sameWhite: '#FAFBF7',
   },
   dark: {
     primaryBackground: '#0F0F0F',
     primaryText: '#FFFFFF',
     secondaryBackground: '#333333',
     secondaryText: '#CCCCCC',
-    accentGreen: '#98FB98',
+    accentGreen: '#B1FB98',
     accentOrange: '#FFA500',
     buttonText: '#000000',
     containerColor: '#1f1f1f',
     cardBackground: '#262626',
-    accentBlue: '#1E90FF'
+    accentBlue: '#1E90FF',
+    secondaryContainerColor: '#1f1f1f',
+    secondaryAccent: '#333333',
+    iconContainer: '#313131',
+    sameBlack: '#000000',
+    sameWhite: '#FAFBF7',
   },
 };
 

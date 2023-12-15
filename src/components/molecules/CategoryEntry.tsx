@@ -185,8 +185,8 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           style={[
             styles.dateButtonContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
             },
           ]}
           onPress={() => setIsIconModalVisible(true)}>
@@ -194,14 +194,14 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
             <Icon
               name={'dots-horizontal-circle'}
               size={25}
-              color={colors.buttonText}
+              color={colors.primaryText}
               type={'MaterialCommunityIcons'}
             />
           ) : (
             <Icon
               name={selectedIcon}
               size={25}
-              color={colors.buttonText}
+              color={colors.primaryText}
               type={'MaterialCommunityIcons'}
             />
           )}
@@ -216,8 +216,8 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           style={[
             styles.dateButtonContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
             },
           ]}
           onPress={() => setIsColorModalVisible(true)}>

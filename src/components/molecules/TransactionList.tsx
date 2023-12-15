@@ -167,7 +167,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                 <View
                   style={[
                     styles.iconContainer,
-                    {backgroundColor: colors.primaryText},
+                    {backgroundColor: colors.iconContainer},
                   ]}>
                   <Icon
                     name={expense.category.icon ?? 'selection-ellipse'}

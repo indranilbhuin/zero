@@ -156,8 +156,8 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         style={[
           textInputStyles.textInputContainer,
           {
-            borderColor: colors.primaryText,
-            backgroundColor: colors.secondaryBackground,
+            borderColor: colors.secondaryContainerColor,
+            backgroundColor: colors.secondaryAccent,
           },
         ]}>
         <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>

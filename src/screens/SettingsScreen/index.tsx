@@ -333,8 +333,8 @@ const SettingsScreen = () => {
                 style={[
                   textInputStyles.textInputContainer,
                   {
-                    borderColor: colors.primaryText,
-                    backgroundColor: colors.secondaryBackground,
+                    borderColor: colors.secondaryContainerColor,
+                    backgroundColor: colors.secondaryAccent,
                   },
                 ]}>
                 <Icon

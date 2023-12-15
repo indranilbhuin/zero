@@ -18,7 +18,6 @@ import useIndividualDebts, {
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import mainStyles from '../../styles/main';
-import Debt from '../../schemas/DebtSchema';
 import DebtList from '../../components/molecules/DebtList';
 
 const IndividualDebtsScreen = () => {
@@ -26,7 +25,6 @@ const IndividualDebtsScreen = () => {
   const {
     colors,
     refreshing,
-    individualDebtsCopy,
     debtLoading,
     debtError,
     debtorName,
@@ -39,7 +37,7 @@ const IndividualDebtsScreen = () => {
     handleDeleteDebtor,
     handleMarkAsPaid,
     handleUpdateDebtor,
-    sortedDebts
+    sortedDebts,
   } = useIndividualDebts(route);
 
   if (debtLoading) {
@@ -66,15 +64,15 @@ const IndividualDebtsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
               width: '50%',
               flexDirection: 'column',
             },
           ]}>
           <PrimaryText
             style={{
-              color: colors.buttonText,
+              color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
             }}>
@@ -82,7 +80,7 @@ const IndividualDebtsScreen = () => {
           </PrimaryText>
           <PrimaryText
             style={{
-              color: colors.buttonText,
+              color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
             }}>
@@ -94,8 +92,8 @@ const IndividualDebtsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
               width: '15%',
             },
           ]}
@@ -111,8 +109,8 @@ const IndividualDebtsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
               width: '15%',
             },
           ]}
@@ -128,8 +126,8 @@ const IndividualDebtsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
               width: '15%',
             },
           ]}
@@ -157,12 +155,15 @@ const IndividualDebtsScreen = () => {
       </ScrollView>
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
-          style={[homeStyles.addButton, {backgroundColor: colors.primaryText}]}
+          style={[
+            homeStyles.addButton,
+            {backgroundColor: colors.secondaryBackground},
+          ]}
           onPress={() => navigate('AddDebtsScreen', {debtorId, debtorName})}>
           <Icon
             name={'assignment-add'}
             size={30}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'MaterialIcons'}
           />
         </TouchableOpacity>

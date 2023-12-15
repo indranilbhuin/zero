@@ -22,12 +22,12 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
         style={[
           styles.categoryContainer,
           {
-            backgroundColor: colors.primaryText,
-            borderColor: colors.secondaryText,
+            backgroundColor: colors.secondaryContainerColor,
+            borderColor: colors.secondaryAccent,
             width: width,
           },
         ]}>
-        <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
+        <PrimaryText style={{color: colors.primaryText, fontSize: 13}}>
           {buttonText}
         </PrimaryText>
       </View>

@@ -32,8 +32,8 @@ const DebtItem = ({
               style={[
                 styles.categoryContainer,
                 {
-                  backgroundColor: colors.primaryText,
-                  borderColor: colors.secondaryText,
+                  backgroundColor: colors.secondaryAccent,
+                  // borderColor: colors.secondaryContainerColor,
                 },
               ]}>
               <TouchableOpacity
@@ -47,7 +47,7 @@ const DebtItem = ({
                 }>
                 <PrimaryText
                   style={{
-                    color: colors.buttonText,
+                    color: colors.primaryText,
                     fontSize: 13,
                     marginRight: 5,
                   }}>
@@ -126,7 +126,9 @@ const styles = StyleSheet.create({
     padding: 5,
     marginRight: 5,
     borderRadius: 5,
-    borderWidth: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    // borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 5,

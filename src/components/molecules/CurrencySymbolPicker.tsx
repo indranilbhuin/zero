@@ -37,20 +37,20 @@ const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
               {
                 backgroundColor:
                   selectedCurrency?.code === currency.code
-                    ? colors.accentGreen
-                    : colors.primaryText,
-                borderColor: colors.secondaryText,
+                    ? `${colors.accentGreen}75`
+                    : colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
               },
             ]}>
             <View style={styles.symbolContainer}>
-              <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
+              <PrimaryText style={{color: colors.primaryText, fontSize: 20}}>
                 {currency.symbolNative}
               </PrimaryText>
-              <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
+              <PrimaryText style={{color: colors.primaryText, fontSize: 13}}>
                 {currency.code}
               </PrimaryText>
             </View>
-            <PrimaryText style={{color: colors.buttonText, fontSize: 10}}>
+            <PrimaryText style={{color: colors.primaryText, fontSize: 10}}>
               {currency.name}
             </PrimaryText>
           </View>
