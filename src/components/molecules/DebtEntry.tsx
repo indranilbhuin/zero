@@ -14,6 +14,7 @@ import {getDebtRequest} from '../../redux/slice/debtDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
 import {DebtsScreenProp} from '../../screens/AddDebtsScreen';
+import moment from 'moment';
 
 interface DebtEntryProps {
   buttonText: string;
@@ -33,7 +34,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
     isAddButton ? '' : String(amount),
   );
   const [createdAt, setCreatedAt] = useState(
-    isAddButton ? new Date() : new Date(debtDate),
+    isAddButton ? moment().format('YYYY-MM-DDTHH:mm:ss') : debtDate,
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const userId = useSelector(selectUserId);

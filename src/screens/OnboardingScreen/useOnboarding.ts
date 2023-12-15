@@ -12,6 +12,8 @@ const useOnboarding = () => {
   const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
     [],
   );
+
+  console.log(selectedCategories)
   const userId = useSelector(selectUserId);
 
   const dispatch = useDispatch();

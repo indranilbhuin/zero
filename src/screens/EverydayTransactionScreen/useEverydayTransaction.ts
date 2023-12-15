@@ -1,9 +1,14 @@
 import moment from 'moment';
 import useThemeColors from '../../hooks/useThemeColors';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {RouteProp} from '@react-navigation/native';
 import Expense from '../../schemas/ExpenseSchema';
+import {useEffect} from 'react';
+import {
+  getEverydayExpenseRequest,
+  selectEverydayExpenseData,
+} from '../../redux/slice/everydayExpenseDataSlice';
 
 export type EverydayTransactionRouteProp = RouteProp<
   {
@@ -16,22 +21,30 @@ export type EverydayTransactionRouteProp = RouteProp<
 >;
 
 const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
-  const transactions = route.params.dayTransactions;
-  const date = transactions[0]?.date;
-  const noTransactionDate = route.params.isDate;
-  const formattedDate = moment(date).format('MMM Do YY');
-  const formatDate = moment(noTransactionDate).format('MMM Do YY');
+  const dispatch = useDispatch();
+  const allEverdayTransaction = useSelector(selectEverydayExpenseData);
+  const allEverdayTransactionCopy = JSON.parse(
+    JSON.stringify(allEverdayTransaction),
+  );
+  const expenseDate = route.params.isDate;
+  console.log('no ', expenseDate);
+  const formattedDate = moment(expenseDate).format('MMM Do YY');
+  const formatDate = moment(expenseDate).format('MMM Do YY');
   const colors = useThemeColors();
   const currencySymbol = useSelector(selectCurrencySymbol);
 
+  useEffect(() => {
+    dispatch(getEverydayExpenseRequest(expenseDate));
+  }, [expenseDate]);
+
   return {
-    transactions,
     formatDate,
     formattedDate,
     colors,
     currencySymbol,
-    date,
-    noTransactionDate,
+    expenseDate,
+    allEverdayTransaction,
+    allEverdayTransactionCopy,
   };
 };
 

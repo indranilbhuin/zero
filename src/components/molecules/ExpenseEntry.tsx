@@ -19,6 +19,7 @@ import {createExpense, updateExpenseById} from '../../services/ExpenseService';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
+import moment from 'moment';
 
 interface ExpenseEntryProps {
   type: string;
@@ -28,11 +29,19 @@ interface ExpenseEntryProps {
 const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const expenseData = route?.params;
   const isAddButton = type === 'Add';
+  const categories = useSelector(selectActiveCategories);
   const [selectedCategories, setSelectedCategories] = useState(
-    isAddButton ? [] : [expenseData?.category],
+    isAddButton
+      ? []
+      : categories?.filter(
+          category => category?.name === expenseData?.category.name,
+        ),
   );
+
   const [createdAt, setCreatedAt] = useState(
-    isAddButton ? new Date() : expenseData.expenseDate,
+    isAddButton
+      ? moment().format('YYYY-MM-DDTHH:mm:ss')
+      : expenseData.expenseDate,
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState(
@@ -46,7 +55,6 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   );
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const categories = useSelector(selectActiveCategories);
   const dispatch = useDispatch();
 
   const colors = useThemeColors();
@@ -93,11 +101,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     ) {
       return;
     }
-    const categoryId = selectedCategories[0]._id;
+    const categoryId = String(selectedCategories[0]._id);
     try {
       updateExpenseById(
         Realm.BSON.ObjectID.createFromHexString(expenseData.expenseId),
-        categoryId,
+        Realm.BSON.ObjectID.createFromHexString(categoryId),
         expenseTitle,
         Number(expenseAmount),
         expenseDescription,
@@ -122,7 +130,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   return (
     <PrimaryView colors={colors}>
       <View style={mainStyles.headerContainer}>
-        <AppHeader onPress={goBack} colors={colors} text="Transaction Screen" />
+        <AppHeader
+          onPress={() => goBack(() => dispatch(getExpenseRequest()))}
+          colors={colors}
+          text="Transaction Screen"
+        />
       </View>
 
       <CustomInput

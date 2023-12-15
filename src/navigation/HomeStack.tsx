@@ -18,6 +18,7 @@ import IndividualDebtsScreen from '../screens/IndividualDebtsScreen';
 import AddDebtsScreen from '../screens/AddDebtsScreen';
 import UpdateDebtScreen from '../screens/UpdateDebtScreen';
 import EverydayTransactionScreen from '../screens/EverydayTransactionScreen';
+import UpdateDebtorScreen from '../screens/UpdateDebtorScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -159,6 +160,7 @@ const HomeStack = () => {
       />
       <Stack.Screen name="AddDebtsScreen" component={AddDebtsScreen} />
       <Stack.Screen name="UpdateDebtScreen" component={UpdateDebtScreen} />
+      <Stack.Screen name="UpdateDebtorScreen" component={UpdateDebtorScreen} />
     </Stack.Navigator>
   );
 };

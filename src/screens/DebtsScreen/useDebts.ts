@@ -14,17 +14,19 @@ const useDebts = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const debtors = useSelector(selectDebtorData);
+  const debtorsCopy = JSON.parse(JSON.stringify(debtors));
+  console.log("this is debtors", debtorsCopy)
   const allDebts = useSelector(selectAllDebtData);
   const allDebtsCopy = JSON.parse(JSON.stringify(allDebts));
   const [debtorType, setDebtorType] = useState('Person');
-  console.log('this is all debts copy', debtors);
-  console.log(debtors);
+  console.log('this is all debts copy', allDebtsCopy);
+  console.log(debtorsCopy);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const personDebtors = debtors.filter(
+  const personDebtors = debtorsCopy.filter(
     (debtor: Debtor) => debtor.type === 'Person',
   );
-  const otherAccountsDebtors = debtors.filter(
+  const otherAccountsDebtors = debtorsCopy.filter(
     (debtor: Debtor) => debtor.type !== 'Person',
   );
 
@@ -37,7 +39,7 @@ const useDebts = () => {
   let otherTotalDebts = 0;
 
   allDebtsCopy.forEach((debt: {debtor: {type: string}; amount: number}) => {
-    if (debt.debtor.type === 'Person') {
+    if (debt?.debtor?.type === 'Person') {
       personTotalDebts += debt.amount;
     } else {
       otherTotalDebts += debt.amount;
@@ -51,7 +53,6 @@ const useDebts = () => {
 
   return {
     colors,
-    debtors,
     allDebts,
     allDebtsCopy,
     debtorType,
@@ -62,6 +63,7 @@ const useDebts = () => {
     totalDebts,
     personTotalDebts,
     otherTotalDebts,
+    debtorsCopy,
   };
 };
 

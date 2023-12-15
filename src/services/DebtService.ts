@@ -5,7 +5,7 @@ export const createDebt = async (
   amount: number,
   description: string,
   debtorId: Realm.BSON.ObjectId,
-  date: Date,
+  date: string,
 ) => {
   const realm = await getRealm();
 
@@ -32,7 +32,7 @@ export const updateDebtById = async (
   debtorId?: Realm.BSON.ObjectId,
   newAmount?: number,
   newDescription?: string,
-  newDate?: Date,
+  newDate?: string,
 ) => {
   const realm = await getRealm();
 
@@ -73,6 +73,25 @@ export const deleteDebtById = async (debtId: Realm.BSON.ObjectId) => {
     });
   } catch (error) {
     console.error('Error deleting Debt:', error);
+  }
+};
+
+export const deleteAllDebtsbyDebtorId = async (debtorId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  
+  try {
+    realm.write(() => {
+      const debts = realm.objects('Debt');
+      
+      for (let i = debts.length - 1; i >= 0; i--) {
+        const debt = debts[i];
+        if (debt.debtor?._id.equals(debtorId)) {
+          realm.delete(debt);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting debts by debtorId:', error);
   }
 };
 

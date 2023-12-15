@@ -6,7 +6,7 @@ const individualDebtsStyles = StyleSheet.create({
     marginBottom: 15,
   },
   categoryContainer: {
-    height: 35,
+    height: 40,
     padding: 5,
     marginRight: 5,
     borderRadius: 5,

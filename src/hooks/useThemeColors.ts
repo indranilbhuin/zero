@@ -27,6 +27,7 @@ const Colors = {
     buttonText: '#FFFFFF',
     containerColor: '#E0E0E0',
     cardBackground: '#EFEFEF',
+    accentBlue: '#1E90FF'
   },
   dark: {
     primaryBackground: '#0F0F0F',
@@ -38,6 +39,7 @@ const Colors = {
     buttonText: '#000000',
     containerColor: '#1f1f1f',
     cardBackground: '#262626',
+    accentBlue: '#1E90FF'
   },
 };
 
@@ -48,7 +50,6 @@ const useThemeColors = () => {
 
   async function fetchTheme() {
     const storedTheme = await AsyncStorageService.getItem('themePreference');
-    console.log('this is the async theme', storedTheme);
     setTheme(storedTheme);
   }
 
