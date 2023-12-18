@@ -47,6 +47,7 @@ const reportsStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 10,
+    marginBottom: 15
   },
   calendarDay: {
     width: '14.28%',

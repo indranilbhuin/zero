@@ -5,7 +5,7 @@ const textInputStyles = StyleSheet.create({
     height: 60,
     borderWidth: 2,
     marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 5,
     borderRadius: 15,
     padding: 20,
     fontFamily: 'FiraCode-Medium',

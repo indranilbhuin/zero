@@ -25,6 +25,7 @@ import {
 } from '../../services/CategoryService';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 import mainStyles from '../../styles/main';
+import {categorySchema} from '../../utils/validationSchema';
 
 interface CategoryEntryProps {
   type: string;
@@ -51,6 +52,8 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const [searchText, setSearchText] = useState('');
   const userId = useSelector(selectUserId);
+
+  const isValid = categorySchema.safeParse(categoryName).success;
 
   const handleAddCategory = () => {
     try {
@@ -175,6 +178,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
         setInput={setCategoryName}
         placeholder="eg. Stationary"
         label="Category Name"
+        schema={categorySchema}
       />
 
       <PrimaryText style={{marginBottom: 10}}>
@@ -238,11 +242,12 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           <PrimaryText>Tap to select Color</PrimaryText>
         </TouchableOpacity>
       </View>
-      <View style={{marginTop: '110%'}}>
+      <View style={isValid ? {marginTop: '115%'} : {marginTop: '95%'}}>
         <PrimaryButton
           onPress={isAddButton ? handleAddCategory : handleUpdateCategory}
           colors={colors}
           buttonTitle={type}
+          disabled={!isValid}
         />
       </View>
 
@@ -265,12 +270,14 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
                 }}>
                 Select Icon
               </PrimaryText>
+
               <CustomInput
                 input={searchText}
                 label={undefined}
                 colors={colors}
                 placeholder={'Search Icons'}
                 setInput={setSearchText}
+                schema={undefined}
               />
 
               <View

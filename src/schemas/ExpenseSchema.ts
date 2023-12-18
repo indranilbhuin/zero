@@ -6,7 +6,7 @@ class Expense extends Realm.Object<Expense> {
   _id!: Realm.BSON.ObjectId;
   title!: string;
   amount!: number;
-  description!: string;
+  description?: string;
   category!: Category;
   user!: User;
   date!: string;

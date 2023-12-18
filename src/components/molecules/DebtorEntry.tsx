@@ -15,6 +15,7 @@ import {selectUserId} from '../../redux/slice/userIdSlice';
 import {createDebtor, updateDebtorById} from '../../services/DebtorService';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
+import {nameSchema} from '../../utils/validationSchema';
 
 interface DebtorEntryProps {
   type: string;
@@ -26,14 +27,19 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const debtorData = route?.params;
   const isAddButton = type === 'Add';
   const dispatch = useDispatch();
-  const [debtorTitle, setDebtorTitle] = useState(isAddButton ? '' : debtorData.debtorName);
+  const [debtorTitle, setDebtorTitle] = useState(
+    isAddButton ? '' : debtorData.debtorName,
+  );
   const [selectedCategories, setSelectedCategories] = useState<Array<any>>(
     isAddButton
       ? []
-      : debtCategories.filter(category => category.name === debtorData.debtorType),
+      : debtCategories.filter(
+          category => category.name === debtorData.debtorType,
+        ),
   );
   console.log('selected categories', selectedCategories);
   const userId = useSelector(selectUserId);
+  const isValid = nameSchema.safeParse(debtorTitle).success;
 
   const toggleCategorySelection = (category: Category) => {
     if (selectedCategories.includes(category)) {
@@ -97,13 +103,15 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
         setInput={setDebtorTitle}
         placeholder="eg. John Doe or Axis"
         label="Debtor Name"
+        schema={nameSchema}
       />
 
-      <View style={{marginTop: '110%'}}>
+      <View style={isValid ? {marginTop: '115%'} : {marginTop: '105%'}}>
         <PrimaryButton
           onPress={isAddButton ? handleAddDebtor : handleUpdateDebtor}
           colors={colors}
           buttonTitle={type}
+          disabled={!isValid}
         />
       </View>
     </PrimaryView>

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TextInput} from 'react-native';
 import AppHeader from '../../components/atoms/AppHeader';
 import CustomInput from '../../components/atoms/CustomInput';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
@@ -15,6 +15,10 @@ import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
 import {DebtsScreenProp} from '../../screens/AddDebtsScreen';
 import moment from 'moment';
+import {expenseAmountSchema, expenseSchema} from '../../utils/validationSchema';
+import textInputStyles from '../../styles/textInput';
+import PrimaryText from '../atoms/PrimaryText';
+import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 
 interface DebtEntryProps {
   buttonText: string;
@@ -25,6 +29,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   console.log('the app', route);
   const colors = useThemeColors();
   const dispatch = useDispatch();
+  const currencySymbol = useSelector(selectCurrencySymbol);
   const {debtId, debtDescription, amount, debtorName, debtDate, debtorId} =
     route.params;
   const isAddButton = buttonText === 'Add';
@@ -39,8 +44,15 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const userId = useSelector(selectUserId);
 
+  const debtAmountError =
+    expenseAmountSchema?.safeParse(Number(debtAmount)).error?.errors || [];
+
+  const isValid =
+    expenseSchema.safeParse(debtName).success &&
+    expenseAmountSchema.safeParse(Number(debtAmount)).success;
+
   const handleAddDebt = () => {
-    if (debtName.trim() === '' || debtAmount === null) {
+    if (!isValid) {
       return;
     }
     try {
@@ -60,7 +72,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   };
 
   const handleUpdateDebt = () => {
-    if (debtName.trim() === '' || debtAmount === null) {
+    if (!isValid) {
       return;
     }
     try {
@@ -96,25 +108,57 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         setInput={setDebtName}
         placeholder="eg. tea"
         label="Debt Title"
+        schema={expenseSchema}
       />
-      <CustomInput
-        colors={colors}
-        input={debtAmount}
-        setInput={setDebtAmount}
-        placeholder="eg. 20"
-        label="Debt Amount"
-      />
+      <PrimaryText style={{marginBottom: 5}}>Debt Amount</PrimaryText>
+
+      <View
+        style={[
+          textInputStyles.textInputContainer,
+          {
+            borderColor: colors.secondaryContainerColor,
+            backgroundColor: colors.secondaryAccent,
+            marginBottom: debtAmountError.length > 0 ? 5 : 15,
+          },
+        ]}>
+        <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>
+        <TextInput
+          style={[
+            textInputStyles.textInputWithIcon,
+            {
+              color: colors.primaryText,
+            },
+          ]}
+          value={debtAmount}
+          onChangeText={setDebtAmount}
+          placeholder={'eg. 200'}
+          placeholderTextColor={colors.secondaryText}
+          keyboardType="numeric"
+        />
+      </View>
+      {debtAmountError.length > 0 && (
+        <View style={{marginBottom: 10}}>
+          {debtAmountError.map(error => (
+            <View key={error.message}>
+              <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
+                {error.message}
+              </PrimaryText>
+            </View>
+          ))}
+        </View>
+      )}
       <DatePicker
         setShowDatePicker={setShowDatePicker}
         createdAt={createdAt}
         showDatePicker={showDatePicker}
         setCreatedAt={setCreatedAt}
       />
-      <View style={styles.submitButtonContainer}>
+      <View style={isValid ? {marginTop: '110%'} : {marginTop: '103%'}}>
         <PrimaryButton
           onPress={isAddButton ? handleAddDebt : handleUpdateDebt}
           colors={colors}
           buttonTitle={buttonText}
+          disabled={!isValid}
         />
       </View>
     </PrimaryView>
@@ -122,10 +166,3 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
 };
 
 export default DebtEntry;
-
-const styles = StyleSheet.create({
-  submitButtonContainer: {
-    marginTop: '100%',
-    marginBottom: 15,
-  },
-});

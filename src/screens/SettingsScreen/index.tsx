@@ -18,6 +18,7 @@ import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import textInputStyles from '../../styles/textInput';
 import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
+import {nameSchema} from '../../utils/validationSchema';
 
 const SettingsScreen = () => {
   const {
@@ -294,12 +295,15 @@ const SettingsScreen = () => {
               }}>
               Change Name
             </PrimaryText>
-            <CustomInput
-              colors={colors}
-              input={name}
-              setInput={setName}
-              placeholder={'change user name'}
-            />
+            <View style={{marginBottom: 10}}>
+              <CustomInput
+                colors={colors}
+                input={name}
+                setInput={setName}
+                placeholder={'change user name'}
+                schema={nameSchema}
+              />
+            </View>
             <PrimaryButton
               onPress={handleNameUpdate}
               colors={colors}

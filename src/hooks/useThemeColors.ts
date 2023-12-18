@@ -19,6 +19,7 @@ export interface Colors {
   iconContainer: string;
   sameBlack: string;
   sameWhite: string;
+  accentRed: string;
 }
 
 const Colors = {
@@ -38,6 +39,7 @@ const Colors = {
     secondaryAccent: '#FAFBF7',
     sameBlack: '#000000',
     sameWhite: '#FAFBF7',
+    accentRed: '#FF8C6B',
   },
   dark: {
     primaryBackground: '#0F0F0F',
@@ -55,6 +57,7 @@ const Colors = {
     iconContainer: '#313131',
     sameBlack: '#000000',
     sameWhite: '#FAFBF7',
+    accentRed: '#FF6347',
   },
 };
 

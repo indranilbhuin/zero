@@ -2,6 +2,7 @@ import {useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import {createUser} from '../../services/UserService';
 import {navigate} from '../../utils/navigationUtils';
+import { nameSchema } from '../../utils/validationSchema';
 
 const usePersonalize = () => {
   const colors = useThemeColors();
@@ -9,11 +10,8 @@ const usePersonalize = () => {
   const email = 'null';
 
   const handleSubmit = async () => {
-    if (!name || !email) {
-      return;
-    }
-
     try {
+      await nameSchema.parseAsync(name);
       await createUser(name, email);
       navigate('OnboardingScreen');
     } catch (error) {
@@ -37,6 +35,7 @@ const usePersonalize = () => {
     name,
     handleSubmit,
     handleSkip,
+    nameSchema,
   };
 };
 

@@ -29,6 +29,14 @@ interface TransactionItemProps {
   targetDate?: string;
 }
 
+const truncateString = (str, maxLength) => {
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength) + '..';
+  } else {
+    return str;
+  }
+};
+
 const TransactionItem: React.FC<TransactionItemProps> = ({
   currencySymbol,
   expense,
@@ -160,7 +168,6 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                 styles.transactionContainer,
                 {
                   backgroundColor: colors.containerColor,
-                  // transform: [{translateX: slideAnim}],
                 },
               ]}>
               <View style={styles.iconNameContainer}>
@@ -177,7 +184,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                   />
                 </View>
                 <View>
-                  <PrimaryText>{expense.title}</PrimaryText>
+                  <PrimaryText>{truncateString(expense.title, 15)}</PrimaryText>
                   <View style={styles.descriptionContainer}>
                     <PrimaryText
                       style={{
@@ -185,16 +192,20 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                         fontSize: 10,
                         marginRight: 5,
                       }}>
-                      {expense.category.name} .
+                      {truncateString(expense.category.name, 8)} ◦
                     </PrimaryText>
-                    <PrimaryText
-                      style={{
-                        color: colors.primaryText,
-                        fontSize: 10,
-                        marginRight: 5,
-                      }}>
-                      {expense.description} .
-                    </PrimaryText>
+
+                    {expense.description !== '' ? (
+                      <PrimaryText
+                        style={{
+                          color: colors.primaryText,
+                          fontSize: 10,
+                          marginRight: 5,
+                        }}>
+                        {truncateString(expense.description, 4)} ◦
+                      </PrimaryText>
+                    ) : null}
+
                     <PrimaryText
                       style={{
                         color: colors.primaryText,
@@ -208,7 +219,10 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               </View>
               <View>
                 <PrimaryText>
-                  {currencySymbol} {expense.amount}
+                  {currencySymbol}{' '}
+                  {Number.isInteger(expense.amount)
+                    ? expense.amount
+                    : expense.amount.toFixed(2)}
                 </PrimaryText>
               </View>
             </Animated.View>

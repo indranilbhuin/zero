@@ -69,6 +69,10 @@ const useHome = () => {
       0,
     );
 
+  const formatTodaySpent = Number.isInteger(todaySpent)
+    ? todaySpent
+    : todaySpent.toFixed(2);
+
   const yesterdayDate = moment().subtract(1, 'days');
 
   const yesterdaySpent = allTransactions
@@ -80,6 +84,10 @@ const useHome = () => {
       0,
     );
 
+  const formatYesterdaySpent = Number.isInteger(yesterdaySpent)
+    ? yesterdaySpent
+    : yesterdaySpent.toFixed(2);
+
   const thisMonthSpent = allTransactions
     .filter((transaction: Expense) =>
       moment(transaction.date).isSame(currentDate, 'month'),
@@ -88,6 +96,10 @@ const useHome = () => {
       (total, transaction: {amount: number}) => total + transaction.amount,
       0,
     );
+
+  const formatThisMonthSpent = Number.isInteger(thisMonthSpent)
+    ? thisMonthSpent
+    : thisMonthSpent.toFixed(2);
 
   return {
     colors,
@@ -104,6 +116,9 @@ const useHome = () => {
     yesterdaySpent,
     thisMonthSpent,
     sortedTransactions,
+    formatTodaySpent,
+    formatYesterdaySpent,
+    formatThisMonthSpent
   };
 };
 

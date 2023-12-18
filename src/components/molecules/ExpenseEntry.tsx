@@ -20,6 +20,11 @@ import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
 import moment from 'moment';
+import {
+  expenseAmountSchema,
+  expenseDescriptionSchema,
+  expenseSchema,
+} from '../../utils/validationSchema';
 
 interface ExpenseEntryProps {
   type: string;
@@ -53,6 +58,15 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const [expenseAmount, setExpenseAmount] = useState(
     isAddButton ? '' : String(expenseData.expenseAmount),
   );
+
+  const expenseAmountError =
+    expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.errors || [];
+
+  const isValid =
+    expenseSchema.safeParse(expenseTitle).success &&
+    expenseDescriptionSchema.safeParse(expenseDescription).success &&
+    expenseAmountSchema.safeParse(Number(expenseAmount)).success;
+
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
   const dispatch = useDispatch();
@@ -68,11 +82,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   };
 
   const handleAddExpense = () => {
-    if (
-      expenseTitle.trim() === '' ||
-      expenseAmount === null ||
-      selectedCategories.length === 0
-    ) {
+    if (!isValid || selectedCategories.length === 0) {
       return;
     }
     const categoryId = selectedCategories[0]._id;
@@ -94,11 +104,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   };
 
   const handleUpdateExpense = () => {
-    if (
-      expenseTitle.trim() === '' ||
-      expenseAmount === null ||
-      selectedCategories.length === 0
-    ) {
+    if (!isValid || selectedCategories.length === 0) {
       return;
     }
     const categoryId = String(selectedCategories[0]._id);
@@ -142,7 +148,8 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         input={expenseTitle}
         setInput={setExpenseTitle}
         placeholder="eg. Biryani"
-        label="Expense Name"
+        label="Expense"
+        schema={expenseSchema}
       />
       <CustomInput
         colors={colors}
@@ -150,6 +157,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         setInput={setExpenseDescription}
         placeholder="eg. From Aroma's"
         label="Expense Description"
+        schema={expenseDescriptionSchema}
       />
       <PrimaryText style={{marginBottom: 5}}>Expense Amount</PrimaryText>
       <View
@@ -158,6 +166,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           {
             borderColor: colors.secondaryContainerColor,
             backgroundColor: colors.secondaryAccent,
+            marginBottom: expenseAmountError.length > 0 ? 5 : 15,
           },
         ]}>
         <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>
@@ -172,8 +181,20 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           onChangeText={setExpenseAmount}
           placeholder={'eg. 320'}
           placeholderTextColor={colors.secondaryText}
+          keyboardType="numeric"
         />
       </View>
+      {expenseAmountError.length > 0 && (
+        <View style={{marginBottom: 10}}>
+          {expenseAmountError.map(error => (
+            <View key={error.message}>
+              <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
+                {error.message}
+              </PrimaryText>
+            </View>
+          ))}
+        </View>
+      )}
       <DatePicker
         setShowDatePicker={setShowDatePicker}
         createdAt={createdAt}
@@ -202,6 +223,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           onPress={isAddButton ? handleAddExpense : handleUpdateExpense}
           colors={colors}
           buttonTitle={type}
+          disabled={!isValid}
         />
       </View>
     </PrimaryView>

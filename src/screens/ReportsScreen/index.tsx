@@ -207,7 +207,6 @@ const ReportsScreen = () => {
   const renderPieChart = () => {
     const aggregateData: {category: any; amount: any}[] = [];
     const categoryMap = new Map();
-    console.log(categoryMap);
 
     filteredTransactions?.forEach((transaction: any) => {
       const {amount, category} = transaction;
@@ -274,12 +273,11 @@ const ReportsScreen = () => {
       );
 
       const hasTransactions = dayTransactions.length > 0;
-      console.log('has', hasTransactions);
+
       let opacity = hasTransactions
-        ? totalAmountForDay / totalAmountForMonth
+        ? Math.round(totalAmountForDay) / Math.round(totalAmountForMonth)
         : 1;
       let visibility = Math.round(opacity * 100);
-
       let backgroundColor;
       if (hasTransactions) {
         backgroundColor = `${colors.accentGreen}${visibility}`;
@@ -352,7 +350,7 @@ const ReportsScreen = () => {
             styles.categoryContainer,
             {
               backgroundColor: colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
+              borderWidth: undefined,
               width: '48.5%',
             },
           ]}>
@@ -370,8 +368,8 @@ const ReportsScreen = () => {
             styles.categoryContainer,
             {
               backgroundColor: colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
               width: '48.5%',
+              borderWidth: undefined,
             },
           ]}>
           <PrimaryText
@@ -386,7 +384,7 @@ const ReportsScreen = () => {
         </View>
       </View>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {filteredTransactions.length === 0 ? (
           <EmptyState
             colors={colors}
