@@ -5,6 +5,7 @@ import PrimaryText from '../atoms/PrimaryText';
 import Icon from '../atoms/Icons';
 import moment from 'moment';
 import {Colors} from '../../hooks/useThemeColors';
+import {formatCurrency} from '../../utils/numberUtils';
 
 interface DebtListProps {
   colors: Colors;
@@ -33,7 +34,6 @@ const DebtItem = ({
                 styles.categoryContainer,
                 {
                   backgroundColor: colors.secondaryAccent,
-                  // borderColor: colors.secondaryContainerColor,
                 },
               ]}>
               <TouchableOpacity
@@ -43,16 +43,17 @@ const DebtItem = ({
                     debt.description,
                     debt.amount,
                     debt.date,
+                    debt.type,
                   )
                 }>
                 <PrimaryText
                   style={{
                     color: colors.primaryText,
-                    fontSize: 13,
+                    fontSize: 12,
                     marginRight: 5,
                   }}>
                   {debt.description}: {currencySymbol}
-                  {debt.amount}
+                  {formatCurrency(debt.amount)}
                 </PrimaryText>
               </TouchableOpacity>
               <TouchableOpacity
@@ -106,7 +107,7 @@ const DebtList: React.FC<DebtListProps> = ({
             nextWeek: 'dddd',
             lastDay: '[Yesterday]',
             lastWeek: '[Last] dddd',
-            sameElse: 'MMM YYYY',
+            sameElse: 'DD MMM YYYY',
           })}
         />
       ))}
@@ -128,7 +129,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 10,
     paddingRight: 10,
-    // borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 5,

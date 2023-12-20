@@ -24,7 +24,7 @@ export const expenseDescriptionSchema = z
 
 export const expenseAmountSchema = z
   .number()
-  .min(0, 'Expense Amount cannot be less than 0.')
+  .min(0.01, 'Expense Amount cannot be less than 0.')
   .max(1000000, 'Expense Amount cannot exceed 1000000.');
 
 export const categorySchema = z

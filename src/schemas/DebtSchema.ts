@@ -9,6 +9,7 @@ class Debt extends Realm.Object<Debt> {
   debtor!: Debtor;
   user!: User;
   date!: string;
+  type!: string;
 
   static schema: ObjectSchema = {
     name: 'Debt',
@@ -19,6 +20,7 @@ class Debt extends Realm.Object<Debt> {
       debtor: 'Debtor',
       user: 'User',
       date: 'string',
+      type: 'string',
     },
     primaryKey: '_id',
   };

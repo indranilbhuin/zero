@@ -9,7 +9,7 @@ import DateTimePicker, {
 import useThemeColors from '../../hooks/useThemeColors';
 
 interface DatePickerProps {
-  createdAt: Date;
+  createdAt: string;
   showDatePicker: boolean;
   setCreatedAt: (value: string) => void;
   setShowDatePicker: (value: boolean) => void;

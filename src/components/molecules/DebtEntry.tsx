@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TextInput} from 'react-native';
+import {View, TextInput, TouchableOpacity} from 'react-native';
 import AppHeader from '../../components/atoms/AppHeader';
 import CustomInput from '../../components/atoms/CustomInput';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
@@ -19,6 +19,7 @@ import {expenseAmountSchema, expenseSchema} from '../../utils/validationSchema';
 import textInputStyles from '../../styles/textInput';
 import PrimaryText from '../atoms/PrimaryText';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import debtsStyles from '../../screens/DebtsScreen/style';
 
 interface DebtEntryProps {
   buttonText: string;
@@ -30,8 +31,15 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const {debtId, debtDescription, amount, debtorName, debtDate, debtorId} =
-    route.params;
+  const {
+    debtId,
+    debtDescription,
+    amount,
+    debtorName,
+    debtDate,
+    debtorId,
+    debtType,
+  } = route.params;
   const isAddButton = buttonText === 'Add';
   console.log(isAddButton, route.params);
   const [debtName, setDebtName] = useState(isAddButton ? '' : debtDescription);
@@ -42,6 +50,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
     isAddButton ? moment().format('YYYY-MM-DDTHH:mm:ss') : debtDate,
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [debtsType, setDebtsType] = useState(isAddButton ? 'Borrow' : debtType);
   const userId = useSelector(selectUserId);
 
   const debtAmountError =
@@ -50,6 +59,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const isValid =
     expenseSchema.safeParse(debtName).success &&
     expenseAmountSchema.safeParse(Number(debtAmount)).success;
+  console.log('debts', debtsType);
 
   const handleAddDebt = () => {
     if (!isValid) {
@@ -62,6 +72,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         debtName,
         Realm.BSON.ObjectID.createFromHexString(debtorId),
         createdAt,
+        debtsType,
       );
       dispatch(getAllDebtRequest());
       dispatch(getDebtRequest(debtorId));
@@ -82,6 +93,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         Number(debtAmount),
         debtDescription,
         createdAt,
+        debtsType,
       );
 
       dispatch(getAllDebtRequest());
@@ -98,8 +110,83 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         <AppHeader
           onPress={goBack}
           colors={colors}
-          text={`${buttonText} Debt | ${debtorName}`}
+          text={`${buttonText} Debt ◦ ${debtorName}`}
         />
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 15,
+        }}>
+        <TouchableOpacity
+          onPress={() => setDebtsType('Borrow')}
+          style={[
+            debtsStyles.categoryContainer,
+            {
+              backgroundColor:
+                debtsType === 'Borrow'
+                  ? colors.accentOrange
+                  : colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
+              width: '48.5%',
+              height: 50,
+            },
+          ]}>
+          <PrimaryText
+            style={{
+              color:
+                debtsType === 'Borrow' ? colors.buttonText : colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
+            Borrowing from
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color:
+                debtsType === 'Borrow' ? colors.buttonText : colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
+            {debtorName}
+          </PrimaryText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setDebtsType('Lend')}
+          style={[
+            debtsStyles.categoryContainer,
+            {
+              backgroundColor:
+                debtsType === 'Lend'
+                  ? colors.accentGreen
+                  : colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
+              width: '48.5%',
+              height: 50,
+            },
+          ]}>
+          <PrimaryText
+            style={{
+              color:
+                debtsType === 'Lend' ? colors.buttonText : colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
+            Lending to
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color:
+                debtsType === 'Lend' ? colors.buttonText : colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+            }}>
+            {debtorName}
+          </PrimaryText>
+        </TouchableOpacity>
       </View>
 
       <CustomInput
@@ -107,10 +194,10 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         input={debtName}
         setInput={setDebtName}
         placeholder="eg. tea"
-        label="Debt Title"
+        label={`${debtsType} Title`}
         schema={expenseSchema}
       />
-      <PrimaryText style={{marginBottom: 5}}>Debt Amount</PrimaryText>
+      <PrimaryText style={{marginBottom: 5}}>{debtsType} Amount</PrimaryText>
 
       <View
         style={[
@@ -153,7 +240,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         showDatePicker={showDatePicker}
         setCreatedAt={setCreatedAt}
       />
-      <View style={isValid ? {marginTop: '110%'} : {marginTop: '103%'}}>
+      <View style={isValid ? {marginTop: '93%'} : {marginTop: '80%'}}>
         <PrimaryButton
           onPress={isAddButton ? handleAddDebt : handleUpdateDebt}
           colors={colors}

@@ -11,6 +11,7 @@ import PrimaryText from '../../components/atoms/PrimaryText';
 import PieChartLabels from '../../components/atoms/PieChartLabels';
 import Expense from '../../schemas/ExpenseSchema';
 import EmptyState from '../../components/atoms/EmptyState';
+import {formatCurrency} from '../../utils/numberUtils';
 
 const ReportsScreen = () => {
   const {
@@ -352,6 +353,7 @@ const ReportsScreen = () => {
               backgroundColor: colors.secondaryAccent,
               borderWidth: undefined,
               width: '48.5%',
+              height: 50,
             },
           ]}>
           <PrimaryText
@@ -359,8 +361,19 @@ const ReportsScreen = () => {
               color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
             }}>
-            Total: {totalAmountForMonth}
+            Total
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
+            }}>
+            {currencySymbol}
+            {formatCurrency(totalAmountForMonth)}
           </PrimaryText>
         </View>
         <View
@@ -370,6 +383,7 @@ const ReportsScreen = () => {
               backgroundColor: colors.secondaryAccent,
               width: '48.5%',
               borderWidth: undefined,
+              height: 50,
             },
           ]}>
           <PrimaryText
@@ -377,9 +391,21 @@ const ReportsScreen = () => {
               color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
             }}>
-            Avg/Day:{' '}
-            {(totalAmountForMonth / daysWithTransactions.length).toFixed(2)}
+            Avg/Day
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
+            }}>
+            {currencySymbol}
+            {formatCurrency(
+              (totalAmountForMonth / daysWithTransactions.length).toFixed(2),
+            )}
           </PrimaryText>
         </View>
       </View>

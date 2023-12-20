@@ -10,6 +10,8 @@ import useDebts from './useDebts';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import EmptyState from '../../components/atoms/EmptyState';
+import useAmountColor from '../../hooks/useAmountColor';
+import {formatCurrency} from '../../utils/numberUtils';
 
 const DebtsScreen = () => {
   const {
@@ -26,6 +28,44 @@ const DebtsScreen = () => {
     debtorsCopy,
   } = useDebts();
 
+  const totalColor = useAmountColor(totalDebts);
+  const personColor = useAmountColor(personTotalDebts);
+  const otherColor = useAmountColor(otherTotalDebts);
+
+  let overallText = null;
+
+  if (Math.abs(totalDebts) !== 0) {
+    if (totalDebts > 0) {
+      overallText = (
+        <PrimaryText
+          style={{
+            color: colors.accentOrange,
+            fontSize: 12,
+            marginBottom: '2%',
+            textAlign: 'center',
+            fontFamily: 'FiraCode-Bold',
+          }}>
+          Overall, you need to pay others {currencySymbol}{' '}
+          {formatCurrency(Math.abs(totalDebts))}
+        </PrimaryText>
+      );
+    } else {
+      overallText = (
+        <PrimaryText
+          style={{
+            color: colors.accentGreen,
+            fontSize: 12,
+            marginBottom: '2%',
+            textAlign: 'center',
+            fontFamily: 'FiraCode-Bold',
+          }}>
+          Overall, others need to pay you {currencySymbol}{' '}
+          {formatCurrency(Math.abs(totalDebts))}
+        </PrimaryText>
+      );
+    }
+  }
+
   return (
     <PrimaryView colors={colors}>
       <View style={{marginBottom: 15}}>
@@ -35,12 +75,13 @@ const DebtsScreen = () => {
         <EmptyState colors={colors} type={'Debts'} style={{marginTop: '30%'}} />
       ) : (
         <>
+          {overallText}
           <View
             style={{
               flexDirection: 'row',
               width: '100%',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               marginBottom: 10,
             }}>
             <View
@@ -48,13 +89,13 @@ const DebtsScreen = () => {
                 styles.categoryContainer,
                 {
                   backgroundColor: colors.secondaryAccent,
-                  borderColor: colors.secondaryContainerColor,
-                  width: '32%',
+                  borderWidth: undefined,
+                  width: '31%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.primaryText,
+                  color: totalColor,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -62,12 +103,12 @@ const DebtsScreen = () => {
               </PrimaryText>
               <PrimaryText
                 style={{
-                  color: colors.primaryText,
+                  color: totalColor,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
                 {currencySymbol}
-                {totalDebts}
+                {formatCurrency(Math.abs(totalDebts))}
               </PrimaryText>
             </View>
             <View
@@ -75,13 +116,13 @@ const DebtsScreen = () => {
                 styles.categoryContainer,
                 {
                   backgroundColor: colors.secondaryAccent,
-                  borderColor: colors.secondaryContainerColor,
-                  width: '32%',
+                  borderWidth: undefined,
+                  width: '31%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.primaryText,
+                  color: personColor,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -90,12 +131,12 @@ const DebtsScreen = () => {
 
               <PrimaryText
                 style={{
-                  color: colors.primaryText,
+                  color: personColor,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
                 {currencySymbol}
-                {personTotalDebts}
+                {formatCurrency(Math.abs(personTotalDebts))}
               </PrimaryText>
             </View>
             <View
@@ -103,13 +144,13 @@ const DebtsScreen = () => {
                 styles.categoryContainer,
                 {
                   backgroundColor: colors.secondaryAccent,
-                  borderColor: colors.secondaryContainerColor,
-                  width: '32%',
+                  borderWidth: undefined,
+                  width: '31%',
                 },
               ]}>
               <PrimaryText
                 style={{
-                  color: colors.primaryText,
+                  color: otherColor,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
@@ -117,12 +158,12 @@ const DebtsScreen = () => {
               </PrimaryText>
               <PrimaryText
                 style={{
-                  color: colors.primaryText,
+                  color: otherColor,
                   fontSize: 13,
                   fontFamily: 'FiraCode-SemiBold',
                 }}>
                 {currencySymbol}
-                {otherTotalDebts}
+                {formatCurrency(Math.abs(otherTotalDebts))}
               </PrimaryText>
             </View>
           </View>
@@ -132,7 +173,7 @@ const DebtsScreen = () => {
               flexDirection: 'row',
               width: '100%',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               marginBottom: 15,
             }}>
             <TouchableOpacity
@@ -145,7 +186,7 @@ const DebtsScreen = () => {
                       ? colors.accentGreen
                       : colors.secondaryAccent,
                   borderColor: colors.secondaryContainerColor,
-                  width: '48.5%',
+                  width: '48%',
                 },
               ]}>
               <PrimaryText
@@ -170,7 +211,7 @@ const DebtsScreen = () => {
                       ? colors.accentGreen
                       : colors.secondaryAccent,
                   borderColor: colors.secondaryContainerColor,
-                  width: '48.5%',
+                  width: '48%',
                 },
               ]}>
               <PrimaryText
@@ -201,7 +242,10 @@ const DebtsScreen = () => {
       )}
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
-          style={[homeStyles.addButton, {backgroundColor: colors.secondaryBackground}]}
+          style={[
+            homeStyles.addButton,
+            {backgroundColor: colors.secondaryBackground},
+          ]}
           onPress={() => navigate('AddDebtorScreen')}>
           <Icon
             name={'credit-card-plus'}

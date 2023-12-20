@@ -20,6 +20,7 @@ export interface Colors {
   sameBlack: string;
   sameWhite: string;
   accentRed: string;
+  lightAccent: string;
 }
 
 const Colors = {
@@ -36,10 +37,11 @@ const Colors = {
     accentBlue: '#1E90FF',
     secondaryContainerColor: '#E0E6D3',
     iconContainer: '#E0E6D3',
-    secondaryAccent: '#FAFBF7',
+    secondaryAccent: '#F0F2ED',
     sameBlack: '#000000',
     sameWhite: '#FAFBF7',
     accentRed: '#FF8C6B',
+    lightAccent: '#FAFBF7'
   },
   dark: {
     primaryBackground: '#0F0F0F',
@@ -58,6 +60,7 @@ const Colors = {
     sameBlack: '#000000',
     sameWhite: '#FAFBF7',
     accentRed: '#FF6347',
+    lightAccent: '#313131'
   },
 };
 

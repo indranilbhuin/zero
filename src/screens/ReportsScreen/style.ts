@@ -40,7 +40,7 @@ const reportsStyles = StyleSheet.create({
     borderBottomWidth: 0.8,
   },
   chartContainer: {
-    marginTop: '12%',
+    marginTop: '8%',
     marginBottom: '12%',
   },
   calendarContainer: {

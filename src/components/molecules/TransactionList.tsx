@@ -1,5 +1,5 @@
 import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useRef} from 'react';
+import React, {useState} from 'react';
 import useThemeColors, {Colors} from '../../hooks/useThemeColors';
 import Icon from '../atoms/Icons';
 import moment from 'moment';
@@ -13,6 +13,8 @@ import Expense from '../../schemas/ExpenseSchema';
 import {Dispatch} from 'redux';
 import PrimaryText from '../atoms/PrimaryText';
 import {getEverydayExpenseRequest} from '../../redux/slice/everydayExpenseDataSlice';
+import UndoModal from '../atoms/UndoModal';
+import {formatCurrency} from '../../utils/numberUtils';
 
 interface TransactionListProps {
   currencySymbol: string;
@@ -39,13 +41,17 @@ const truncateString = (str, maxLength) => {
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
   currencySymbol,
-  expense,
+  expense: initialExpense,
   colors,
   dispatch,
   label,
   targetDate,
 }) => {
-  const slideAnim = useRef(new Animated.Value(1)).current;
+  const [expenses, setExpenses] = useState<Array<Expense>>(initialExpense);
+  const [deletedItem, setDeletedItem] = useState<Expense | null>(null);
+  const [deletionTimeoutId, setDeletionTimeoutId] = useState<number | null>(
+    null,
+  );
 
   const handleEdit = (
     expenseId: string,
@@ -55,32 +61,46 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
     expenseDate: string,
     expenseAmount: number,
   ) => {
-    Animated.timing(slideAnim, {
-      toValue: 200,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => {
-      navigate('UpdateTransactionScreen', {
-        expenseId,
-        expenseTitle,
-        expenseDescription,
-        category,
-        expenseDate,
-        expenseAmount,
-      });
+    navigate('UpdateTransactionScreen', {
+      expenseId,
+      expenseTitle,
+      expenseDescription,
+      category,
+      expenseDate,
+      expenseAmount,
     });
   };
 
   const handleDelete = (expenseId: string) => {
-    Animated.timing(slideAnim, {
-      toValue: -200,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => {
-      deleteExpenseById(Realm.BSON.ObjectID.createFromHexString(expenseId));
-      dispatch(getExpenseRequest());
-      dispatch(getEverydayExpenseRequest(targetDate));
-    });
+    const deletedExpense = expenses.find(
+      expense => String(expense._id) === expenseId,
+    );
+    setExpenses(prevExpenses =>
+      prevExpenses.filter(expense => String(expense._id) !== expenseId),
+    );
+    setDeletedItem(deletedExpense);
+
+    const deletionTimeout = setTimeout(() => {
+      if (!deletedItem) {
+        deleteExpenseById(Realm.BSON.ObjectID.createFromHexString(expenseId));
+        dispatch(getExpenseRequest());
+        dispatch(getEverydayExpenseRequest(targetDate));
+      }
+    }, 3000);
+
+    setTimeout(() => {
+      setDeletedItem(null);
+    }, 3000);
+
+    setDeletionTimeoutId(deletionTimeout);
+  };
+
+  const handleUndo = () => {
+    if (deletedItem) {
+      clearTimeout(deletionTimeoutId);
+      setExpenses(prevExpenses => [...prevExpenses, deletedItem]);
+      setDeletedItem(null);
+    }
   };
 
   const renderLeftActions = (expense: Expense) => {
@@ -101,7 +121,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           style={[
             styles.swipeView,
             {
-              backgroundColor: colors.cardBackground,
+              backgroundColor: colors.lightAccent,
               borderTopLeftRadius: 10,
               borderBottomLeftRadius: 10,
             },
@@ -116,7 +136,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         <View
           style={[
             styles.stretchView,
-            {backgroundColor: colors.cardBackground, marginRight: -250},
+            {backgroundColor: colors.lightAccent, marginRight: -250},
           ]}
         />
       </TouchableOpacity>
@@ -131,14 +151,14 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         <View
           style={[
             styles.stretchView,
-            {backgroundColor: colors.cardBackground, marginLeft: -250},
+            {backgroundColor: colors.lightAccent, marginLeft: -250},
           ]}
         />
         <View
           style={[
             styles.swipeView,
             {
-              backgroundColor: colors.cardBackground,
+              backgroundColor: colors.lightAccent,
               borderTopRightRadius: 10,
               borderBottomRightRadius: 10,
             },
@@ -157,7 +177,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   return (
     <View>
       <PrimaryText style={{fontSize: 12, marginBottom: 5}}>{label}</PrimaryText>
-      {expense.map((expense: Expense) => (
+      {expenses.map((expense: Expense) => (
         <GestureHandlerRootView key={String(expense._id)}>
           <Swipeable
             renderLeftActions={() => renderLeftActions(expense)}
@@ -192,7 +212,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                         fontSize: 10,
                         marginRight: 5,
                       }}>
-                      {truncateString(expense.category.name, 8)} ◦
+                      {truncateString(expense.category.name, 7)} ◦
                     </PrimaryText>
 
                     {expense.description !== '' ? (
@@ -218,17 +238,22 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                 </View>
               </View>
               <View>
-                <PrimaryText>
-                  {currencySymbol}{' '}
+                <PrimaryText style={{fontSize: 13}}>
+                  {currencySymbol}
                   {Number.isInteger(expense.amount)
-                    ? expense.amount
-                    : expense.amount.toFixed(2)}
+                    ? formatCurrency(expense.amount)
+                    : formatCurrency(expense.amount.toFixed(2))}
                 </PrimaryText>
               </View>
             </Animated.View>
           </Swipeable>
         </GestureHandlerRootView>
       ))}
+      <UndoModal
+        isVisible={deletedItem !== null}
+        onUndo={handleUndo}
+        type={'Transaction'}
+      />
     </View>
   );
 };
@@ -265,7 +290,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
             nextWeek: 'dddd',
             lastDay: '[Yesterday]',
             lastWeek: '[Last] dddd',
-            sameElse: 'MMM YYYY',
+            sameElse: 'DD MMM YYYY',
           })}
         />
       ))}
