@@ -40,13 +40,14 @@ const reportsStyles = StyleSheet.create({
     borderBottomWidth: 0.8,
   },
   chartContainer: {
-    marginTop: '12%',
+    marginTop: '8%',
     marginBottom: '12%',
   },
   calendarContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 10,
+    marginBottom: 15
   },
   calendarDay: {
     width: '14.28%',

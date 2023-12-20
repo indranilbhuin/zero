@@ -4,6 +4,7 @@ import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../atoms/PrimaryText';
 import Icon from '../atoms/Icons';
 import moment from 'moment';
+import {formatCurrency} from '../../utils/numberUtils';
 
 interface TransactionCardProps {
   currencySymbol: string;
@@ -50,10 +51,13 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
       <View
         style={[
           styles.transactionContainer,
-          {backgroundColor: colors.secondaryBackground},
+          {backgroundColor: colors.lightAccent},
         ]}>
-        <PrimaryText>
-          {currencySymbol} {totalSpent}
+        <PrimaryText style={{fontSize: 13}}>
+          {currencySymbol}
+          {Number.isInteger(totalSpent)
+            ? formatCurrency(totalSpent)
+            : formatCurrency(totalSpent.toFixed(2))}
         </PrimaryText>
       </View>
     </View>

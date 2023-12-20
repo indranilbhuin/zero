@@ -6,6 +6,7 @@ import Debtor from '../../schemas/DebtorSchema';
 import Debt from '../../schemas/DebtSchema';
 import PrimaryText from '../atoms/PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
+import {formatCurrency} from '../../utils/numberUtils';
 
 interface DebtorListProps {
   currencySymbol: string;
@@ -36,8 +37,37 @@ const DebtorList: React.FC<DebtorListProps> = ({
     const debtorDebts = allDebts.filter(
       debt => debt.debtor?._id?.toString() === debtorId,
     );
-    const totalDebt = debtorDebts.reduce((acc, curr) => acc + curr.amount, 0);
+
+    const debtorBorrowings = debtorDebts.filter(
+      (debt: Debt) => debt.type === 'Borrow',
+    );
+    const debtorLendings = debtorDebts.filter(
+      (debt: Debt) => debt.type === 'Lend',
+    );
+
+    const totalBorrowings = debtorBorrowings.reduce(
+      (total: number, debt: {amount: number}) => total + debt.amount,
+      0,
+    );
+    const totalLendings = debtorLendings.reduce(
+      (total: number, debt: {amount: number}) => total + debt.amount,
+      0,
+    );
+
+    const totalDebt = totalBorrowings - totalLendings;
     return totalDebt;
+  };
+
+  const amountColor = (debtorId: string) => {
+    let textColor = colors.primaryText;
+    const totalDebt = calculateTotalDebt(String(debtorId));
+
+    if (totalDebt < 0) {
+      textColor = colors.accentGreen;
+    } else if (totalDebt > 0) {
+      textColor = colors.accentOrange;
+    }
+    return textColor;
   };
 
   return (
@@ -66,7 +96,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
               style={[
                 styles.debtorContainer,
                 {
-                  backgroundColor: colors.primaryText,
+                  backgroundColor: colors.sameWhite,
                   borderColor: debtor.color ?? colors.primaryText,
                 },
               ]}>
@@ -90,7 +120,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
           </TouchableOpacity>
           <View
             style={{
-              backgroundColor: colors.primaryText,
+              backgroundColor: colors.iconContainer,
               width: '100%',
               alignItems: 'center',
               borderRadius: 5,
@@ -98,12 +128,13 @@ const DebtorList: React.FC<DebtorListProps> = ({
             }}>
             <PrimaryText
               style={{
-                color: colors.buttonText,
-                fontSize: 12,
+                color: amountColor(String(debtor._id)),
+                fontSize: 11,
+                textAlign: 'center',
                 fontFamily: 'FiraCode-SemiBold',
               }}>
               {currencySymbol}
-              {calculateTotalDebt(String(debtor._id))}
+              {formatCurrency(Math.abs(calculateTotalDebt(String(debtor._id))))}
             </PrimaryText>
           </View>
         </View>

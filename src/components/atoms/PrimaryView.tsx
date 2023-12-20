@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {StatusBar, StyleSheet, View} from 'react-native';
 import React, {ReactNode} from 'react';
 import {Colors} from '../../hooks/useThemeColors';
 
@@ -8,12 +8,17 @@ interface PrimaryViewProps {
 }
 
 const PrimaryView: React.FC<PrimaryViewProps> = ({colors, children}) => {
+  const isDark = colors.primaryBackground === '#0F0F0F';
   return (
     <View
       style={[
         styles.mainContainer,
         {backgroundColor: colors.primaryBackground},
       ]}>
+      <StatusBar
+        backgroundColor={colors.primaryBackground}
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+      />
       {children}
     </View>
   );

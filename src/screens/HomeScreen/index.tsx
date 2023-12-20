@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Image,
   RefreshControl,
   ScrollView,
   Text,
@@ -28,10 +27,10 @@ const HomeScreen = () => {
     userName,
     currencySymbol,
     onRefresh,
-    todaySpent,
-    yesterdaySpent,
-    thisMonthSpent,
     sortedTransactions,
+    formatTodaySpent,
+    formatYesterdaySpent,
+    formatThisMonthSpent,
   } = useHome();
 
   if (expenseLoading) {
@@ -60,17 +59,17 @@ const HomeScreen = () => {
                 <TransactionCard
                   currencySymbol={currencySymbol}
                   day={'Today'}
-                  totalSpent={todaySpent}
+                  totalSpent={Number(formatTodaySpent)}
                 />
                 <TransactionCard
                   currencySymbol={currencySymbol}
                   day={'Yesterday'}
-                  totalSpent={yesterdaySpent}
+                  totalSpent={Number(formatYesterdaySpent)}
                 />
                 <TransactionCard
                   currencySymbol={currencySymbol}
                   day={'This Month'}
-                  totalSpent={thisMonthSpent}
+                  totalSpent={Number(formatThisMonthSpent)}
                 />
               </View>
             </ScrollView>
@@ -95,12 +94,15 @@ const HomeScreen = () => {
       </PrimaryView>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
-          style={[styles.addButton, {backgroundColor: colors.primaryText}]}
+          style={[
+            styles.addButton,
+            {backgroundColor: colors.secondaryBackground},
+          ]}
           onPress={() => navigate('AddTransactionsScreen')}>
           <Icon
             name={'wallet-plus'}
             size={30}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'MaterialCommunityIcons'}
           />
         </TouchableOpacity>

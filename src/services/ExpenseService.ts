@@ -17,15 +17,20 @@ export const createExpense = async (
     const uniqueId = new Realm.BSON.ObjectID();
 
     if (user) {
-      realm.create('Expense', {
+      const expenseData: any = {
         _id: uniqueId,
         title,
         amount,
-        description,
         category: category,
         user: user,
         date: date,
-      });
+      };
+
+      if (description !== undefined) {
+        expenseData.description = description;
+      }
+
+      realm.create('Expense', expenseData);
     }
   });
 };

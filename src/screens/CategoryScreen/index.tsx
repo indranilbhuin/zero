@@ -46,7 +46,7 @@ const CategoryScreen = () => {
                     <View
                       style={[
                         styles.iconContainer,
-                        {backgroundColor: colors.primaryText},
+                        {backgroundColor: colors.iconContainer},
                       ]}>
                       <Icon
                         name={category.icon}
@@ -102,12 +102,12 @@ const CategoryScreen = () => {
       </PrimaryView>
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
-          style={[homeStyles.addButton, {backgroundColor: colors.primaryText}]}
+          style={[homeStyles.addButton, {backgroundColor: colors.secondaryBackground}]}
           onPress={() => navigate('AddCategoryScreen')}>
           <Icon
             name={'shape-plus'}
             size={30}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'MaterialCommunityIcons'}
           />
         </TouchableOpacity>

@@ -45,9 +45,9 @@ const OnboardingScreen = () => {
                 styles.categoryContainer,
                 {
                   backgroundColor: selectedCategories?.includes(category)
-                    ? colors.accentGreen
-                    : colors.primaryText,
-                  borderColor: colors.secondaryText,
+                    ? `${colors.accentGreen}75`
+                    : colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                 },
               ]}>
               {category.icon !== undefined ? (
@@ -61,7 +61,13 @@ const OnboardingScreen = () => {
                 </View>
               ) : null}
 
-              <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
+              <PrimaryText
+                style={{
+                  color: selectedCategories?.includes(category)
+                    ? colors.buttonText
+                    : colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {category.name}
               </PrimaryText>
             </View>

@@ -18,6 +18,8 @@ import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {deleteDebtorById} from '../../services/DebtorService';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import moment from 'moment';
+import Debt from '../../schemas/DebtSchema';
+import useAmountColor from '../../hooks/useAmountColor';
 
 export type IndividualDebtsScreenRouteProp = RouteProp<
   {
@@ -44,26 +46,54 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
   const currencySymbol = useSelector(selectCurrencySymbol);
+  const [paidToastVisible, setPaidToastVisible] = useState(false);
+  const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
   const {debtorName, debtorId, debtorType} = route.params;
 
-  const debtorTotal = individualDebtsCopy.reduce(
+  const borrowings = individualDebtsCopy.filter(
+    (debt: Debt) => debt.type === 'Borrow',
+  );
+  const lendings = individualDebtsCopy.filter(
+    (debt: Debt) => debt.type === 'Lend',
+  );
+
+  console.log('first', borrowings);
+  console.log('second', lendings);
+
+  const sortedBorrowings = borrowings.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
+
+  const sortedLendings = lendings.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
+
+  const totalBorrowings = borrowings.reduce(
     (total: number, debt: {amount: number}) => total + debt.amount,
     0,
   );
 
-  console.log(debtorId);
-
-  console.log(route.params);
+  const totalLendings = lendings.reduce(
+    (total: number, debt: {amount: number}) => total + debt.amount,
+    0,
+  );
+  console.log('firstttttt', totalBorrowings, totalLendings);
+  const debtorTotal = totalBorrowings - totalLendings;
 
   const onRefresh = () => {
     setRefreshing(true);
   };
+
+  const debtorTotalColor = useAmountColor(debtorTotal);
 
   const handleEditDebt = (
     debtId: string,
     debtDescription: string,
     amount: number,
     debtDate: string,
+    debtType: string,
   ) => {
     navigate('UpdateDebtScreen', {
       debtId,
@@ -72,6 +102,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
       debtorName,
       debtDate,
       debtorId,
+      debtType,
     });
   };
 
@@ -83,17 +114,38 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   };
 
   const handleDeleteDebtor = () => {
-    deleteDebtorById(Realm.BSON.ObjectID.createFromHexString(debtorId));
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-    goBack();
+    if (individualDebtsCopy.length === 0) {
+      deleteDebtorById(Realm.BSON.ObjectID.createFromHexString(debtorId));
+      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      goBack();
+    } else {
+      setDeleteDebtorVisible(true);
+    }
   };
 
   const handleMarkAsPaid = () => {
+    setPaidToastVisible(true);
+  };
+
+  const handleOk = () => {
     deleteAllDebtsbyDebtorId(Realm.BSON.ObjectID.createFromHexString(debtorId));
     dispatch(getDebtRequest(debtorId));
     dispatch(getAllDebtRequest());
+    setPaidToastVisible(false);
   };
 
+  const handleDeleteOk = () => {
+    setPaidToastVisible(true);
+    setDeleteDebtorVisible(false);
+  };
+
+  const handleCancel = () => {
+    setPaidToastVisible(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDebtorVisible(false);
+  };
   const handleUpdateDebtor = () => {
     navigate('UpdateDebtorScreen', {debtorId, debtorName, debtorType});
   };
@@ -112,9 +164,6 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   return {
     colors,
     refreshing,
-    setRefreshing,
-    individualDebts,
-    individualDebtsCopy,
     debtLoading,
     debtError,
     debtorName,
@@ -128,6 +177,17 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     handleMarkAsPaid,
     handleUpdateDebtor,
     sortedDebts,
+    sortedBorrowings,
+    sortedLendings,
+    debtorTotalColor,
+    totalBorrowings,
+    totalLendings,
+    paidToastVisible,
+    handleOk,
+    handleCancel,
+    deleteDebtorVisible,
+    handleDeleteOk,
+    handleDeleteCancel,
   };
 };
 
