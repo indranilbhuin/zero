@@ -17,16 +17,17 @@ const debtorDataSlice = createSlice({
   },
 });
 
-export const selectDebtorData = (state: RootState) =>
-  state.debtor.debtorData;
+export const selectDebtorData = (state: RootState) => state.debtor.debtorData;
 
 export const selectActiveDebtors = createSelector(
   [selectDebtorData],
   debtorData =>
-    debtorData.filter(
-      (debtor: Debtor) => debtor.debtorStatus === true,
-    ),
+    debtorData.filter((debtor: Debtor) => debtor.debtorStatus === true),
 );
+
+export const resetDebtorData = (state: RootState) => {
+  state.debtor = initialState;
+};
 
 export const {setDebtorData} = debtorDataSlice.actions;
 

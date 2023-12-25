@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import { RootState } from '../rootReducer';
+import {RootState} from '../rootReducer';
 
 const initialState = {
   userId: '',
@@ -18,5 +18,8 @@ const userIdSlice = createSlice({
 export const selectUserId = (state: RootState) => state.userId.userId;
 
 export const {setUserId} = userIdSlice.actions;
+export const resetUserId = (state: RootState) => {
+  state.userId = initialState;
+};
 
 export default userIdSlice.reducer;

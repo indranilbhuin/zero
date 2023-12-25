@@ -37,4 +37,8 @@ export const selectAllDebtError = (state: RootState) => state.allDebt.error;
 export const {getAllDebtRequest, getAllDebtSuccess, getAllDebtFaliure} =
   allDebtDataSlice.actions;
 
+export const resetAllDebt = (state: RootState) => {
+  state.allDebt = initialState;
+};
+
 export default allDebtDataSlice.reducer;

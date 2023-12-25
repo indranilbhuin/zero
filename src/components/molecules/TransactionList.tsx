@@ -32,7 +32,7 @@ interface TransactionItemProps {
 }
 
 const truncateString = (str, maxLength) => {
-  if (str.length > maxLength) {
+  if (str?.length > maxLength) {
     return str.substring(0, maxLength) + '..';
   } else {
     return str;
@@ -197,9 +197,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                     {backgroundColor: colors.iconContainer},
                   ]}>
                   <Icon
-                    name={expense.category.icon ?? 'selection-ellipse'}
+                    name={expense.category?.icon ?? 'selection-ellipse'}
                     size={20}
-                    color={expense.category.color ?? colors.buttonText}
+                    color={expense.category?.color ?? colors.buttonText}
                     type={'MaterialCommunityIcons'}
                   />
                 </View>
@@ -212,7 +212,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                         fontSize: 10,
                         marginRight: 5,
                       }}>
-                      {truncateString(expense.category.name, 7)} ◦
+                      {truncateString(expense.category?.name, 7)} ◦
                     </PrimaryText>
 
                     {expense.description !== '' ? (

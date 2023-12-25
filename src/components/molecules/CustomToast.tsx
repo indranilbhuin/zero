@@ -73,12 +73,12 @@ const CustomToast: React.FC<CustomToastProps> = ({
     case 'error':
       toastColor = colors.accentRed;
       toastType = 'Error';
-      toastImage = require('../../../assets/images/darkNoDebt.png');
+      toastImage = require('../../../assets/images/reject.png');
       break;
     case 'warning':
       toastColor = colors.accentOrange;
       toastType = 'Alert';
-      toastImage = require('../../../assets/images/darkNoDebt.png');
+      toastImage = require('../../../assets/images/warning.png');
       break;
     default:
       toastColor = colors.accentBlue;

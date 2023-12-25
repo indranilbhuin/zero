@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {RootState} from '../rootReducer';
 
 const initialState = {
   userName: '',
@@ -14,7 +15,10 @@ const userNameSlice = createSlice({
   },
 });
 
-export const selectUserName = (state: any) => state.userName.userName;
+export const selectUserName = (state: RootState) => state.userName.userName;
+export const resetUserName = (state: RootState) => {
+  state.userName = initialState;
+};
 
 export const {setUserName} = userNameSlice.actions;
 

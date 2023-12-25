@@ -19,6 +19,8 @@ import PrimaryText from '../../components/atoms/PrimaryText';
 import textInputStyles from '../../styles/textInput';
 import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
 import {nameSchema} from '../../utils/validationSchema';
+import {exportRealmData} from '../../utils/dataUtils';
+import CustomToast from '../../components/molecules/CustomToast';
 
 const SettingsScreen = () => {
   const {
@@ -50,6 +52,11 @@ const SettingsScreen = () => {
     handleRateNow,
     handleGithub,
     handlePrivacyPolicy,
+    handleDeleteAllData,
+    isDeleteModalVisible,
+    handleDeleteAllDataOk,
+    handleDeleteAllDataCancel,
+    allData,
   } = useSettings();
 
   const renderRadioButtons = (onThemeSelect: {
@@ -148,6 +155,54 @@ const SettingsScreen = () => {
                 <PrimaryText>{currencySymbol}</PrimaryText>
                 <PrimaryText>{currencyName}</PrimaryText>
               </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
+          Data
+        </PrimaryText>
+        <View
+          style={[
+            styles.settingsContainer,
+            {
+              backgroundColor: colors.containerColor,
+              borderColor: colors.secondaryText,
+            },
+          ]}>
+          <TouchableOpacity onPress={() => exportRealmData(allData)}>
+            <View
+              style={[
+                styles.individualSettingsContainer,
+                {
+                  borderColor: colors.secondaryText,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                },
+              ]}>
+              <PrimaryText>Download your data</PrimaryText>
+              <PrimaryText style={{fontSize: 11}}>
+                You can import this data in a new device
+              </PrimaryText>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDeleteAllData}>
+            <View
+              style={[
+                styles.individualSettingsContainer,
+                {
+                  borderColor: colors.secondaryText,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                  borderBottomWidth: 0,
+                },
+              ]}>
+              <PrimaryText>Delete all data</PrimaryText>
+              <PrimaryText style={{fontSize: 11}}>
+                All data associated with zero will be deleted
+              </PrimaryText>
             </View>
           </TouchableOpacity>
         </View>
@@ -374,6 +429,14 @@ const SettingsScreen = () => {
           </View>
         </View>
       </Modal>
+
+      <CustomToast
+        visible={isDeleteModalVisible}
+        message={'Are you sure you want to delete all your data'}
+        type="warning"
+        onOk={handleDeleteAllDataOk}
+        onCancel={handleDeleteAllDataCancel}
+      />
     </PrimaryView>
   );
 };
