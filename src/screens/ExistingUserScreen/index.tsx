@@ -26,6 +26,7 @@ import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
 import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
+import { getExpenseRequest } from '../../redux/slice/expenseDataSlice';
 
 const ExistingUserScreen = () => {
   const colors = useThemeColors();
@@ -33,12 +34,13 @@ const ExistingUserScreen = () => {
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
   const allCategories = useSelector(selectCategoryData);
-  console.log("kkkk",allCategories)
-  const allCategoriesCopy = JSON.parse(JSON.stringify(allCategories));
+  console.log('kkkk', allCategories);
+  const cat = Array.from(allCategories);
+  const allCategoriesCopy = allCategories;
   const [allData, setAllData] = useState(null);
   const [fileName, setFileName] = useState(null);
   const allDebtors = useSelector(selectDebtorData);
-  const debtorsCopy = JSON.parse(JSON.stringify(allDebtors));
+  const debtorsCopy = allDebtors;
 
   console.log('lklklkla', debtorsCopy);
 
@@ -186,6 +188,10 @@ const ExistingUserScreen = () => {
       }
 
       console.log('Data populated successfully!');
+      dispatch({type: FETCH_ALL_USER_DATA});
+      dispatch({type: FETCH_CURRENCY_DATA});
+      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch(getExpenseRequest());
 
       await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
       dispatch(setIsOnboarded(true));

@@ -24,7 +24,7 @@ interface TransactionListProps {
 
 interface TransactionItemProps {
   currencySymbol: string;
-  expense: Array<Expense>;
+  expense?: Array<Expense>;
   colors: Colors;
   dispatch: Dispatch<any>;
   label: string;
@@ -177,7 +177,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   return (
     <View>
       <PrimaryText style={{fontSize: 12, marginBottom: 5}}>{label}</PrimaryText>
-      {expenses.map((expense: Expense) => (
+      {expenses?.map((expense: Expense) => (
         <GestureHandlerRootView key={String(expense._id)}>
           <Swipeable
             renderLeftActions={() => renderLeftActions(expense)}

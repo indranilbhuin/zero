@@ -177,7 +177,7 @@ const useSettings = () => {
   };
 
   const handleDeleteAllDataOk = async () => {
-    deleteAllData();
+    await deleteAllData();
     await AsyncStorageService.setItem('isOnboarded', JSON.stringify(false));
     dispatch(setIsOnboarded(false));
   };
