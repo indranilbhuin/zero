@@ -1,5 +1,5 @@
 import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useRef} from 'react';
+import React, {useState} from 'react';
 import useThemeColors, {Colors} from '../../hooks/useThemeColors';
 import Icon from '../atoms/Icons';
 import moment from 'moment';
@@ -12,63 +12,98 @@ import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import Expense from '../../schemas/ExpenseSchema';
 import {Dispatch} from 'redux';
 import PrimaryText from '../atoms/PrimaryText';
+import {getEverydayExpenseRequest} from '../../redux/slice/everydayExpenseDataSlice';
+import UndoModal from '../atoms/UndoModal';
+import {formatCurrency} from '../../utils/numberUtils';
 
 interface TransactionListProps {
   currencySymbol: string;
   allExpenses: Array<Expense>;
+  targetDate?: string;
 }
 
 interface TransactionItemProps {
   currencySymbol: string;
-  expense: Expense;
+  expense?: Array<Expense>;
   colors: Colors;
   dispatch: Dispatch<any>;
+  label: string;
+  targetDate?: string;
 }
+
+const truncateString = (str, maxLength) => {
+  if (str?.length > maxLength) {
+    return str.substring(0, maxLength) + '..';
+  } else {
+    return str;
+  }
+};
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
   currencySymbol,
-  expense,
+  expense: initialExpense,
   colors,
   dispatch,
+  label,
+  targetDate,
 }) => {
-  const slideAnim = useRef(new Animated.Value(1)).current;
+  const [expenses, setExpenses] = useState<Array<Expense>>(initialExpense);
+  const [deletedItem, setDeletedItem] = useState<Expense | null>(null);
+  const [deletionTimeoutId, setDeletionTimeoutId] = useState<number | null>(
+    null,
+  );
 
   const handleEdit = (
     expenseId: string,
     expenseTitle: string,
     expenseDescription: string,
     category: Category,
-    expenseDate: Date,
+    expenseDate: string,
     expenseAmount: number,
   ) => {
-    Animated.timing(slideAnim, {
-      toValue: 200,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => {
-      navigate('UpdateTransactionScreen', {
-        expenseId,
-        expenseTitle,
-        expenseDescription,
-        category,
-        expenseDate,
-        expenseAmount,
-      });
+    navigate('UpdateTransactionScreen', {
+      expenseId,
+      expenseTitle,
+      expenseDescription,
+      category,
+      expenseDate,
+      expenseAmount,
     });
   };
 
-  const handleDelete = (expenseId: Realm.BSON.ObjectId) => {
-    Animated.timing(slideAnim, {
-      toValue: -200,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => {
-      deleteExpenseById(expenseId);
-      dispatch(getExpenseRequest());
-    });
+  const handleDelete = (expenseId: string) => {
+    const deletedExpense = expenses.find(
+      expense => String(expense._id) === expenseId,
+    );
+    setExpenses(prevExpenses =>
+      prevExpenses.filter(expense => String(expense._id) !== expenseId),
+    );
+    setDeletedItem(deletedExpense);
+
+    const deletionTimeout = setTimeout(() => {
+      if (!deletedItem) {
+        deleteExpenseById(Realm.BSON.ObjectID.createFromHexString(expenseId));
+        dispatch(getExpenseRequest());
+        dispatch(getEverydayExpenseRequest(targetDate));
+      }
+    }, 3000);
+
+    setTimeout(() => {
+      setDeletedItem(null);
+    }, 3000);
+
+    setDeletionTimeoutId(deletionTimeout);
   };
 
-  const renderLeftActions = () => {
+  const handleUndo = () => {
+    if (deletedItem) {
+      clearTimeout(deletionTimeoutId);
+      setExpenses(prevExpenses => [...prevExpenses, deletedItem]);
+      setDeletedItem(null);
+    }
+  };
+
+  const renderLeftActions = (expense: Expense) => {
     return (
       <TouchableOpacity
         onPress={() =>
@@ -86,7 +121,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           style={[
             styles.swipeView,
             {
-              backgroundColor: colors.cardBackground,
+              backgroundColor: colors.lightAccent,
               borderTopLeftRadius: 10,
               borderBottomLeftRadius: 10,
             },
@@ -101,29 +136,29 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         <View
           style={[
             styles.stretchView,
-            {backgroundColor: colors.cardBackground, marginRight: -250},
+            {backgroundColor: colors.lightAccent, marginRight: -250},
           ]}
         />
       </TouchableOpacity>
     );
   };
 
-  const renderRightActions = () => {
+  const renderRightActions = (expense: Expense) => {
     return (
       <TouchableOpacity
         style={{flexDirection: 'row'}}
-        onPress={() => handleDelete(expense._id)}>
+        onPress={() => handleDelete(String(expense._id))}>
         <View
           style={[
             styles.stretchView,
-            {backgroundColor: colors.cardBackground, marginLeft: -250},
+            {backgroundColor: colors.lightAccent, marginLeft: -250},
           ]}
         />
         <View
           style={[
             styles.swipeView,
             {
-              backgroundColor: colors.cardBackground,
+              backgroundColor: colors.lightAccent,
               borderTopRightRadius: 10,
               borderBottomRightRadius: 10,
             },
@@ -140,90 +175,123 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   };
 
   return (
-    <GestureHandlerRootView>
-      <Swipeable
-        renderLeftActions={renderLeftActions}
-        renderRightActions={renderRightActions}
-        friction={2}>
-        <Animated.View
-          style={[
-            styles.transactionContainer,
-            {
-              backgroundColor: colors.containerColor,
-              transform: [{translateX: slideAnim}],
-            },
-          ]}
-          key={String(expense._id)}>
-          <View style={styles.iconNameContainer}>
-            <View
+    <View>
+      <PrimaryText style={{fontSize: 12, marginBottom: 5}}>{label}</PrimaryText>
+      {expenses?.map((expense: Expense) => (
+        <GestureHandlerRootView key={String(expense._id)}>
+          <Swipeable
+            renderLeftActions={() => renderLeftActions(expense)}
+            renderRightActions={() => renderRightActions(expense)}
+            friction={2}>
+            <Animated.View
               style={[
-                styles.iconContainer,
-                {backgroundColor: colors.primaryText},
+                styles.transactionContainer,
+                {
+                  backgroundColor: colors.containerColor,
+                },
               ]}>
-              <Icon
-                name={expense.category.icon ?? 'selection-ellipse'}
-                size={20}
-                color={expense.category.color ?? colors.buttonText}
-                type={'MaterialCommunityIcons'}
-              />
-            </View>
-            <View>
-              <PrimaryText>{expense.title}</PrimaryText>
-              <View style={styles.descriptionContainer}>
-                <PrimaryText
-                  style={{
-                    color: colors.primaryText,
-                    fontSize: 10,
-                    marginRight: 5,
-                  }}>
-                  {expense.category.name} .
-                </PrimaryText>
-                <PrimaryText
-                  style={{
-                    color: colors.primaryText,
-                    fontSize: 10,
-                    marginRight: 5,
-                  }}>
-                  {expense.description} .
-                </PrimaryText>
-                <PrimaryText
-                  style={{
-                    color: colors.primaryText,
-                    fontSize: 10,
-                    marginRight: 5,
-                  }}>
-                  {moment(expense.date).format('Do MMM')}
+              <View style={styles.iconNameContainer}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {backgroundColor: colors.iconContainer},
+                  ]}>
+                  <Icon
+                    name={expense.category?.icon ?? 'selection-ellipse'}
+                    size={20}
+                    color={expense.category?.color ?? colors.buttonText}
+                    type={'MaterialCommunityIcons'}
+                  />
+                </View>
+                <View>
+                  <PrimaryText>{truncateString(expense.title, 15)}</PrimaryText>
+                  <View style={styles.descriptionContainer}>
+                    <PrimaryText
+                      style={{
+                        color: colors.primaryText,
+                        fontSize: 10,
+                        marginRight: 5,
+                      }}>
+                      {truncateString(expense.category?.name, 7)} ◦
+                    </PrimaryText>
+
+                    {expense.description !== '' ? (
+                      <PrimaryText
+                        style={{
+                          color: colors.primaryText,
+                          fontSize: 10,
+                          marginRight: 5,
+                        }}>
+                        {truncateString(expense.description, 4)} ◦
+                      </PrimaryText>
+                    ) : null}
+
+                    <PrimaryText
+                      style={{
+                        color: colors.primaryText,
+                        fontSize: 10,
+                        marginRight: 5,
+                      }}>
+                      {moment(expense.date).format('Do MMM')}
+                    </PrimaryText>
+                  </View>
+                </View>
+              </View>
+              <View>
+                <PrimaryText style={{fontSize: 13}}>
+                  {currencySymbol}
+                  {Number.isInteger(expense.amount)
+                    ? formatCurrency(expense.amount)
+                    : formatCurrency(expense.amount.toFixed(2))}
                 </PrimaryText>
               </View>
-            </View>
-          </View>
-          <View>
-            <PrimaryText>
-              {currencySymbol} {expense.amount}
-            </PrimaryText>
-          </View>
-        </Animated.View>
-      </Swipeable>
-    </GestureHandlerRootView>
+            </Animated.View>
+          </Swipeable>
+        </GestureHandlerRootView>
+      ))}
+      <UndoModal
+        isVisible={deletedItem !== null}
+        onUndo={handleUndo}
+        type={'Transaction'}
+      />
+    </View>
   );
 };
 
 const TransactionList: React.FC<TransactionListProps> = ({
   currencySymbol,
   allExpenses,
+  targetDate,
 }) => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
+  const groupedExpenses = new Map<string, Array<Expense>>();
+
+  allExpenses?.forEach(expense => {
+    const date = moment(expense.date).format('YYYY-MM-DD');
+    const currentGroup = groupedExpenses.get(date) ?? [];
+    currentGroup.push(expense);
+    groupedExpenses.set(date, currentGroup);
+  });
 
   return (
     <View style={styles.mainContainer}>
-      {allExpenses?.map((expense: Expense) => (
+      {Array.from(groupedExpenses.keys()).map(date => (
         <TransactionItem
-          key={String(expense._id)}
-          expense={expense}
+          key={date}
           currencySymbol={currencySymbol}
+          expense={groupedExpenses.get(date) ?? []}
           colors={colors}
           dispatch={dispatch}
+          targetDate={targetDate}
+          label={moment(date).calendar(null, {
+            sameDay: '[Today]',
+            nextDay: '[Tomorrow]',
+            nextWeek: 'dddd',
+            lastDay: '[Yesterday]',
+            lastWeek: '[Last] dddd',
+            sameElse: 'DD MMM YYYY',
+          })}
         />
       ))}
     </View>
@@ -238,7 +306,7 @@ const styles = StyleSheet.create({
   },
   transactionContainer: {
     height: 60,
-    width: '100%',
+    width: '99.5%',
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',

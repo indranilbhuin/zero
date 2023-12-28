@@ -9,9 +9,9 @@ import DateTimePicker, {
 import useThemeColors from '../../hooks/useThemeColors';
 
 interface DatePickerProps {
-  createdAt: Date;
+  createdAt: string;
   showDatePicker: boolean;
-  setCreatedAt: (value: Date) => void;
+  setCreatedAt: (value: string) => void;
   setShowDatePicker: (value: boolean) => void;
 }
 
@@ -27,10 +27,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
     selectedDate?: Date | undefined,
   ) => {
     const currentDate = selectedDate ?? createdAt;
-    const utcDate = moment(currentDate).utc().toDate();
-    setCreatedAt(utcDate);
+    const utcDate = new Date(currentDate);
+    const formattedDate = moment(currentDate).format('YYYY-MM-DDTHH:mm:ss');
+    setCreatedAt(formattedDate);
     setShowDatePicker(false);
+    console.log("this is selected date", currentDate, utcDate, formattedDate)
   };
+  console.log("this is current date", createdAt)
 
   return (
     <View style={styles.dateContainer}>
@@ -39,14 +42,14 @@ const DatePicker: React.FC<DatePickerProps> = ({
           style={[
             styles.dateButtonContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
             },
           ]}>
           <Icon
             name={'calendar'}
             size={20}
-            color={colors.buttonText}
+            color={colors.primaryText}
             type={'IonIcons'}
           />
         </View>
@@ -57,7 +60,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       <View>
         {showDatePicker && (
           <DateTimePicker
-            value={createdAt}
+            value={new Date(createdAt)}
             mode="date"
             is24Hour={false}
             display="default"

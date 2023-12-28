@@ -7,17 +7,26 @@ import {
   selectDebtError,
   selectDebtLoading,
 } from '../../redux/slice/debtDataSlice';
-import {navigate} from '../../utils/navigationUtils';
-import {deleteDebtById} from '../../services/DebtService';
+import {goBack, navigate} from '../../utils/navigationUtils';
+import {
+  deleteAllDebtsbyDebtorId,
+  deleteDebtById,
+} from '../../services/DebtService';
 import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 import {RouteProp} from '@react-navigation/native';
+import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import {deleteDebtorById} from '../../services/DebtorService';
+import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
+import moment from 'moment';
+import Debt from '../../schemas/DebtSchema';
+import useAmountColor from '../../hooks/useAmountColor';
 
 export type IndividualDebtsScreenRouteProp = RouteProp<
   {
     IndividualDebtsScreen: {
       debtorName: string;
       debtorId: string;
-      debtorTotal: number;
+      debtorType: string;
     };
   },
   'IndividualDebtsScreen'
@@ -29,22 +38,62 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const [refreshing, setRefreshing] = useState(false);
   const individualDebts = useSelector(selectDebtData);
   const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts));
+  const sortedDebts = individualDebtsCopy.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
+  console.log('all debtsss', individualDebtsCopy);
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
-  const {debtorName, debtorId, debtorTotal} = route.params;
-  console.log(debtorId);
+  const currencySymbol = useSelector(selectCurrencySymbol);
+  const [paidToastVisible, setPaidToastVisible] = useState(false);
+  const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
+  const {debtorName, debtorId, debtorType} = route.params;
 
-  console.log(route.params);
+  const borrowings = individualDebtsCopy.filter(
+    (debt: Debt) => debt.type === 'Borrow',
+  );
+  const lendings = individualDebtsCopy.filter(
+    (debt: Debt) => debt.type === 'Lend',
+  );
+
+  console.log('first', borrowings);
+  console.log('second', lendings);
+
+  const sortedBorrowings = borrowings.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
+
+  const sortedLendings = lendings.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
+
+  const totalBorrowings = borrowings.reduce(
+    (total: number, debt: {amount: number}) => total + debt.amount,
+    0,
+  );
+
+  const totalLendings = lendings.reduce(
+    (total: number, debt: {amount: number}) => total + debt.amount,
+    0,
+  );
+  console.log('firstttttt', totalBorrowings, totalLendings);
+  const debtorTotal = totalBorrowings - totalLendings;
 
   const onRefresh = () => {
     setRefreshing(true);
   };
 
+  const debtorTotalColor = useAmountColor(debtorTotal);
+
   const handleEditDebt = (
     debtId: string,
     debtDescription: string,
     amount: number,
-    debtDate: Date,
+    debtDate: string,
+    debtType: string,
   ) => {
     navigate('UpdateDebtScreen', {
       debtId,
@@ -53,6 +102,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
       debtorName,
       debtDate,
       debtorId,
+      debtType,
     });
   };
 
@@ -61,6 +111,43 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     dispatch(getDebtRequest(debtorId));
     dispatch(getAllDebtRequest());
     setRefreshing(true);
+  };
+
+  const handleDeleteDebtor = () => {
+    if (individualDebtsCopy.length === 0) {
+      deleteDebtorById(Realm.BSON.ObjectID.createFromHexString(debtorId));
+      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      goBack();
+    } else {
+      setDeleteDebtorVisible(true);
+    }
+  };
+
+  const handleMarkAsPaid = () => {
+    setPaidToastVisible(true);
+  };
+
+  const handleOk = () => {
+    deleteAllDebtsbyDebtorId(Realm.BSON.ObjectID.createFromHexString(debtorId));
+    dispatch(getDebtRequest(debtorId));
+    dispatch(getAllDebtRequest());
+    setPaidToastVisible(false);
+  };
+
+  const handleDeleteOk = () => {
+    setPaidToastVisible(true);
+    setDeleteDebtorVisible(false);
+  };
+
+  const handleCancel = () => {
+    setPaidToastVisible(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDebtorVisible(false);
+  };
+  const handleUpdateDebtor = () => {
+    navigate('UpdateDebtorScreen', {debtorId, debtorName, debtorType});
   };
 
   useEffect(() => {
@@ -77,9 +164,6 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   return {
     colors,
     refreshing,
-    setRefreshing,
-    individualDebts,
-    individualDebtsCopy,
     debtLoading,
     debtError,
     debtorName,
@@ -88,6 +172,22 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     onRefresh,
     handleEditDebt,
     handleDeleteDebt,
+    currencySymbol,
+    handleDeleteDebtor,
+    handleMarkAsPaid,
+    handleUpdateDebtor,
+    sortedDebts,
+    sortedBorrowings,
+    sortedLendings,
+    debtorTotalColor,
+    totalBorrowings,
+    totalLendings,
+    paidToastVisible,
+    handleOk,
+    handleCancel,
+    deleteDebtorVisible,
+    handleDeleteOk,
+    handleDeleteCancel,
   };
 };
 

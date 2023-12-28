@@ -18,7 +18,6 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
   toggleCategorySelection,
   selectedCategories,
 }) => {
-  console.log(selectedCategories);
   return (
     <View style={styles.categoryMainContainer}>
       {categories?.map((category: Category) => (
@@ -29,10 +28,11 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
             style={[
               styles.categoryContainer,
               {
-                backgroundColor: selectedCategories?.includes(category)
-                  ? colors.accentGreen
-                  : colors.primaryText,
-                borderColor: colors.secondaryText,
+                backgroundColor:
+                  category?.name === selectedCategories[0]?.name
+                    ? `${colors.accentGreen}75`
+                    : colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
               },
             ]}>
             {category.icon !== undefined ? (
@@ -46,7 +46,14 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
               </View>
             ) : null}
 
-            <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
+            <PrimaryText
+              style={{
+                color:
+                  category?.name === selectedCategories[0]?.name
+                    ? colors.buttonText
+                    : colors.primaryText,
+                fontSize: 13,
+              }}>
               {category.name}
             </PrimaryText>
           </View>

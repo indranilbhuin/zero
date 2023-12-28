@@ -16,6 +16,25 @@ export const createUser = async (username: string, email: string) => {
   }
 };
 
+export const createExistingUser = async (
+  userId: Realm.BSON.ObjectId,
+  username: string,
+  email: string,
+) => {
+  const realm = await getRealm();
+  try {
+    realm.write(() => {
+      realm.create('User', {
+        _id: userId,
+        username,
+        email,
+      });
+    });
+  } catch (error) {
+    console.error('Error creating User:', error);
+  }
+};
+
 export const updateUserById = async (
   userId: Realm.BSON.ObjectId,
   newUserData: {username?: string; email?: string},

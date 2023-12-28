@@ -18,6 +18,7 @@ import IndividualDebtsScreen from '../screens/IndividualDebtsScreen';
 import AddDebtsScreen from '../screens/AddDebtsScreen';
 import UpdateDebtScreen from '../screens/UpdateDebtScreen';
 import EverydayTransactionScreen from '../screens/EverydayTransactionScreen';
+import UpdateDebtorScreen from '../screens/UpdateDebtorScreen';
 
 const screenOptions = {
   headerShown: false,
@@ -31,7 +32,7 @@ const HomeIcon = ({color}: any) => (
       type={'MaterialIcons'}
       color={color}
     />
-    <Text style={[styles.labelText, {color: color}]}>Dashboard</Text>
+    <Text style={[styles.labelText, {color: color}]}>Home</Text>
   </View>
 );
 
@@ -70,12 +71,9 @@ const TabStack = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.buttonText,
-        tabBarInactiveTintColor: colors.secondaryBackground,
+        tabBarActiveTintColor: colors.primaryText,
+        tabBarInactiveTintColor: colors.secondaryText,
         tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: colors.accentGreen,
-        },
       }}>
       <Tab.Screen
         name="HomeScreen"
@@ -84,7 +82,7 @@ const TabStack = () => {
           headerShown: false,
           tabBarIcon: HomeIcon,
           tabBarStyle: {
-            backgroundColor: colors.primaryText,
+            backgroundColor: colors.containerColor,
             height: 55,
           },
         }}
@@ -96,7 +94,7 @@ const TabStack = () => {
           headerShown: false,
           tabBarIcon: ReportsIcon,
           tabBarStyle: {
-            backgroundColor: colors.primaryText,
+            backgroundColor: colors.containerColor,
             height: 55,
           },
         }}
@@ -108,7 +106,7 @@ const TabStack = () => {
           headerShown: false,
           tabBarIcon: CategoriesIcon,
           tabBarStyle: {
-            backgroundColor: colors.primaryText,
+            backgroundColor: colors.containerColor,
             height: 55,
           },
         }}
@@ -120,7 +118,7 @@ const TabStack = () => {
           headerShown: false,
           tabBarIcon: DebtIcon,
           tabBarStyle: {
-            backgroundColor: colors.primaryText,
+            backgroundColor: colors.containerColor,
             height: 55,
           },
         }}
@@ -159,6 +157,7 @@ const HomeStack = () => {
       />
       <Stack.Screen name="AddDebtsScreen" component={AddDebtsScreen} />
       <Stack.Screen name="UpdateDebtScreen" component={UpdateDebtScreen} />
+      <Stack.Screen name="UpdateDebtorScreen" component={UpdateDebtorScreen} />
     </Stack.Navigator>
   );
 };

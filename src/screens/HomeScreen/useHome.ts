@@ -11,6 +11,7 @@ import {selectUserName} from '../../redux/slice/userNameSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {
+  FETCH_ALL_CATEGORY_DATA,
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
@@ -22,6 +23,12 @@ const useHome = () => {
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
   const allTransactions = useSelector(selectExpenseData);
+  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
+  const sortedTransactions = allTransactionsCopy.sort(
+    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
+      moment(b.date).diff(moment(a.date)),
+  );
+
   const expenseLoading = useSelector(selectExpenseLoading);
   const expenseError = useSelector(selectExpenseError);
   const userName = useSelector(selectUserName);
@@ -35,6 +42,7 @@ const useHome = () => {
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
+    dispatch({type: FETCH_ALL_CATEGORY_DATA});
   }, [userId, userName, currencySymbol]);
 
   useEffect(() => {
@@ -50,30 +58,48 @@ const useHome = () => {
 
   console.log('in home screen', allTransactions);
 
-  const calculateSpent = (unit: string | null | undefined, subtract = 0) => {
-    const currentDate = moment().utc();
-    console.log(currentDate);
-    if (unit === 'day') {
-      currentDate.subtract(subtract, 'days');
-    } else if (unit === 'month') {
-      currentDate.startOf('month');
-    }
+  const currentDate = moment();
 
-    const filteredTransactions = allTransactions.filter(
-      (transaction: Expense) =>
-        moment(transaction.date).isSameOrAfter(currentDate, unit),
-    );
-
-    const totalSpent = filteredTransactions.reduce(
-      (sum, transaction: {amount: number}) => sum + transaction.amount,
+  const todaySpent = allTransactions
+    .filter((transaction: Expense) =>
+      moment(transaction.date).isSame(currentDate, 'day'),
+    )
+    .reduce(
+      (total, transaction: {amount: number}) => total + transaction.amount,
       0,
     );
 
-    return totalSpent;
-  };
-  const todaySpent = calculateSpent('day', 0);
-  const yesterdaySpent = calculateSpent('day', 1);
-  const thisMonthSpent = calculateSpent('month');
+  const formatTodaySpent = Number.isInteger(todaySpent)
+    ? todaySpent
+    : todaySpent.toFixed(2);
+
+  const yesterdayDate = moment().subtract(1, 'days');
+
+  const yesterdaySpent = allTransactions
+    .filter((transaction: Expense) =>
+      moment(transaction.date).isSame(yesterdayDate, 'day'),
+    )
+    .reduce(
+      (total, transaction: {amount: number}) => total + transaction.amount,
+      0,
+    );
+
+  const formatYesterdaySpent = Number.isInteger(yesterdaySpent)
+    ? yesterdaySpent
+    : yesterdaySpent.toFixed(2);
+
+  const thisMonthSpent = allTransactions
+    .filter((transaction: Expense) =>
+      moment(transaction.date).isSame(currentDate, 'month'),
+    )
+    .reduce(
+      (total, transaction: {amount: number}) => total + transaction.amount,
+      0,
+    );
+
+  const formatThisMonthSpent = Number.isInteger(thisMonthSpent)
+    ? thisMonthSpent
+    : thisMonthSpent.toFixed(2);
 
   return {
     colors,
@@ -86,10 +112,13 @@ const useHome = () => {
     userId,
     currencySymbol,
     onRefresh,
-    calculateSpent,
     todaySpent,
     yesterdaySpent,
     thisMonthSpent,
+    sortedTransactions,
+    formatTodaySpent,
+    formatYesterdaySpent,
+    formatThisMonthSpent
   };
 };
 

@@ -20,6 +20,9 @@ import AsyncStorageService from '../../utils/asyncStorageService';
 import {updateUserById} from '../../services/UserService';
 import {updateCurrencyById} from '../../services/CurrencyService';
 import {Linking} from 'react-native';
+import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
+import {deleteAllData} from '../../services/DeleteService';
+import { getAllDataRequest, selectAllData } from '../../redux/slice/allDataSlice';
 
 const useSettings = () => {
   const userName = useSelector(selectUserName);
@@ -29,6 +32,8 @@ const useSettings = () => {
   const currencyName = useSelector(selectCurrencyName);
   const currencySymbol = useSelector(selectCurrencySymbol);
   const selectedTheme = useSelector(selectThemePreference);
+  const allData = useSelector(selectAllData)
+  console.log(allData)
 
   const currencyData = {
     code: currencyCode,
@@ -38,6 +43,7 @@ const useSettings = () => {
 
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [name, setName] = useState(userName);
   const [searchText, setSearchText] = useState('');
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
@@ -47,6 +53,10 @@ const useSettings = () => {
 
   const colors = useThemeColors();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllDataRequest());
+  }, []);
 
   useEffect(() => {
     const getThemePreference = async () => {
@@ -165,6 +175,19 @@ const useSettings = () => {
     );
   };
 
+  const handleDeleteAllDataOk = async () => {
+    await deleteAllData();
+    await AsyncStorageService.setItem('isOnboarded', JSON.stringify(false));
+    dispatch(setIsOnboarded(false));
+  };
+  const handleDeleteAllDataCancel = () => {
+    setIsDeleteModalVisible(false);
+  };
+
+  const handleDeleteAllData = () => {
+    setIsDeleteModalVisible(true);
+  };
+
   return {
     isThemeModalVisible,
     setIsThemeModalVisible,
@@ -196,6 +219,11 @@ const useSettings = () => {
     handleRateNow,
     handleGithub,
     handlePrivacyPolicy,
+    handleDeleteAllData,
+    isDeleteModalVisible,
+    handleDeleteAllDataOk,
+    handleDeleteAllDataCancel,
+    allData
   };
 };
 

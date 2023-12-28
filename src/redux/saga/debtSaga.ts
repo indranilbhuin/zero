@@ -20,8 +20,8 @@ function* fetchAllDebtsbyDebtor(action: any): Generator<any, void, any> {
     const userId = yield select(selectUserId);
     const debtorId = action.payload;
     const debts = yield call(getAllDebtsByUserIdAndDebtorId, userId, debtorId);
-    yield put(getDebtSuccess(debts));
     console.log('in debts', debts);
+    yield put(getDebtSuccess(debts));
   } catch (error) {
     yield put(getDebtFaliure(error));
     console.error('Error fetching debts:', error);

@@ -6,10 +6,10 @@ class Expense extends Realm.Object<Expense> {
   _id!: Realm.BSON.ObjectId;
   title!: string;
   amount!: number;
-  description!: string;
+  description?: string;
   category!: Category;
   user!: User;
-  date!: Date;
+  date!: string;
 
   static schema: ObjectSchema = {
     name: 'Expense',
@@ -20,7 +20,7 @@ class Expense extends Realm.Object<Expense> {
       description: 'string',
       category: 'Category',
       user: 'User',
-      date: 'date',
+      date: 'string',
     },
     primaryKey: '_id',
   };

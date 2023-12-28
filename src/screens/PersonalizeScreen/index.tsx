@@ -8,7 +8,10 @@ import PrimaryText from '../../components/atoms/PrimaryText';
 import CustomInput from '../../components/atoms/CustomInput';
 
 const PersonalizeScreen = () => {
-  const {colors, setName, name, handleSubmit, handleSkip} = usePersonalize();
+  const {colors, setName, name, handleSubmit, handleSkip, nameSchema} =
+    usePersonalize();
+  const isValid = nameSchema.safeParse(name).success;
+
   return (
     <PrimaryView colors={colors}>
       <TouchableOpacity style={styles.skipButtonContainer} onPress={handleSkip}>
@@ -31,13 +34,18 @@ const PersonalizeScreen = () => {
         </PrimaryText>
       </View>
 
-      <View style={styles.textInputContainer}>
+      <View
+        style={[
+          styles.textInputContainer,
+          isValid ? {marginBottom: '100%'} : null,
+        ]}>
         <CustomInput
           input={name}
           label={'Name'}
           colors={colors}
-          placeholder={'eg. John Doe'}
+          placeholder={'eg. Indranil Bhuin'}
           setInput={setName}
+          schema={nameSchema}
         />
       </View>
 
@@ -45,6 +53,7 @@ const PersonalizeScreen = () => {
         onPress={handleSubmit}
         colors={colors}
         buttonTitle={'Continue'}
+        disabled={!isValid}
       />
     </PrimaryView>
   );

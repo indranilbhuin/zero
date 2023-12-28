@@ -10,6 +10,7 @@ interface CustomInputProps {
   colors: Colors;
   placeholder: string;
   setInput: (value: string) => void;
+  schema: any;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -18,7 +19,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
   setInput,
   placeholder,
   label,
+  schema,
 }) => {
+  const errors = schema?.safeParse(input).error?.errors || [];
+
   return (
     <View>
       {label ? (
@@ -28,9 +32,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
         style={[
           textInputStyles.textInput,
           {
-            borderColor: colors.primaryText,
+            borderColor: colors.secondaryContainerColor,
             color: colors.primaryText,
-            backgroundColor: colors.secondaryBackground,
+            backgroundColor: colors.secondaryAccent,
           },
         ]}
         value={input}
@@ -38,6 +42,17 @@ const CustomInput: React.FC<CustomInputProps> = ({
         placeholder={placeholder}
         placeholderTextColor={colors.secondaryText}
       />
+      {errors.length > 0 && (
+        <View style={{marginBottom: 10}}>
+          {errors.map(error => (
+            <View key={error.message}>
+              <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
+                {error.message}
+              </PrimaryText>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 };

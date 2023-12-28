@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {getRealm} from '../utils/realmService';
 
 export const createExpense = async (
@@ -6,7 +7,7 @@ export const createExpense = async (
   amount: number,
   description: string,
   categoryId: Realm.BSON.ObjectId,
-  date: Date,
+  date: string,
 ) => {
   const realm = await getRealm();
 
@@ -16,15 +17,20 @@ export const createExpense = async (
     const uniqueId = new Realm.BSON.ObjectID();
 
     if (user) {
-      realm.create('Expense', {
+      const expenseData: any = {
         _id: uniqueId,
         title,
         amount,
-        description,
         category: category,
         user: user,
         date: date,
-      });
+      };
+
+      if (description !== undefined) {
+        expenseData.description = description;
+      }
+
+      realm.create('Expense', expenseData);
     }
   });
 };
@@ -35,7 +41,7 @@ export const updateExpenseById = async (
   newTitle?: string,
   newAmount?: number,
   newDescription?: string,
-  newDate?: Date,
+  newDate?: string,
 ) => {
   const realm = await getRealm();
 
@@ -90,4 +96,22 @@ export const getAllExpensesByUserId = async (userId: Realm.BSON.ObjectId) => {
   });
 
   return expensesByUserId;
+};
+
+export const getAllExpensesByDate = async (
+  userId: Realm.BSON.ObjectId,
+  targetDate: string,
+) => {
+  const realm = await getRealm();
+  const expenses = realm.objects('Expense');
+  console.log('in service', targetDate);
+  const expensesByDate = Array.from(expenses).filter(expense => {
+    const formattedExpenseDate = moment(expense.date).format('YYYY-MM-DD');
+
+    return (
+      expense.user?._id.equals(userId) && formattedExpenseDate === targetDate
+    );
+  });
+
+  return expensesByDate;
 };

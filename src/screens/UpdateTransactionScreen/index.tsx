@@ -10,7 +10,7 @@ export type UpdateTransactionScreenRouteProp = RouteProp<
       expenseTitle: string;
       expenseDescription: string;
       category: Category;
-      expenseDate: Date;
+      expenseDate: string;
       expenseAmount: string;
     };
   },

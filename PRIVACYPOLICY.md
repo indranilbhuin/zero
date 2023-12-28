@@ -1,58 +1,86 @@
-**Privacy Policy**
+# zero - Privacy Policy
 
-Indranil Bhuin built the zero app as an Open Source app. This SERVICE is provided by Indranil Bhuin at no cost and is intended for use as is.
+Last updated: December 22, 2023
 
-This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.
+This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
 
-If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy.
+We do not collect any user data. Zero respects your privacy, and we believe that your financial information is personal and should remain private. The application does not track, store, or share any data with external parties.
 
-The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which are accessible at zero unless otherwise defined in this Privacy Policy.
+## Interpretation and Definitions
 
-**Information Collection and Use**
+### Interpretation
 
-For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. The information that I request will be retained on your device and is not collected by me in any way.
+The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
 
-**Log Data**
+### Definitions
 
-I want to inform you that whenever you use my Service, in a case of an error in the app I collect data and information (through third-party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (“IP”) address, device name, operating system version, the configuration of the app when utilizing my Service, the time and date of your use of the Service, and other statistics.
+For the purposes of this Privacy Policy:
 
-**Cookies**
+- __Account__ means a unique account created for You to access the application.
 
-Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.
+- __Application__ refers to zero, the expense tracker application provided by Indranil Bhuin.
 
-This Service does not use these “cookies” explicitly. However, the app may use third-party code and libraries that use “cookies” to collect information and improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service.
+- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to zero.
 
-**Service Providers**
+- __Country__ refers to: Karnataka,  India
 
-I may employ third-party companies and individuals due to the following reasons:
+- __Device__ means any device that can access the application such as a computer, a cellphone or a digital tablet.
 
-*   To facilitate our Service;
-*   To provide the Service on our behalf;
-*   To perform Service-related services; or
-*   To assist us in analyzing how our Service is used.
+- __Personal Data__ is any information that relates to an identified or identifiable individual.
 
-I want to inform users of this Service that these third parties have access to their Personal Information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose.
+- __Service__ refers to the Application.
 
-**Security**
+- __You__ means the individual accessing or using the application, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
 
-I value your trust in providing us your Personal Information, thus we are striving to use commercially acceptable means of protecting it. But remember that no method of transmission over the internet, or method of electronic storage is 100% secure and reliable, and I cannot guarantee its absolute security.
+## Collecting and Using Your Personal Data
 
-**Links to Other Sites**
+### Types of Data Collected
 
-This Service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by me. Therefore, I strongly advise you to review the Privacy Policy of these websites. I have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.
+#### Personal Data
 
-**Children’s Privacy**
+- __No Data Collection__: We do not collect any user data. Zero respects your privacy, and we believe that your financial information is personal and should remain private. The application does not track, store, or share any data with external parties.
 
-I do not knowingly collect personally identifiable information from children. I encourage all children to never submit any personally identifiable information through the Application and/or Services. I encourage parents and legal guardians to monitor their children's Internet usage and to help enforce this Policy by instructing their children never to provide personally identifiable information through the Application and/or Services without their permission. If you have reason to believe that a child has provided personally identifiable information to us through the Application and/or Services, please contact us. You must also be at least 16 years of age to consent to the processing of your personally identifiable information in your country (in some countries we may allow your parent or guardian to do so on your behalf).
+- __Local Database__: All data generated and entered by the user is stored exclusively in the local database on their device. This enhances privacy by ensuring that sensitive information is kept within the user's control.
 
-**Changes to This Privacy Policy**
+- __Open Source__: Zero is an open-source application, promoting transparency and collaboration. Users can access the source code, contributing to the ongoing improvement and security of the application.
 
-I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
+### Delete Your Personal Data
 
-This policy is effective as of 2023-11-22
+ You have the right to manage your data. Zero allows users to delete or download their app data directly from the application, providing a transparent and user-friendly way to control their information.
 
-**Contact Us**
+### Disclosure of Your Personal Data
 
-If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at zeroinsights@gmail.com.
+#### Law enforcement
 
-This privacy policy page was created at [privacypolicytemplate.net](https://privacypolicytemplate.net) and modified/generated by [App Privacy Policy Generator](https://app-privacy-policy-generator.nisrulz.com/)
+Under certain circumstances, the Company may be required to disclose Your Personal Data ( we collect zero data ) if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).
+
+#### Other legal requirements
+
+The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:
+
+- Comply with a legal obligation
+- Protect and defend the rights or property of the Company
+- Prevent or investigate possible wrongdoing in connection with the Service
+- Protect the personal safety of Users of the Service or the public
+- Protect against legal liability
+
+## Links to Other Websites
+
+Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.
+
+We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.
+
+## Changes to this Privacy Policy
+
+We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.
+
+We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.
+
+You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
+
+## Contact Us
+
+If you have any questions about this Privacy Policy, You can contact us:
+
+
+- By email: zeroinsights@gmail.com

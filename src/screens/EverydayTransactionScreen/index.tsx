@@ -16,13 +16,13 @@ import mainStyles from '../../styles/main';
 const EverydayTransactionScreen = () => {
   const route = useRoute<EverydayTransactionRouteProp>();
   const {
-    transactions,
     formatDate,
     formattedDate,
     colors,
     currencySymbol,
-    date,
-    noTransactionDate,
+    expenseDate,
+    allEverdayTransaction,
+    allEverdayTransactionCopy
   } = useEverydayTransaction(route);
 
   return (
@@ -35,7 +35,7 @@ const EverydayTransactionScreen = () => {
         />
       </View>
       <View>
-        {transactions?.length === 0 ? (
+        {allEverdayTransaction?.length === 0 ? (
           <View style={styles.noTransactionContainer}>
             {colors.primaryText === '#000000' ? (
               <Image
@@ -50,16 +50,13 @@ const EverydayTransactionScreen = () => {
             )}
             <PrimaryText
               style={{color: colors.primaryText, fontSize: 13, marginTop: 5}}>
-              No Transactions on{' '}
-              {formattedDate === undefined
-                ? moment(date).format('Do MMM YY')
-                : moment(noTransactionDate).format('Do MMM YY')}
+              No Transactions on {moment(expenseDate).format('Do MMM YY')}
             </PrimaryText>
           </View>
         ) : (
           <TransactionList
             currencySymbol={currencySymbol}
-            allExpenses={transactions}
+            allExpenses={allEverdayTransactionCopy}
           />
         )}
       </View>

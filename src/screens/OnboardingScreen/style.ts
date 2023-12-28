@@ -31,6 +31,7 @@ const onboardingStyles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   categoryMainContainer: {
     flexDirection: 'row',
@@ -49,7 +50,10 @@ const onboardingStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonContainer: {
-    marginTop: '50%',
+    marginTop: '60%',
+  },
+  iconContainer: {
+    marginRight: 5,
   },
 });
 

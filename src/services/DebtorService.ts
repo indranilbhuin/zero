@@ -49,6 +49,22 @@ export const softDeleteDebtorById = async (debtorId: Realm.BSON.ObjectId) => {
   }
 };
 
+export const deleteDebtorById = async (debtorId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+  try {
+    realm.write(() => {
+      const debtor = realm.objectForPrimaryKey('Debtor', debtorId);
+      if (debtor) {
+        realm.delete(debtor);
+      } else {
+        console.error('Debtor not found.');
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting Debt:', error);
+  }
+};
+
 export const updateDebtorById = async (
   debtorId?: Realm.BSON.ObjectId,
   newDebtorTitle?: string,

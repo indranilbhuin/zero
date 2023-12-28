@@ -10,6 +10,8 @@ import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PieChartLabels from '../../components/atoms/PieChartLabels';
 import Expense from '../../schemas/ExpenseSchema';
+import EmptyState from '../../components/atoms/EmptyState';
+import {formatCurrency} from '../../utils/numberUtils';
 
 const ReportsScreen = () => {
   const {
@@ -28,6 +30,32 @@ const ReportsScreen = () => {
     totalAmountForMonth,
     daysInMonth,
   } = useReports();
+
+  const daysWithTransactions = filteredTransactions.reduce(
+    (days, transaction) => {
+      const transactionDay = moment(transaction.date).date();
+      if (!days.includes(transactionDay)) {
+        days.push(transactionDay);
+      }
+      return days;
+    },
+    [],
+  );
+
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   const renderYearPickerItems = () => {
     return (
@@ -69,21 +97,6 @@ const ReportsScreen = () => {
   };
 
   const renderMonths = () => {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
     return (
       <>
         {months.map(month => (
@@ -97,11 +110,18 @@ const ReportsScreen = () => {
                   backgroundColor:
                     month === selectedMonth
                       ? colors.accentGreen
-                      : colors.primaryText,
-                  borderColor: colors.secondaryText,
+                      : colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
                 },
               ]}>
-              <PrimaryText style={{color: colors.buttonText, fontSize: 13}}>
+              <PrimaryText
+                style={{
+                  color:
+                    month === selectedMonth
+                      ? colors.buttonText
+                      : colors.primaryText,
+                  fontSize: 13,
+                }}>
                 {month}
               </PrimaryText>
             </View>
@@ -116,24 +136,23 @@ const ReportsScreen = () => {
       <View
         style={{
           marginRight: 5,
-          borderRightWidth: 0.8,
-          borderColor: 'white',
+          borderRightWidth: 2,
+          borderColor: colors.containerColor,
           alignItems: 'center',
           justifyContent: 'center',
-          borderStyle: 'dashed',
         }}>
         <TouchableOpacity onPress={handleYearPicker}>
           <View
             style={[
               styles.categoryContainer,
               {
-                backgroundColor: colors.primaryText,
-                borderColor: colors.secondaryText,
+                backgroundColor: colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
               },
             ]}>
             <PrimaryText
               style={{
-                color: colors.buttonText,
+                color: colors.primaryText,
                 fontSize: 13,
                 fontFamily: 'FiraCode-SemiBold',
               }}>
@@ -189,7 +208,6 @@ const ReportsScreen = () => {
   const renderPieChart = () => {
     const aggregateData: {category: any; amount: any}[] = [];
     const categoryMap = new Map();
-    console.log(categoryMap);
 
     filteredTransactions?.forEach((transaction: any) => {
       const {amount, category} = transaction;
@@ -256,29 +274,32 @@ const ReportsScreen = () => {
       );
 
       const hasTransactions = dayTransactions.length > 0;
+
       let opacity = hasTransactions
-        ? totalAmountForDay / totalAmountForMonth
+        ? Math.round(totalAmountForDay) / Math.round(totalAmountForMonth)
         : 1;
       let visibility = Math.round(opacity * 100);
+      let backgroundColor;
+      if (hasTransactions) {
+        backgroundColor = `${colors.accentGreen}${visibility}`;
+      } else {
+        backgroundColor = 'transparent';
+      }
 
-      const backgroundColor = hasTransactions
-        ? `${colors.accentGreen}${visibility}`
-        : 'transparent';
+      if (totalAmountForDay === totalAmountForMonth) {
+        backgroundColor = `${colors.accentGreen}60`;
+      }
 
-      console.log('this is daytransaction: ', day, dayTransactions);
+      const monthIndex = months.indexOf(selectedMonth);
+      const selectedDate = new Date(selectedYear, monthIndex, day);
 
-      const isDate = moment(
-        `${selectedYear}-${selectedMonth}-${day}`,
-        'YYYY-MMMM-D',
-      ).toISOString();
+      const isDate = moment(selectedDate).format('YYYY-MM-DD');
 
       return day !== 0 ? (
         <TouchableOpacity
           key={index}
           style={[styles.calendarDay, {backgroundColor}]}
-          onPress={() =>
-            navigate('EverydayTransactionScreen', {dayTransactions, isDate})
-          }>
+          onPress={() => navigate('EverydayTransactionScreen', {isDate})}>
           <PrimaryText
             style={{
               color: colors.primaryText,
@@ -329,56 +350,92 @@ const ReportsScreen = () => {
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
+              borderWidth: undefined,
               width: '48.5%',
+              height: 50,
             },
           ]}>
           <PrimaryText
             style={{
-              color: colors.buttonText,
+              color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
             }}>
-            Total: {totalAmountForMonth}
+            Total
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
+            }}>
+            {currencySymbol}
+            {formatCurrency(totalAmountForMonth)}
           </PrimaryText>
         </View>
         <View
           style={[
             styles.categoryContainer,
             {
-              backgroundColor: colors.primaryText,
-              borderColor: colors.secondaryText,
+              backgroundColor: colors.secondaryAccent,
               width: '48.5%',
+              borderWidth: undefined,
+              height: 50,
             },
           ]}>
           <PrimaryText
             style={{
-              color: colors.buttonText,
+              color: colors.primaryText,
               fontSize: 13,
               fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
             }}>
-            Avg/Day: {(totalAmountForMonth / daysInMonth).toFixed(2)}
+            Avg/Day
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.primaryText,
+              fontSize: 13,
+              fontFamily: 'FiraCode-SemiBold',
+              textAlign: 'center',
+            }}>
+            {currencySymbol}
+            {formatCurrency(
+              (totalAmountForMonth / daysWithTransactions.length).toFixed(2),
+            )}
           </PrimaryText>
         </View>
       </View>
 
-      <ScrollView>
-        <View style={styles.chartContainer}>{renderPieChart()}</View>
-        <View style={styles.calendarContainer}>
-          {dayNames.map((day, index) => (
-            <View key={index} style={styles.calendarDay}>
-              <PrimaryText
-                style={{
-                  color: colors.primaryText,
-                  fontSize: 13,
-                }}>
-                {day}
-              </PrimaryText>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {filteredTransactions.length === 0 ? (
+          <EmptyState
+            colors={colors}
+            type={'Insights'}
+            style={{marginTop: '20%'}}
+          />
+        ) : (
+          <>
+            <View style={styles.chartContainer}>{renderPieChart()}</View>
+            <View style={styles.calendarContainer}>
+              {dayNames.map((day, index) => (
+                <View key={index} style={styles.calendarDay}>
+                  <PrimaryText
+                    style={{
+                      color: colors.primaryText,
+                      fontSize: 13,
+                    }}>
+                    {day}
+                  </PrimaryText>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-        <View style={styles.calendarContainer}>{renderCalendar()}</View>
+            <View style={styles.calendarContainer}>{renderCalendar()}</View>
+          </>
+        )}
       </ScrollView>
     </PrimaryView>
   );

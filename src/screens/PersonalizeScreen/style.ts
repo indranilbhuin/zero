@@ -18,7 +18,7 @@ const personalizeStyles = StyleSheet.create({
     includeFontPadding: false,
   },
   textInputContainer: {
-    marginBottom: '100%',
+    marginBottom: '90%',
   },
   skipButtonContainer: {
     alignSelf: 'flex-end',

@@ -11,6 +11,7 @@ export type DebtsScreenProp = RouteProp<
       debtDescription: string;
       amount: number;
       debtDate: string;
+      debtType: string;
     };
   },
   'DebtsScreen'

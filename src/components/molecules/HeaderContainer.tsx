@@ -25,8 +25,9 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
           ]}>
           <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
             {userName
-              .split(' ')
+              ?.split(' ')
               .map((name: string) => name.charAt(0))
+              .slice(0, 2)
               .join('')}
           </PrimaryText>
         </View>
