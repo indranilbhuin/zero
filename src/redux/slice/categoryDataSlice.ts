@@ -11,14 +11,14 @@ const categoryDataSlice = createSlice({
   initialState,
   reducers: {
     setCategoryData: (state, action) => {
-      console.log(action.payload);
+      console.log("hhhh", action.payload);
       state.categoryData = action.payload;
     },
   },
 });
 
 export const selectCategoryData = (state: RootState) =>
-  state.category.categoryData;
+  state.category.categoryData || [];
 
 export const selectActiveCategories = createSelector(
   [selectCategoryData],

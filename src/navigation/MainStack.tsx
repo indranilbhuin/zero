@@ -27,8 +27,11 @@ const MainStack = () => {
           isOnboarded,
           value,
         );
-        if (value) {
+        if (isOnboarded) {
           dispatch(setIsOnboarded(true));
+          console.log('Fetched isOnboarded from AsyncStorage');
+        } else {
+          dispatch(setIsOnboarded(false));
           console.log('Fetched isOnboarded from AsyncStorage');
         }
       } catch (error) {

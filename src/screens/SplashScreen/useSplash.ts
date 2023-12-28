@@ -3,7 +3,7 @@ import {navigate} from '../../utils/navigationUtils';
 
 const useSplash = () => {
   const handleClick = () => {
-    navigate('PersonalizeScreen');
+    navigate('WelcomeScreen');
   };
 
   const colors = useThemeColors();

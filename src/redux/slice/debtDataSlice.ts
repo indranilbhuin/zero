@@ -28,10 +28,8 @@ const debtDataSlice = createSlice({
   },
 });
 
-export const selectDebtData = (state: RootState) =>
-  state.debt.debtData;
-export const selectDebtLoading = (state: RootState) =>
-  state.debt.isLoading;
+export const selectDebtData = (state: RootState) => state.debt.debtData;
+export const selectDebtLoading = (state: RootState) => state.debt.isLoading;
 export const selectDebtError = (state: RootState) => state.debt.error;
 
 export const {getDebtRequest, getDebtSuccess, getDebtFaliure} =

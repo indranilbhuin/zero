@@ -10,7 +10,7 @@ function* fetchAllCategories(): Generator<any, void, any> {
     const userId = yield select(selectUserId);
     const categories = yield call(getAllCategoriesByUserId, userId);
     yield put(setCategoryData(categories));
-    console.log(categories);
+    console.log("all categories in saga",categories);
   } catch (error) {
     console.error('Error fetching categories:', error);
   }
