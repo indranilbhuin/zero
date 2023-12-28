@@ -16,9 +16,6 @@ const userNameSlice = createSlice({
 });
 
 export const selectUserName = (state: RootState) => state.userName.userName;
-export const resetUserName = (state: RootState) => {
-  state.userName = initialState;
-};
 
 export const {setUserName} = userNameSlice.actions;
 

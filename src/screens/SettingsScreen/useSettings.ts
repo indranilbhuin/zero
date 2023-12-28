@@ -23,7 +23,6 @@ import {Linking} from 'react-native';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import {deleteAllData} from '../../services/DeleteService';
 import { getAllDataRequest, selectAllData } from '../../redux/slice/allDataSlice';
-import { resetAllSlices } from '../../redux/resetAllSlices';
 
 const useSettings = () => {
   const userName = useSelector(selectUserName);

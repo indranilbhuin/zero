@@ -35,10 +35,6 @@ export const selectEverydayExpenseLoading = (state: RootState) =>
 export const selectEverydayExpenseError = (state: RootState) =>
   state.everydayExpense.error;
 
-export const resetEverydayData = (state: RootState) => {
-  state.everydayExpense = initialState;
-};
-
 export const {
   getEverydayExpenseRequest,
   getEverydayExpenseSuccess,

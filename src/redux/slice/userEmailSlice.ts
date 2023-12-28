@@ -18,7 +18,5 @@ const userEmailSlice = createSlice({
 export const selectUserEmail = (state: RootState) => state.userEmail.userEmail;
 
 export const {setUserEmail} = userEmailSlice.actions;
-export const resetUserEmail = (state: RootState) => {
-  state.userEmail = initialState;
-};
+
 export default userEmailSlice.reducer;

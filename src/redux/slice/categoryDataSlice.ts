@@ -28,10 +28,6 @@ export const selectActiveCategories = createSelector(
     ),
 );
 
-export const resetCategoryData = (state: RootState) => {
-  state.category = initialState;
-};
-
 export const {setCategoryData} = categoryDataSlice.actions;
 
 export default categoryDataSlice.reducer;

@@ -31,9 +31,7 @@ const debtDataSlice = createSlice({
 export const selectDebtData = (state: RootState) => state.debt.debtData;
 export const selectDebtLoading = (state: RootState) => state.debt.isLoading;
 export const selectDebtError = (state: RootState) => state.debt.error;
-export const resetDebtData = (state: RootState) => {
-  state.debt = initialState;
-};
+
 export const {getDebtRequest, getDebtSuccess, getDebtFaliure} =
   debtDataSlice.actions;
 

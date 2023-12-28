@@ -31,10 +31,6 @@ export const selectCurrencyCode = (state: RootState) =>
 export const selectCurrencySymbol = (state: RootState) =>
   state.currencyData.currencySymbol;
 
-export const resetCurrencyData = (state: RootState) => {
-  state.currencyData = initialState;
-};
-
 export const {setCurrencyData} = currencyDataSlice.actions;
 
 export default currencyDataSlice.reducer;

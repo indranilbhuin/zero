@@ -160,7 +160,7 @@ const SettingsScreen = () => {
         </View>
 
         <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
-          Data
+          Manage your Data
         </PrimaryText>
         <View
           style={[
@@ -303,6 +303,7 @@ const SettingsScreen = () => {
             fontSize: 12,
             alignSelf: 'center',
             textAlign: 'center',
+            marginBottom: '5%',
           }}>
           Developed with{' '}
           <Text style={{color: colors.accentGreen}}>passion</Text> in India.

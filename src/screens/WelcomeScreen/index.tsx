@@ -1,10 +1,13 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
 import {navigate} from '../../utils/navigationUtils';
+import Carousel from '../../components/atoms/Carousel';
+// import Carousel from '../../components/atoms/Carousel';
+// import Carousell from '../../components/atoms/Carousel';
 
 const WelcomeScreen = () => {
   const colors = useThemeColors();
@@ -17,18 +20,20 @@ const WelcomeScreen = () => {
   };
 
   return (
-    <PrimaryView colors={colors}>
+    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
       <View style={styles.titleTextContainer}>
         <PrimaryText style={{fontSize: 24}}>
           Welcome to <Text style={{color: colors.accentGreen}}>zero</Text>
         </PrimaryText>
       </View>
 
-      <View style={{marginTop: '150%'}}>
+      <Carousel />
+
+      <View style={{marginBottom: '10%'}}>
         <PrimaryButton
           onPress={handleAllreadyUser}
           colors={colors}
-          buttonTitle={'Already an User'}
+          buttonTitle={'Existing User'}
           disabled={undefined}
         />
         <PrimaryText
@@ -38,7 +43,7 @@ const WelcomeScreen = () => {
         <PrimaryButton
           onPress={handleNewUser}
           colors={colors}
-          buttonTitle={'Continue as new User'}
+          buttonTitle={'New User'}
           disabled={undefined}
         />
       </View>
@@ -51,5 +56,9 @@ export default WelcomeScreen;
 const styles = StyleSheet.create({
   titleTextContainer: {
     paddingTop: '15%',
+  },
+  noImage: {
+    height: 200,
+    width: 200,
   },
 });

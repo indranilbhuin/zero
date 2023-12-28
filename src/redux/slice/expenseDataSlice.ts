@@ -37,8 +37,4 @@ export const selectExpenseError = (state: RootState) => state.expense.error;
 export const {getExpenseRequest, getExpenseSuccess, getExpenseFaliure} =
   expenseDataSlice.actions;
 
-export const resetExpenseData = (state: RootState) => {
-  state.expense = initialState;
-};
-
 export default expenseDataSlice.reducer;

@@ -25,10 +25,6 @@ export const selectActiveDebtors = createSelector(
     debtorData.filter((debtor: Debtor) => debtor.debtorStatus === true),
 );
 
-export const resetDebtorData = (state: RootState) => {
-  state.debtor = initialState;
-};
-
 export const {setDebtorData} = debtorDataSlice.actions;
 
 export default debtorDataSlice.reducer;

@@ -36,8 +36,4 @@ export const selectAllDataError = (state: RootState) => state.allData.error;
 export const {getAllDataRequest, getAllDataSuccess, getAllDataFaliure} =
   allDataSlice.actions;
 
-export const resetAllData = (state: RootState) => {
-  state.allData = initialState;
-};
-
 export default allDataSlice.reducer;

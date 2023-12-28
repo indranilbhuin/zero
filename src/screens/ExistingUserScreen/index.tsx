@@ -26,7 +26,8 @@ import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
 import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
-import { getExpenseRequest } from '../../redux/slice/expenseDataSlice';
+import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
+import {deleteAllData} from '../../services/DeleteService';
 
 const ExistingUserScreen = () => {
   const colors = useThemeColors();
@@ -35,9 +36,10 @@ const ExistingUserScreen = () => {
   const userId = useSelector(selectUserId);
   const allCategories = useSelector(selectCategoryData);
   console.log('kkkk', allCategories);
-  const cat = Array.from(allCategories);
   const allCategoriesCopy = allCategories;
   const [allData, setAllData] = useState(null);
+  const [fileKey, setFileKey] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState('Upload your file');
   const [fileName, setFileName] = useState(null);
   const allDebtors = useSelector(selectDebtorData);
   const debtorsCopy = allDebtors;
@@ -66,6 +68,7 @@ const ExistingUserScreen = () => {
     try {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
+        allowMultiSelection: false,
       });
 
       const {0: res} = result;
@@ -80,6 +83,16 @@ const ExistingUserScreen = () => {
       const jsonData = JSON.parse(fileContent);
 
       const {key, data} = jsonData;
+      if (!key) {
+        setUploadMessage('Invalid key. Please upload a valid file.');
+        return;
+      }
+      console.log(isValidKey(key));
+      if (!isValidKey(key)) {
+        setUploadMessage('Invalid key. Please upload a valid file.');
+        return;
+      }
+      setFileKey(key);
       const {users} = data;
       const {username, email} = users[0];
       await createUser(username, email);
@@ -90,6 +103,27 @@ const ExistingUserScreen = () => {
     } catch (error) {
       console.error('Error picking or reading file:', error);
     }
+  };
+
+  const reUpload = async () => {
+    await deleteAllData();
+    dispatch({type: FETCH_ALL_CATEGORY_DATA});
+    dispatch({type: FETCH_ALL_DEBTOR_DATA});
+    await importRealmData();
+  };
+
+  const isValidKey = key => {
+    if (key?.length !== 20) {
+      return false;
+    }
+
+    const prefix = key.slice(0, 4);
+    if (prefix !== 'zero') {
+      return false;
+    }
+
+    const alphanumericPart = key.slice(4);
+    return /^[a-zA-Z0-9]+$/.test(alphanumericPart);
   };
 
   const populateCategory = async () => {
@@ -191,6 +225,7 @@ const ExistingUserScreen = () => {
       dispatch({type: FETCH_ALL_USER_DATA});
       dispatch({type: FETCH_CURRENCY_DATA});
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch({type: FETCH_ALL_DEBTOR_DATA});
       dispatch(getExpenseRequest());
 
       await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
@@ -198,68 +233,175 @@ const ExistingUserScreen = () => {
     }
   };
 
+  console.log(allCategoriesCopy.length > 0 && debtorsCopy.length > 0);
+
   return (
-    <PrimaryView colors={colors}>
-      <View style={styles.titleTextContainer}>
-        <PrimaryText style={{fontSize: 20}}>
-          As an existing user if you have exported your data,
-        </PrimaryText>
-        <PrimaryText
-          style={{color: colors.accentGreen, fontSize: 15, paddingTop: '10%'}}>
-          Upload your{' '}
-          <Text style={{color: colors.accentGreen}}>zero***.json</Text> file we
-          will assess your data
-        </PrimaryText>
-      </View>
-      <View
-        style={{flexDirection: 'row', alignItems: 'center', marginTop: '5%'}}>
-        <View
-          style={[
-            styles.uploadContainer,
-            {
-              backgroundColor: colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
-            },
-          ]}>
-          <TouchableOpacity
-            style={styles.uploadContent}
-            onPress={importRealmData}>
-            <Icon
-              name={'file-upload'}
-              size={25}
-              color={colors.accentGreen}
-              type={'MaterialCommunityIcons'}
-            />
-          </TouchableOpacity>
+    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
+      <View>
+        <View style={styles.titleTextContainer}>
+          <PrimaryText style={{fontSize: 20}}>
+            As an existing user if you have exported your data,
+          </PrimaryText>
+          <PrimaryText
+            style={{
+              color: colors.accentGreen,
+              fontSize: 15,
+              paddingTop: '10%',
+            }}>
+            Upload your{' '}
+            <Text style={{color: colors.accentGreen}}>zero***.json</Text> file
+            we will assess your data
+          </PrimaryText>
         </View>
-        {!fileName ? (
-          <PrimaryText style={{fontSize: 13}}>Upload your file</PrimaryText>
-        ) : (
-          <PrimaryText style={{fontSize: 13}}>{fileName}</PrimaryText>
-        )}
+        <View
+          style={{flexDirection: 'row', alignItems: 'center', marginTop: '5%'}}>
+          <View
+            style={[
+              styles.uploadContainer,
+              {
+                backgroundColor: colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
+              },
+            ]}>
+            <TouchableOpacity
+              style={styles.uploadContent}
+              onPress={importRealmData}
+              disabled={isValidKey(fileKey)}>
+              <Icon
+                name={'file-upload'}
+                size={25}
+                color={colors.accentGreen}
+                type={'MaterialCommunityIcons'}
+              />
+            </TouchableOpacity>
+          </View>
+          {!userName ? (
+            <PrimaryText style={{fontSize: 13, width: '80%'}}>
+              {uploadMessage}
+            </PrimaryText>
+          ) : (
+            <View style={{}}>
+              <PrimaryText style={{fontSize: 13}}>
+                uploaded {fileName}
+              </PrimaryText>
+              <TouchableOpacity onPress={reUpload}>
+                <PrimaryText style={{fontSize: 13, color: colors.accentOrange}}>
+                  reUpload
+                </PrimaryText>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        {isValidKey(fileKey) ? (
+          <View style={{marginTop: '5%'}}>
+            <TouchableOpacity
+              disabled={allCategoriesCopy?.length > 0}
+              onPress={populateCategory}>
+              <View
+                style={[
+                  styles.settingsContainer,
+                  {
+                    backgroundColor:
+                      allCategoriesCopy?.length > 0
+                        ? colors.accentGreen
+                        : colors.containerColor,
+                    borderColor: colors.secondaryContainerColor,
+                    marginBottom: '3%',
+                  },
+                ]}>
+                <Icon
+                  name={'database-sync'}
+                  size={25}
+                  color={
+                    allCategoriesCopy?.length > 0
+                      ? colors.buttonText
+                      : colors.primaryText
+                  }
+                  type={'MaterialCommunityIcons'}
+                />
+                {allCategoriesCopy?.length > 0 ? (
+                  <PrimaryText
+                    style={{
+                      fontSize: 13,
+                      color:
+                        allCategoriesCopy?.length > 0
+                          ? colors.buttonText
+                          : colors.primaryText,
+                    }}>
+                    Synced Expense Data successfully
+                  </PrimaryText>
+                ) : (
+                  <PrimaryText
+                    style={{
+                      color:
+                        allCategoriesCopy?.length > 0
+                          ? colors.buttonText
+                          : colors.primaryText,
+                    }}>
+                    Sync Expense Data
+                  </PrimaryText>
+                )}
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={debtorsCopy?.length > 0}
+              onPress={populate}>
+              <View
+                style={[
+                  styles.settingsContainer,
+                  {
+                    backgroundColor:
+                      debtorsCopy?.length > 0
+                        ? colors.accentGreen
+                        : colors.containerColor,
+                    borderColor: colors.secondaryContainerColor,
+                    marginBottom: '3%',
+                  },
+                ]}>
+                <Icon
+                  name={'credit-card-sync-outline'}
+                  size={25}
+                  color={
+                    debtorsCopy?.length > 0
+                      ? colors.buttonText
+                      : colors.primaryText
+                  }
+                  type={'MaterialCommunityIcons'}
+                />
+                {debtorsCopy?.length > 0 ? (
+                  <PrimaryText
+                    style={{
+                      fontSize: 13,
+                      color:
+                        debtorsCopy?.length > 0
+                          ? colors.buttonText
+                          : colors.primaryText,
+                    }}>
+                    Synced Debt Data successfully
+                  </PrimaryText>
+                ) : (
+                  <PrimaryText
+                    style={{
+                      color:
+                        debtorsCopy?.length > 0
+                          ? colors.buttonText
+                          : colors.primaryText,
+                    }}>
+                    Sync Debt Data
+                  </PrimaryText>
+                )}
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </View>
-      <View style={{marginTop: '5%'}}>
-        <PrimaryButton
-          onPress={populateCategory}
-          colors={colors}
-          buttonTitle={'fff'}
-          disabled={undefined}
-        />
-        <PrimaryButton
-          onPress={populate}
-          colors={colors}
-          buttonTitle={'jjj'}
-          disabled={undefined}
-        />
+      <View style={{marginBottom: '10%'}}>
         <PrimaryButton
           onPress={handleDataSubmit}
           colors={colors}
-          buttonTitle={'Submit'}
-          disabled={undefined}
+          buttonTitle={'Continue'}
+          disabled={!(allCategoriesCopy.length > 0 && debtorsCopy.length > 0)}
         />
-      </View>
-      <View>
-        <PrimaryText>welcome back {userName}</PrimaryText>
       </View>
     </PrimaryView>
   );
@@ -282,5 +424,22 @@ const styles = StyleSheet.create({
   },
   uploadContent: {
     alignItems: 'center',
+  },
+  settingsContainer: {
+    borderWidth: 2,
+    borderRadius: 8,
+    height: 65,
+    justifyContent: 'space-between',
+    padding: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  individualSettingsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 65,
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
   },
 });
