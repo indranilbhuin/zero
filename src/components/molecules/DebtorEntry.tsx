@@ -16,6 +16,7 @@ import {createDebtor, updateDebtorById} from '../../services/DebtorService';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
 import {nameSchema} from '../../utils/validationSchema';
+import { getDebtRequest } from '../../redux/slice/debtDataSlice';
 
 interface DebtorEntryProps {
   type: string;
@@ -75,6 +76,7 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
         selectedCategories[0].color,
       );
       dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      dispatch(getDebtRequest(debtorData.debtorId));
       goBack();
     } catch (error) {
       console.error('Error creating debtor:', error);
