@@ -19,8 +19,13 @@ import PrimaryText from '../../components/atoms/PrimaryText';
 import textInputStyles from '../../styles/textInput';
 import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
 import {nameSchema} from '../../utils/validationSchema';
-import {exportRealmData} from '../../utils/dataUtils';
 import CustomToast from '../../components/molecules/CustomToast';
+import RNFS from 'react-native-fs';
+import {
+  generateUniqueKey,
+  requestStoragePermission,
+} from '../../utils/dataUtils';
+import moment from 'moment';
 
 const SettingsScreen = () => {
   const {
@@ -57,7 +62,54 @@ const SettingsScreen = () => {
     handleDeleteAllDataOk,
     handleDeleteAllDataCancel,
     allData,
+    isStorageModalVisible,
+    handleAccessStorageOk,
+    handleAccessStorageCancel,
+    setIsStorageModalVisible,
+    isDownloadSuccessful,
+    setIsDownloadSuccessful,
+    isDownloadError,
+    setIsDownloadError,
+    handleDownloadSuccessful,
+    handleDownloadError,
   } = useSettings();
+
+  const exportRealmData = async allData => {
+    try {
+      console.log(allData);
+
+      const storagePermissionGranted = await requestStoragePermission();
+
+      if (!storagePermissionGranted) {
+        console.log('Storage permission denied.');
+        setIsStorageModalVisible(true);
+        return;
+      }
+
+      const currentDateAndTime = moment().format('YYYYMMDDHHmmss');
+      const jsonData = JSON.stringify(
+        {key: generateUniqueKey(), data: allData},
+        null,
+        2,
+      );
+      console.log(jsonData);
+      const path = `${RNFS.DownloadDirectoryPath}/zero${currentDateAndTime}.json`;
+
+      RNFS.writeFile(path, jsonData, 'utf8')
+        .then(success => {
+          setIsDownloadSuccessful(true);
+          console.log('File written successfully!');
+          console.log('File path:', path);
+        })
+        .catch(error => {
+          setIsDownloadError(true);
+        });
+
+      console.log('File saved successfully at: ', path);
+    } catch (error) {
+      console.error('Error saving file:', error);
+    }
+  };
 
   const renderRadioButtons = (onThemeSelect: {
     (theme: any): Promise<void>;
@@ -437,6 +489,28 @@ const SettingsScreen = () => {
         type="warning"
         onOk={handleDeleteAllDataOk}
         onCancel={handleDeleteAllDataCancel}
+      />
+
+      <CustomToast
+        visible={isStorageModalVisible}
+        message={
+          'You need to manually give permission for the storage to download your data'
+        }
+        type="warning"
+        onOk={handleAccessStorageOk}
+        onCancel={handleAccessStorageCancel}
+      />
+      <CustomToast
+        visible={isDownloadSuccessful}
+        message={'You data is successfuly exported in Downloads folder'}
+        type="success"
+        onOk={handleDownloadSuccessful}
+      />
+      <CustomToast
+        visible={isDownloadError}
+        message={'There is an error in exporting your data'}
+        type="warning"
+        onOk={handleDownloadError}
       />
     </PrimaryView>
   );

@@ -1,27 +1,17 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import React from 'react';
 import PrimaryView from '../../components/atoms/PrimaryView';
-import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
-import {navigate} from '../../utils/navigationUtils';
 import Carousel from '../../components/atoms/Carousel';
-// import Carousel from '../../components/atoms/Carousel';
-// import Carousell from '../../components/atoms/Carousel';
+import useWelcome from './useWelcome';
 
 const WelcomeScreen = () => {
-  const colors = useThemeColors();
-  const handleAllreadyUser = () => {
-    navigate('ExistingUserScreen');
-  };
-
-  const handleNewUser = () => {
-    navigate('PersonalizeScreen');
-  };
+  const {colors, handleAllreadyUser, handleNewUser} = useWelcome();
 
   return (
     <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
-      <View style={styles.titleTextContainer}>
+      <View style={{paddingTop: '15%'}}>
         <PrimaryText style={{fontSize: 24}}>
           Welcome to <Text style={{color: colors.accentGreen}}>zero</Text>
         </PrimaryText>
@@ -52,13 +42,3 @@ const WelcomeScreen = () => {
 };
 
 export default WelcomeScreen;
-
-const styles = StyleSheet.create({
-  titleTextContainer: {
-    paddingTop: '15%',
-  },
-  noImage: {
-    height: 200,
-    width: 200,
-  },
-});
