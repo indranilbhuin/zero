@@ -167,82 +167,84 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   };
 
   return (
-    <PrimaryView colors={colors}>
-      <View style={mainStyles.headerContainer}>
-        <AppHeader onPress={goBack} colors={colors} text="Add Category" />
-      </View>
+    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
+      <View>
+        <View style={mainStyles.headerContainer}>
+          <AppHeader onPress={goBack} colors={colors} text="Add Category" />
+        </View>
 
-      <CustomInput
-        colors={colors}
-        input={categoryName}
-        setInput={setCategoryName}
-        placeholder="eg. Stationary"
-        label="Category Name"
-        schema={categorySchema}
-      />
+        <CustomInput
+          colors={colors}
+          input={categoryName}
+          setInput={setCategoryName}
+          placeholder="eg. Stationary"
+          label="Category Name"
+          schema={categorySchema}
+        />
 
-      <PrimaryText style={{marginBottom: 10}}>
-        Pick your own icon and color
-      </PrimaryText>
-      <View style={styles.dateContainer}>
-        <TouchableOpacity
-          style={[
-            styles.dateButtonContainer,
-            {
-              backgroundColor: colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
-            },
-          ]}
-          onPress={() => setIsIconModalVisible(true)}>
-          {selectedIcon === 'null' ? (
-            <Icon
-              name={'dots-horizontal-circle'}
-              size={25}
-              color={colors.primaryText}
-              type={'MaterialCommunityIcons'}
-            />
-          ) : (
-            <Icon
-              name={selectedIcon}
-              size={25}
-              color={colors.primaryText}
-              type={'MaterialCommunityIcons'}
-            />
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsIconModalVisible(true)}>
-          <PrimaryText>Tap to select icon</PrimaryText>
-        </TouchableOpacity>
-      </View>
+        <PrimaryText style={{marginBottom: 10}}>
+          Pick your own icon and color
+        </PrimaryText>
+        <View style={styles.dateContainer}>
+          <TouchableOpacity
+            style={[
+              styles.dateButtonContainer,
+              {
+                backgroundColor: colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
+              },
+            ]}
+            onPress={() => setIsIconModalVisible(true)}>
+            {selectedIcon === 'null' ? (
+              <Icon
+                name={'dots-horizontal-circle'}
+                size={25}
+                color={colors.primaryText}
+                type={'MaterialCommunityIcons'}
+              />
+            ) : (
+              <Icon
+                name={selectedIcon}
+                size={25}
+                color={colors.primaryText}
+                type={'MaterialCommunityIcons'}
+              />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsIconModalVisible(true)}>
+            <PrimaryText>Tap to select icon</PrimaryText>
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.dateContainer}>
-        <TouchableOpacity
-          style={[
-            styles.dateButtonContainer,
-            {
-              backgroundColor: colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
-            },
-          ]}
-          onPress={() => setIsColorModalVisible(true)}>
-          {selectedColor === 'null' ? (
-            <View
-              style={[
-                styles.colorCircle,
-                {backgroundColor: colors.accentGreen},
-              ]}
-            />
-          ) : (
-            <View
-              style={[styles.colorCircle, {backgroundColor: selectedColor}]}
-            />
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsColorModalVisible(true)}>
-          <PrimaryText>Tap to select Color</PrimaryText>
-        </TouchableOpacity>
+        <View style={styles.dateContainer}>
+          <TouchableOpacity
+            style={[
+              styles.dateButtonContainer,
+              {
+                backgroundColor: colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
+              },
+            ]}
+            onPress={() => setIsColorModalVisible(true)}>
+            {selectedColor === 'null' ? (
+              <View
+                style={[
+                  styles.colorCircle,
+                  {backgroundColor: colors.accentGreen},
+                ]}
+              />
+            ) : (
+              <View
+                style={[styles.colorCircle, {backgroundColor: selectedColor}]}
+              />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsColorModalVisible(true)}>
+            <PrimaryText>Tap to select Color</PrimaryText>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={isValid ? {marginTop: '115%'} : {marginTop: '95%'}}>
+      <View style={{marginBottom: '10%'}}>
         <PrimaryButton
           onPress={isAddButton ? handleAddCategory : handleUpdateCategory}
           colors={colors}

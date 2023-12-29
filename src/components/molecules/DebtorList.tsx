@@ -91,7 +91,8 @@ const DebtorList: React.FC<DebtorListProps> = ({
               handleDebtor(String(debtor._id), debtor.title, debtor.type)
             }
             onLongPress={() => handleLongPress(String(debtor._id))}
-            delayLongPress={500}>
+            delayLongPress={500}
+            style={{justifyContent: 'center', alignItems: 'center'}}>
             <View
               style={[
                 styles.debtorContainer,
@@ -114,6 +115,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
                 color: colors.primaryText,
                 alignSelf: 'center',
                 fontSize: 12,
+                textAlign: 'center',
               }}>
               {debtor.title}
             </PrimaryText>

@@ -22,7 +22,7 @@ import {updateCurrencyById} from '../../services/CurrencyService';
 import {Linking} from 'react-native';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import {deleteAllData} from '../../services/DeleteService';
-import { getAllDataRequest, selectAllData } from '../../redux/slice/allDataSlice';
+import {getAllDataRequest, selectAllData} from '../../redux/slice/allDataSlice';
 
 const useSettings = () => {
   const userName = useSelector(selectUserName);
@@ -32,8 +32,8 @@ const useSettings = () => {
   const currencyName = useSelector(selectCurrencyName);
   const currencySymbol = useSelector(selectCurrencySymbol);
   const selectedTheme = useSelector(selectThemePreference);
-  const allData = useSelector(selectAllData)
-  console.log(allData)
+  const allData = useSelector(selectAllData);
+  console.log(allData);
 
   const currencyData = {
     code: currencyCode,
@@ -44,6 +44,11 @@ const useSettings = () => {
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isStorageModalVisible, setIsStorageModalVisible] = useState(false);
+
+  const [isDownloadSuccessful, setIsDownloadSuccessful] = useState(false);
+  const [isDownloadError, setIsDownloadError] = useState(false);
+
   const [name, setName] = useState(userName);
   const [searchText, setSearchText] = useState('');
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
@@ -184,8 +189,23 @@ const useSettings = () => {
     setIsDeleteModalVisible(false);
   };
 
+  const handleAccessStorageOk = async () => {
+    Linking.openSettings();
+  };
+  const handleAccessStorageCancel = () => {
+    setIsStorageModalVisible(false);
+  };
+
   const handleDeleteAllData = () => {
     setIsDeleteModalVisible(true);
+  };
+
+  const handleDownloadSuccessful = () => {
+    setIsDownloadSuccessful(false);
+  };
+
+  const handleDownloadError = () => {
+    setIsDownloadError(false);
   };
 
   return {
@@ -223,7 +243,17 @@ const useSettings = () => {
     isDeleteModalVisible,
     handleDeleteAllDataOk,
     handleDeleteAllDataCancel,
-    allData
+    allData,
+    isStorageModalVisible,
+    handleAccessStorageOk,
+    handleAccessStorageCancel,
+    setIsStorageModalVisible,
+    isDownloadSuccessful,
+    setIsDownloadSuccessful,
+    isDownloadError,
+    setIsDownloadError,
+    handleDownloadSuccessful,
+    handleDownloadError,
   };
 };
 
