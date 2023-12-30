@@ -1,4 +1,4 @@
-# zero - Expense Tracker
+# zer0 - Expense Tracker
 
 Zero is a lightweight, open-source Android application designed to empower users to effortlessly manage their expenses while prioritizing privacy. With a minimalistic user interface, dark and light themes, and a commitment to keeping user data entirely on their devices, Zero ensures a seamless and secure expense tracking experience.
 
@@ -46,7 +46,7 @@ Zero is a lightweight, open-source Android application designed to empower users
 
 The project's folder structure is organized as follows:
 
-- `src/` - Contains the source code for the zero app.
+- `src/` - Contains the source code for the zer0 app.
    - `components/` - React Native components used throughout the app.
    - `screens/` - React Native screens.
       - index.tsx - Main React component file for the screen, responsible for rendering the UI.
@@ -68,7 +68,7 @@ The project's folder structure is organized as follows:
 
 ## Getting Started with the code
 
-To use zero, simply download the app from the playstore and use it.
+To use zer0, simply download the app from the playstore and use it.
 
 OR
 

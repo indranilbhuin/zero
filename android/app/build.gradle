@@ -74,9 +74,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.zero"
+    namespace "com.indranil.zer0"
     defaultConfig {
-        applicationId "com.zero"
+        applicationId "com.indranil.zer0"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
