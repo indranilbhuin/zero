@@ -1,79 +1,103 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# zero - Expense Tracker
 
-# Getting Started
+Zero is a lightweight, open-source Android application designed to empower users to effortlessly manage their expenses while prioritizing privacy. With a minimalistic user interface, dark and light themes, and a commitment to keeping user data entirely on their devices, Zero ensures a seamless and secure expense tracking experience.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
 
-## Step 1: Start the Metro Server
+### 1. Account Creation
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- **New User:** Easily create a local account by choosing a username, default categories, and currency symbol.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- **Existing User:** Upload the `zero***.json` file to sync user data and continue using the application seamlessly.
 
-```bash
-# using npm
-npm start
+### 2. Expense Tracking
 
-# OR using Yarn
-yarn start
-```
+- **Add, Edit, Delete:** Effortlessly manage expenses by adding, editing, or deleting transactions along with customizable categories.
 
-## Step 2: Start your Application
+### 3. Category Modification
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+- **Add, Delete, Edit:** Tailor the application to your needs by modifying expense categories.
 
-### For Android
+### 4. View Insights
 
-```bash
-# using npm
-npm run android
+- **Analytics:** Gain valuable insights into spending habits with features like average per day, total spending by each day, and monthly overviews.
 
-# OR using Yarn
-yarn android
-```
+- **Heatmap:** Visualize spending patterns with a heatmap, providing a comprehensive overview of monthly expenditures.
 
-### For iOS
+### 5. Borrowings or Lendings
 
-```bash
-# using npm
-npm run ios
+- **Debtor Management:** Track borrowings or lendings by creating debtors and managing debts with a user-friendly interface.
 
-# OR using Yarn
-yarn ios
-```
+### 6. Settings
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+- **Customization:** Personalize the application by changing currency symbols, themes, and usernames.
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+- **Export/Import Data:** Easily export or import all application data in JSON format for backup or migration purposes.
 
-## Step 3: Modifying your App
+- **Delete Data:** Maintain control over your data with the option to delete all application data.
 
-Now that you have successfully run the app, let's modify it.
+### 7. Privacy
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+- **Local Database:** User data is stored securely on the device, ensuring privacy is prioritized.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+- **No Data Collection:** Zero collects no user data, not even usernames, fostering a commitment to user privacy.
 
-## Congratulations! :tada:
+## Folder Structure
 
-You've successfully run and modified your React Native App. :partying_face:
+The project's folder structure is organized as follows:
 
-### Now what?
+- `src/` - Contains the source code for the zero app.
+   - `components/` - React Native components used throughout the app.
+   - `screens/` - React Native screens.
+      - index.tsx - Main React component file for the screen, responsible for rendering the UI.
+      - useScreenName.ts - Custom hook for storing business logic specific to the screen named "ScreenName".
+      - style.ts - Styles specific to the "ScreenName" screen, maintaining separation of concerns.
+   - `hooks/` - React Global hooks defined here.
+   - `redux/` - Redux store configuration and slices.
+   - `schemas/` - Realm database schemas defined here.
+   - `services/` - Static assets such as images and fonts.
+   - `navigation/` - Navigation configurations.
+   - `utils/` - Utility functions and helpers.
+   - `styles` - Global stylesheet defined here.
+   - `android/` - Android-specific project files and configurations.
+   - `ios/` - iOS-specific project files and configurations.
+- `assets` - All assets for the project is stored here
+   - `fonts` - Store font files such as .ttf or .otf here.
+   - `images` - Store image assets such as PNGs, JPGs, etc., here.
+   - `jsons` - Store JSON data files here, which may be used for configuration or other structured data.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+## Getting Started with the code
 
-# Troubleshooting
+To use zero, simply download the app from the playstore and use it.
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+OR
 
-# Learn More
+Follow these steps to run the FoodTechApp project locally:
 
-To learn more about React Native, take a look at the following resources:
+1. Download and install Node.js from the official website: [Node.js Download](https://nodejs.org/en/download/)
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+2. Open a terminal window on your machine.
+
+3. Navigate to the directory where you want to store the project.
+
+4. Run the command:
+
+   ```shell
+   git clone https://github.com/indranilbhuin/zero.git
+   ```
+
+5. Wait for Git to clone the repository to your machine.
+
+6. Once the cloning process is complete, navigate to the project's root directory:
+
+    ```shell
+    cd zero
+    ```
+
+7. Run the command to install all required dependencies:
+
+    ```shell
+   yarn install
+   ```
+
+8. Make sure you have a simulator or a device set up for running the app. You can use Android Studio or Xcode to set up an emulator or connect a physical device.

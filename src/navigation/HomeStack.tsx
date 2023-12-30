@@ -27,7 +27,7 @@ const screenOptions = {
 const HomeIcon = ({color}: any) => (
   <View style={{alignItems: 'center'}}>
     <Icon
-      name={'exposure-zero'}
+      name={'home'}
       size={28}
       type={'MaterialIcons'}
       color={color}
@@ -71,8 +71,8 @@ const TabStack = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primaryText,
-        tabBarInactiveTintColor: colors.secondaryText,
+        tabBarActiveTintColor: colors.accentGreen,
+        tabBarInactiveTintColor: colors.primaryText,
         tabBarShowLabel: false,
       }}>
       <Tab.Screen
