@@ -7,10 +7,14 @@ import {
 } from '../redux/slice/isOnboardedSlice';
 import HomeStack from './HomeStack';
 import OnboardingStack from './OnboardingStack';
+import useThemeColors from '../hooks/useThemeColors';
+import CustomLoader from '../components/atoms/CustomLoader';
 
 const MainStack = () => {
   const dispatch = useDispatch();
+  const colors = useThemeColors();
   const isOnboarded = useSelector(selectIsOnboarded);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [stack, setStack] = useState(null);
 
@@ -36,6 +40,8 @@ const MainStack = () => {
         }
       } catch (error) {
         console.error('Error getting isOnboarded:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -49,7 +55,7 @@ const MainStack = () => {
 
   const memoizedStack = useMemo(() => stack, [stack]);
 
-  return memoizedStack;
+  return isLoading ? <CustomLoader colors={colors} /> : memoizedStack;
 };
 
 export default MainStack;

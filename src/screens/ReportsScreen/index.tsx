@@ -403,9 +403,13 @@ const ReportsScreen = () => {
               textAlign: 'center',
             }}>
             {currencySymbol}
-            {formatCurrency(
-              (totalAmountForMonth / daysWithTransactions.length).toFixed(2),
-            )}
+            {filteredTransactions.length === 0
+              ? 0
+              : formatCurrency(
+                  (totalAmountForMonth / daysWithTransactions.length).toFixed(
+                    2,
+                  ),
+                )}
           </PrimaryText>
         </View>
       </View>
