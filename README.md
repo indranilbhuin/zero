@@ -1,6 +1,21 @@
-# zer0 - Expense Tracker
+<div align="center">
+    <img src="assets/images/zer0.png" height="128">
+    <h1 align="center">zer0 - Minimal Expense Manager</h1>
+</div>
 
 Zero is a lightweight, open-source Android application designed to empower users to effortlessly manage their expenses while prioritizing privacy. With a minimalistic user interface, dark and light themes, and a commitment to keeping user data entirely on their devices, Zero ensures a seamless and secure expense tracking experience.
+
+## Screen Shots
+<img src="assets/screenshots/zero_home_screen_dark.png" width="200"/>
+<img src="assets/screenshots/zero_home_screen_light.png" width="200"/>
+<img src="assets/screenshots/zero_report_screen_dark.png" width="200"/>
+<img src="assets/screenshots/zero_report_screen_light.png" width="200"/>
+<img src="assets/screenshots/zero_debts_screen_dark.png" width="200"/>
+<img src="assets/screenshots/zero_debts_screen_light.png" width="200"/>
+<img src="assets/screenshots/zero_settings_screen_dark.png" width="200"/>
+<img src="assets/screenshots/zero_settings_screen_light.png" width="200"/>
+<img src="assets/screenshots/zero_categories_screen_dark.png" width="200"/>
+<img src="assets/screenshots/zero_categories_screen_light.png" width="200"/>
 
 ## Features
 
