@@ -34,6 +34,7 @@ interface ExpenseEntryProps {
 const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const expenseData = route?.params;
   const isAddButton = type === 'Add';
+  const [hasInteracted, setHasInteracted] = useState(false);
   const categories = useSelector(selectActiveCategories);
   const [selectedCategories, setSelectedCategories] = useState(
     isAddButton
@@ -59,8 +60,9 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     isAddButton ? '' : String(expenseData.expenseAmount),
   );
 
-  const expenseAmountError =
-    expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.errors || [];
+  const expenseAmountError = hasInteracted
+    ? expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.errors || []
+    : [];
 
   const isValid =
     expenseSchema.safeParse(expenseTitle).success &&
@@ -79,6 +81,10 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
 
   const handleAddCategory = () => {
     navigate('AddCategoryScreen');
+  };
+
+  const handleTextInputFocus = () => {
+    setHasInteracted(true);
   };
 
   const handleAddExpense = () => {
@@ -180,6 +186,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           value={expenseAmount}
           onChangeText={setExpenseAmount}
           placeholder={'eg. 320'}
+          onChange={handleTextInputFocus}
           placeholderTextColor={colors.secondaryText}
           keyboardType="numeric"
         />

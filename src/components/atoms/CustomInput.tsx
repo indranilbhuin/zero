@@ -1,5 +1,5 @@
 import {TextInput, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import PrimaryText from './PrimaryText';
 import textInputStyles from '../../styles/textInput';
 import {Colors} from '../../hooks/useThemeColors';
@@ -21,7 +21,15 @@ const CustomInput: React.FC<CustomInputProps> = ({
   label,
   schema,
 }) => {
-  const errors = schema?.safeParse(input).error?.errors || [];
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  const errors = hasInteracted
+    ? schema?.safeParse(input).error?.errors || []
+    : [];
+
+  const handleTextInputFocus = () => {
+    setHasInteracted(true);
+  };
 
   return (
     <View>
@@ -39,6 +47,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         ]}
         value={input}
         onChangeText={setInput}
+        onChange={handleTextInputFocus}
         placeholder={placeholder}
         placeholderTextColor={colors.secondaryText}
       />
