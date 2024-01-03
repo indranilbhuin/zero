@@ -8,16 +8,16 @@ Zero is a lightweight, open-source Android application designed to empower users
 ## Screen Shots
 
 <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-<img src="assets/screenshots/zero_home_screen_dark.png" width="300"/>
-<img src="assets/screenshots/zero_home_screen_light.png" width="300"/>
-<img src="assets/screenshots/zero_report_screen_dark.png" width="300"/>
-<img src="assets/screenshots/zero_report_screen_light.png" width="300"/>
-<img src="assets/screenshots/zero_debts_screen_dark.png" width="300"/>
-<img src="assets/screenshots/zero_debts_screen_light.png" width="300"/>
-<img src="assets/screenshots/zero_settings_screen_dark.png" width="300"/>
-<img src="assets/screenshots/zero_settings_screen_light.png" width="300"/>
-<img src="assets/screenshots/zero_categories_screen_dark.png" width="300"/>
-<img src="assets/screenshots/zero_categories_screen_light.png" width="300"/>
+<img src="assets/screenshots/zero_home_screen_dark.png" width="215"/>
+<img src="assets/screenshots/zero_home_screen_light.png" width="215"/>
+<img src="assets/screenshots/zero_report_screen_dark.png" width="215"/>
+<img src="assets/screenshots/zero_report_screen_light.png" width="215"/>
+<img src="assets/screenshots/zero_debts_screen_dark.png" width="215"/>
+<img src="assets/screenshots/zero_debts_screen_light.png" width="215"/>
+<img src="assets/screenshots/zero_settings_screen_dark.png" width="215"/>
+<img src="assets/screenshots/zero_settings_screen_light.png" width="215"/>
+<img src="assets/screenshots/zero_categories_screen_dark.png" width="215"/>
+<img src="assets/screenshots/zero_categories_screen_light.png" width="215"/>
 </div>
 
 ## Features
