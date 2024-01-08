@@ -1,7 +1,6 @@
-import moment from 'moment';
-import RNFS from 'react-native-fs';
+import {PermissionsAndroid, Platform} from 'react-native';
 
-const generateUniqueKey = () => {
+export const generateUniqueKey = () => {
   const characters =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const keyLength = 20;
@@ -15,29 +14,52 @@ const generateUniqueKey = () => {
   return key;
 };
 
-export const exportRealmData = async allData => {
-  try {
-    console.log(allData);
-    const currentDateAndTime = moment().format('YYYYMMDDHHmmss');
-    const jsonData = JSON.stringify(
-      {key: generateUniqueKey(), data: allData},
-      null,
-      2,
-    );
-    console.log(jsonData);
-    const path = `${RNFS.DownloadDirectoryPath}/zero${currentDateAndTime}.json`;
+export const requestStoragePermission = async () => {
+  if (Platform.OS === 'android') {
+    const currentApiLevel = Platform.Version;
 
-    RNFS.writeFile(path, jsonData, 'utf8')
-      .then(success => {
-        console.log('File written successfully!');
-        console.log('File path:', path);
-      })
-      .catch(error => {
-        console.error('Error writing file:', error.message);
-      });
+    if (currentApiLevel > 32) {
+      console.log('Storage permission not needed on API level 32 or higher.');
+      return true;
+    }
 
-    console.log('File saved successfully at: ', path);
-  } catch (error) {
-    console.error('Error saving file:', error);
+    try {
+      const permissions = [
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ];
+
+      const granted = await PermissionsAndroid.requestMultiple(permissions);
+
+      if (
+        granted['android.permission.READ_EXTERNAL_STORAGE'] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE'] ===
+          PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        return true;
+      } else {
+        const secondRequest = await PermissionsAndroid.requestMultiple(
+          permissions,
+        );
+
+        if (
+          secondRequest['android.permission.READ_EXTERNAL_STORAGE'] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          secondRequest['android.permission.WRITE_EXTERNAL_STORAGE'] ===
+            PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          return true;
+        } else {
+          console.log('Storage permission denied. Opening app settings...');
+          return false;
+        }
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  } else {
+    return true;
   }
 };

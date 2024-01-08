@@ -61,28 +61,23 @@ const CustomToast: React.FC<CustomToastProps> = ({
     return null;
   }
   let toastColor = '';
-  let toastType = '';
   let toastImage = null;
 
   switch (type) {
     case 'success':
       toastColor = colors.accentGreen;
-      toastType = 'Success';
       toastImage = require('../../../assets/images/approve.png');
       break;
     case 'error':
       toastColor = colors.accentRed;
-      toastType = 'Error';
       toastImage = require('../../../assets/images/reject.png');
       break;
     case 'warning':
       toastColor = colors.accentOrange;
-      toastType = 'Alert';
       toastImage = require('../../../assets/images/warning.png');
       break;
     default:
       toastColor = colors.accentBlue;
-      toastType = 'Info';
       break;
   }
 
@@ -107,7 +102,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
                 fontSize: 13,
                 marginLeft: 20,
                 marginRight: 20,
-                textAlign: 'center'
+                textAlign: 'center',
               }}>
               {message}
             </PrimaryText>
