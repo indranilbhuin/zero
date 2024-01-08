@@ -494,7 +494,7 @@ const SettingsScreen = () => {
       <CustomToast
         visible={isStorageModalVisible}
         message={
-          'You need to manually give permission for the storage to download your data'
+          'You need to manually give permission for the device storage to download your data'
         }
         type="warning"
         onOk={handleAccessStorageOk}
