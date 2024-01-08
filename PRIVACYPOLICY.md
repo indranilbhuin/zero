@@ -18,9 +18,9 @@ For the purposes of this Privacy Policy:
 
 - __Account__ means a unique account created for You to access the application.
 
-- __Application__ refers to zero, the expense tracker application provided by Indranil Bhuin.
+- __Application__ refers to zer0, the expense tracker application provided by Indranil Bhuin.
 
-- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to zero.
+- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to zer0.
 
 - __Country__ refers to: Karnataka,  India
 
@@ -52,7 +52,7 @@ For the purposes of this Privacy Policy:
 
 #### Law enforcement
 
-Under certain circumstances, the Company may be required to disclose Your Personal Data ( we collect zero data ) if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).
+Under certain circumstances, the Company may be required to disclose Your Personal Data ( we collect zer0 data ) if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).
 
 #### Other legal requirements
 
