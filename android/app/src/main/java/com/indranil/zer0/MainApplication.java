@@ -1,4 +1,4 @@
-package com.zero;
+package com.indranil.zer0;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

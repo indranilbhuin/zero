@@ -37,6 +37,11 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
     dispatch(getEverydayExpenseRequest(expenseDate));
   }, [expenseDate]);
 
+  const totalAmountForTheDay = allEverdayTransactionCopy.reduce(
+    (sum: number, transaction: {amount: number}) => sum + transaction.amount,
+    0,
+  );
+
   return {
     formatDate,
     formattedDate,
@@ -45,6 +50,7 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
     expenseDate,
     allEverdayTransaction,
     allEverdayTransactionCopy,
+    totalAmountForTheDay
   };
 };
 

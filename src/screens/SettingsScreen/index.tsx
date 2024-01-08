@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import React from 'react';
-import CustomInput from '../../components/atoms/CustomInput';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
 import Icon from '../../components/atoms/Icons';
 import {goBack} from '../../utils/navigationUtils';
@@ -18,7 +17,6 @@ import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import textInputStyles from '../../styles/textInput';
 import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
-import {nameSchema} from '../../utils/validationSchema';
 import CustomToast from '../../components/molecules/CustomToast';
 import RNFS from 'react-native-fs';
 import {
@@ -26,6 +24,7 @@ import {
   requestStoragePermission,
 } from '../../utils/dataUtils';
 import moment from 'moment';
+import ChangeNameModal from '../../components/molecules/ChangeNameModal';
 
 const SettingsScreen = () => {
   const {
@@ -385,41 +384,14 @@ const SettingsScreen = () => {
         </View>
       </Modal>
 
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isNameModalVisible}
-        onRequestClose={handleNameModalClose}>
-        <View style={[styles.modalContainer]}>
-          <View
-            style={[styles.modal, {backgroundColor: colors.containerColor}]}>
-            <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 17,
-                marginTop: 10,
-                marginBottom: 30,
-                fontFamily: 'FiraCode-SemiBold',
-              }}>
-              Change Name
-            </PrimaryText>
-            <View style={{marginBottom: 10}}>
-              <CustomInput
-                colors={colors}
-                input={name}
-                setInput={setName}
-                placeholder={'change user name'}
-                schema={nameSchema}
-              />
-            </View>
-            <PrimaryButton
-              onPress={handleNameUpdate}
-              colors={colors}
-              buttonTitle={'Update'}
-            />
-          </View>
-        </View>
-      </Modal>
+      <ChangeNameModal
+        colors={colors}
+        isNameModalVisible={isNameModalVisible}
+        handleNameModalClose={handleNameModalClose}
+        name={name}
+        setName={setName}
+        handleNameUpdate={handleNameUpdate}
+      />
 
       <Modal
         animationType="fade"
