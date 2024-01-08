@@ -25,10 +25,7 @@ const UndoModal: React.FC<UndoModalProps> = ({isVisible, onUndo, type}) => {
               style={{
                 backgroundColor: colors.accentGreen,
                 padding: 5,
-                height: '85%',
                 borderRadius: 5,
-                alignItems: 'center',
-                justifyContent: 'center'
               }}>
               <PrimaryText style={{fontSize: 12, color: colors.buttonText}}>
                 Undo

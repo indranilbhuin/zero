@@ -12,8 +12,6 @@ import styles from './style';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import mainStyles from '../../styles/main';
-import reportsStyles from '../ReportsScreen/style';
-import { formatCurrency } from '../../utils/numberUtils';
 
 const EverydayTransactionScreen = () => {
   const route = useRoute<EverydayTransactionRouteProp>();
@@ -24,8 +22,7 @@ const EverydayTransactionScreen = () => {
     currencySymbol,
     expenseDate,
     allEverdayTransaction,
-    allEverdayTransactionCopy,
-    totalAmountForTheDay
+    allEverdayTransactionCopy
   } = useEverydayTransaction(route);
 
   return (
@@ -57,46 +54,10 @@ const EverydayTransactionScreen = () => {
             </PrimaryText>
           </View>
         ) : (
-          <>
-            <View
-              style={[
-                reportsStyles.categoryContainer,
-                {
-                  backgroundColor: colors.secondaryAccent,
-                  borderWidth: undefined,
-                  width: '100%',
-                  height: 50,
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  paddingLeft: 10,
-                  paddingRight: 10
-                },
-              ]}>
-              <PrimaryText
-                style={{
-                  color: colors.primaryText,
-                  fontSize: 13,
-                  fontFamily: 'FiraCode-SemiBold',
-                  textAlign: 'center',
-                }}>
-                Total Spent
-              </PrimaryText>
-              <PrimaryText
-                style={{
-                  color: colors.primaryText,
-                  fontSize: 13,
-                  fontFamily: 'FiraCode-SemiBold',
-                  textAlign: 'center',
-                }}>
-                {currencySymbol}
-                {formatCurrency(totalAmountForTheDay)}
-              </PrimaryText>
-            </View>
-            <TransactionList
-              currencySymbol={currencySymbol}
-              allExpenses={allEverdayTransactionCopy}
-            />
-          </>
+          <TransactionList
+            currencySymbol={currencySymbol}
+            allExpenses={allEverdayTransactionCopy}
+          />
         )}
       </View>
     </PrimaryView>

@@ -235,7 +235,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
           />
         </View>
         {debtAmountError.length > 0 && (
-          <View style={{ttom: 10}}>
+          <View style={{marginBottom: 10}}>
             {debtAmountError.map(error => (
               <View key={error.message}>
                 <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
