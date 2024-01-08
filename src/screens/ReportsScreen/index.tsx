@@ -278,7 +278,9 @@ const ReportsScreen = () => {
       let opacity = hasTransactions
         ? Math.round(totalAmountForDay) / Math.round(totalAmountForMonth)
         : 1;
-      let visibility = Math.round(opacity * 100);
+      console.log('the opacity is:', opacity);
+      let visibility = Math.round(opacity * 200);
+      console.log('the visibility is:', visibility);
       let backgroundColor;
       if (hasTransactions) {
         backgroundColor = `${colors.accentGreen}${visibility}`;
@@ -288,6 +290,12 @@ const ReportsScreen = () => {
 
       if (totalAmountForDay === totalAmountForMonth) {
         backgroundColor = `${colors.accentGreen}60`;
+      }
+
+      const opacityThreshold = 0.1;
+
+      if (opacity < opacityThreshold) {
+        backgroundColor = `${colors.accentGreen}20`;
       }
 
       const monthIndex = months.indexOf(selectedMonth);
