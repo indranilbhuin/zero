@@ -1,11 +1,15 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
 import Icon from '../atoms/Icons';
 import useThemeColors from '../../hooks/useThemeColors';
-import {useSelector} from 'react-redux';
-import {selectUserName} from '../../redux/slice/userNameSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectUserName, setUserName} from '../../redux/slice/userNameSlice';
 import {navigate} from '../../utils/navigationUtils';
 import PrimaryText from '../atoms/PrimaryText';
+import useSettings from '../../screens/SettingsScreen/useSettings';
+import ChangeNameModal from './ChangeNameModal';
+import { updateUserById } from '../../services/UserService';
+import { selectUserId } from '../../redux/slice/userIdSlice';
 
 interface HeaderContainerProps {
   headerText: string;
@@ -13,37 +17,77 @@ interface HeaderContainerProps {
 
 const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
   const colors = useThemeColors();
+  const dispatch = useDispatch();
   const userName = useSelector(selectUserName);
+  const userId = useSelector(selectUserId);
+  const { handleNameModalClose} = useSettings();
+  const [name, setName] = useState(userName);
+  const [isNameModalVisible, setIsNameModalVisible] = useState(false);
+
+  const handleProfileClick = () => {
+    setIsNameModalVisible(true);
+  };
+
+  const handleNameUpdate = async () => {
+    try {
+      await updateUserById(Realm.BSON.ObjectID.createFromHexString(userId), {
+        username: name,
+      });
+      dispatch(setUserName(name));
+      setIsNameModalVisible(false);
+    } catch (error) {
+      console.error('Error updating the name:', error);
+    }
+  };
 
   return (
-    <View style={styles.headerContainer}>
-      <View style={styles.greetingsContainer}>
-        <View
-          style={[
-            styles.initialsContainer,
-            {backgroundColor: colors.primaryText},
-          ]}>
-          <PrimaryText style={{color: colors.buttonText, fontSize: 20}}>
-            {userName
-              ?.split(' ')
-              .map((name: string) => name.charAt(0))
-              .slice(0, 2)
-              .join('')}
-          </PrimaryText>
+    <>
+      <View style={styles.headerContainer}>
+        <View style={styles.greetingsContainer}>
+          <TouchableOpacity onPress={handleProfileClick}>
+            <View
+              style={[
+                styles.initialsContainer,
+                {backgroundColor: colors.primaryText},
+              ]}>
+              <Image
+                source={require('../../../assets/images/2.png')}
+                style={styles.noImage}
+              />
+
+              <PrimaryText
+                style={{color: colors.buttonText, fontSize: 20, zIndex: 3}}>
+                {userName
+                  ?.split(' ')
+                  .map((name: string) => name.charAt(0))
+                  .slice(0, 2)
+                  .join('')}
+              </PrimaryText>
+            </View>
+          </TouchableOpacity>
+          <PrimaryText style={{fontSize: 15}}>{headerText}</PrimaryText>
         </View>
-        <PrimaryText style={{fontSize: 15}}>{headerText}</PrimaryText>
+        <View>
+          <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
+            <Icon
+              name={'setting'}
+              size={23}
+              color={colors.primaryText}
+              type={'AntDesign'}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View>
-        <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
-          <Icon
-            name={'setting'}
-            size={23}
-            color={colors.primaryText}
-            type={'AntDesign'}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+
+      <ChangeNameModal
+        colors={colors}
+        isNameModalVisible={isNameModalVisible}
+        handleNameModalClose={handleNameModalClose}
+        name={name}
+        setName={setName}
+        handleNameUpdate={handleNameUpdate}
+      />
+    </>
   );
 };
 
@@ -71,5 +115,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
+  },
+  noImage: {
+    height: 40,
+    width: 40,
+    position: 'absolute',
+    borderRadius: 50,
   },
 });
