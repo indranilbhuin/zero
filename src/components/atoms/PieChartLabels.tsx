@@ -18,6 +18,7 @@ interface PieChartLabelsProps {
 }
 
 const PieChartLabels: React.FC<PieChartLabelsProps> = ({colors, slices}) => {
+  console.log(slices);
   return (
     <View
       style={{

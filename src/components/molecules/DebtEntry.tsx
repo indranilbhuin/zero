@@ -27,6 +27,7 @@ interface DebtEntryProps {
 }
 
 const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
+  console.log('the app', route);
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const currencySymbol = useSelector(selectCurrencySymbol);
@@ -41,7 +42,6 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   } = route.params;
   const isAddButton = buttonText === 'Add';
   console.log(isAddButton, route.params);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [debtName, setDebtName] = useState(isAddButton ? '' : debtDescription);
   const [debtAmount, setDebtAmount] = useState(
     isAddButton ? '' : String(amount),
@@ -53,9 +53,8 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const [debtsType, setDebtsType] = useState(isAddButton ? 'Borrow' : debtType);
   const userId = useSelector(selectUserId);
 
-  const debtAmountError = hasInteracted
-    ? expenseAmountSchema?.safeParse(Number(debtAmount)).error?.errors || []
-    : [];
+  const debtAmountError =
+    expenseAmountSchema?.safeParse(Number(debtAmount)).error?.errors || [];
 
   const isValid =
     expenseSchema.safeParse(debtName).success &&
@@ -103,10 +102,6 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
     } catch (error) {
       console.error('Error updating expense:', error);
     }
-  };
-
-  const handleTextInputFocus = () => {
-    setHasInteracted(true);
   };
 
   return (
@@ -229,7 +224,6 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
             value={debtAmount}
             onChangeText={setDebtAmount}
             placeholder={'eg. 200'}
-            onChange={handleTextInputFocus}
             placeholderTextColor={colors.secondaryText}
             keyboardType="numeric"
           />

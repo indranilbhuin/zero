@@ -48,8 +48,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const currencySymbol = useSelector(selectCurrencySymbol);
   const [paidToastVisible, setPaidToastVisible] = useState(false);
   const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
-  const {debtorId, debtorType} = route.params;
-  const debtorName = individualDebtsCopy[0]?.debtor.title;
+  const {debtorName, debtorId, debtorType} = route.params;
 
   const borrowings = individualDebtsCopy.filter(
     (debt: Debt) => debt.type === 'Borrow',

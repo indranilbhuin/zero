@@ -26,10 +26,6 @@ import {
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 import mainStyles from '../../styles/main';
 import {categorySchema} from '../../utils/validationSchema';
-import onboardingStyles from '../../screens/OnboardingScreen/style';
-import Category from '../../schemas/CategorySchema';
-import defaultCategories from '../../../assets/jsons/defaultCategories.json';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
 
 interface CategoryEntryProps {
   type: string;
@@ -53,17 +49,6 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const [selectedColor, setSelectedColor] = useState(
     isAddButton ? 'null' : categoryData.categoryColor,
   );
-  const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
-    [],
-  );
-  console.log('ggggggggggg', selectedCategories);
-  const allCategories = useSelector(selectCategoryData);
-
-  const existingCategoryNames = allCategories.map(category => category.name);
-
-  const filteredCategories = defaultCategories.filter(
-    category => !existingCategoryNames.includes(category.name),
-  );
 
   const [searchText, setSearchText] = useState('');
   const userId = useSelector(selectUserId);
@@ -85,19 +70,6 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     }
   };
 
-  const handleAddFromDefaultCategory = async () => {
-    for (const category of selectedCategories) {
-      await createCategory(
-        category.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        category.icon,
-        category.color,
-      );
-    }
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
-    goBack();
-  };
-
   const handleUpdateCategory = () => {
     try {
       updateCategoryById(
@@ -110,18 +82,6 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
       goBack();
     } catch (error) {
       console.error('Error creating category:', error);
-    }
-  };
-
-  const handleAddFromDefaultOrAddCategory = () => {
-    if (isAddButton) {
-      if (selectedCategories.length !== 0) {
-        handleAddFromDefaultCategory();
-      } else {
-        handleAddCategory();
-      }
-    } else {
-      handleUpdateCategory();
     }
   };
 
@@ -206,16 +166,6 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     ));
   };
 
-  const toggleCategorySelection = (category: Category) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter(item => item !== category),
-      );
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
-  };
-
   return (
     <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
       <View>
@@ -293,66 +243,13 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
             <PrimaryText>Tap to select Color</PrimaryText>
           </TouchableOpacity>
         </View>
-        {filteredCategories.length !== 0 && isAddButton ? (
-          <>
-            <PrimaryText
-              style={{
-                marginBottom: '5%',
-                color: colors.accentGreen,
-                marginTop: '3%',
-              }}>
-              or
-            </PrimaryText>
-            <PrimaryText>Add from default categories</PrimaryText>
-            <View style={onboardingStyles.categoryMainContainer}>
-              {filteredCategories?.map((category: any) => (
-                <TouchableOpacity
-                  key={String(category._id)}
-                  onPress={() => toggleCategorySelection(category)}>
-                  <View
-                    style={[
-                      onboardingStyles.categoryContainer,
-                      {
-                        backgroundColor: selectedCategories?.includes(category)
-                          ? `${colors.accentGreen}75`
-                          : colors.secondaryAccent,
-                        borderColor: colors.secondaryContainerColor,
-                      },
-                    ]}>
-                    {category.icon !== undefined ? (
-                      <View style={onboardingStyles.iconContainer}>
-                        <Icon
-                          name={category.icon}
-                          size={20}
-                          color={category.color}
-                          type="MaterialCommunityIcons"
-                        />
-                      </View>
-                    ) : null}
-
-                    <PrimaryText
-                      style={{
-                        color: selectedCategories?.includes(category)
-                          ? colors.buttonText
-                          : colors.primaryText,
-                        fontSize: 13,
-                      }}>
-                      {category.name}
-                    </PrimaryText>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </>
-        ) : null}
       </View>
-
       <View style={{marginBottom: '10%'}}>
         <PrimaryButton
-          onPress={handleAddFromDefaultOrAddCategory}
+          onPress={isAddButton ? handleAddCategory : handleUpdateCategory}
           colors={colors}
           buttonTitle={type}
-          disabled={!isValid && selectedCategories.length === 0}
+          disabled={!isValid}
         />
       </View>
 
@@ -458,8 +355,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   colorCircle: {
-    height: 30,
-    width: 30,
+    height: 25,
+    width: 25,
     borderRadius: 50,
   },
   addButtonContainer: {

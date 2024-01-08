@@ -18,69 +18,63 @@ const OnboardingScreen = () => {
   } = useOnboarding();
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
-      <View>
-        <TouchableOpacity
-          style={styles.skipButtonContainer}
-          onPress={handleSkip}>
-          <PrimaryText style={{color: colors.accentGreen, fontSize: 12}}>
-            skip
-          </PrimaryText>
-        </TouchableOpacity>
+    <PrimaryView colors={colors}>
+      <TouchableOpacity style={styles.skipButtonContainer} onPress={handleSkip}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 12}}>
+          skip
+        </PrimaryText>
+      </TouchableOpacity>
 
-        <View style={styles.titleTextContainer}>
-          <PrimaryText style={{fontSize: 24}}>
-            Default categories are
-          </PrimaryText>
-          <PrimaryText style={{fontSize: 24}}>here</PrimaryText>
-        </View>
-
-        <View style={styles.subtitleTextContainer}>
-          <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
-            Select your categories you want track
-          </PrimaryText>
-        </View>
-        <View style={styles.categoryMainContainer}>
-          {defaultCategories?.map((category: any) => (
-            <TouchableOpacity
-              key={String(category._id)}
-              onPress={() => toggleCategorySelection(category)}>
-              <View
-                style={[
-                  styles.categoryContainer,
-                  {
-                    backgroundColor: selectedCategories?.includes(category)
-                      ? `${colors.accentGreen}75`
-                      : colors.secondaryAccent,
-                    borderColor: colors.secondaryContainerColor,
-                  },
-                ]}>
-                {category.icon !== undefined ? (
-                  <View style={styles.iconContainer}>
-                    <Icon
-                      name={category.icon}
-                      size={20}
-                      color={category.color}
-                      type="MaterialCommunityIcons"
-                    />
-                  </View>
-                ) : null}
-
-                <PrimaryText
-                  style={{
-                    color: selectedCategories?.includes(category)
-                      ? colors.buttonText
-                      : colors.primaryText,
-                    fontSize: 13,
-                  }}>
-                  {category.name}
-                </PrimaryText>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+      <View style={styles.titleTextContainer}>
+        <PrimaryText style={{fontSize: 24}}>Default categories are</PrimaryText>
+        <PrimaryText style={{fontSize: 24}}>here</PrimaryText>
       </View>
-      <View style={{marginBottom: '10%'}}>
+
+      <View style={styles.subtitleTextContainer}>
+        <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
+          Select your categories you want track
+        </PrimaryText>
+      </View>
+      <View style={styles.categoryMainContainer}>
+        {defaultCategories?.map((category: any) => (
+          <TouchableOpacity
+            key={String(category._id)}
+            onPress={() => toggleCategorySelection(category)}>
+            <View
+              style={[
+                styles.categoryContainer,
+                {
+                  backgroundColor: selectedCategories?.includes(category)
+                    ? `${colors.accentGreen}75`
+                    : colors.secondaryAccent,
+                  borderColor: colors.secondaryContainerColor,
+                },
+              ]}>
+              {category.icon !== undefined ? (
+                <View style={styles.iconContainer}>
+                  <Icon
+                    name={category.icon}
+                    size={20}
+                    color={category.color}
+                    type="MaterialCommunityIcons"
+                  />
+                </View>
+              ) : null}
+
+              <PrimaryText
+                style={{
+                  color: selectedCategories?.includes(category)
+                    ? colors.buttonText
+                    : colors.primaryText,
+                  fontSize: 13,
+                }}>
+                {category.name}
+              </PrimaryText>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <View style={styles.buttonContainer}>
         <PrimaryButton
           onPress={handleSubmit}
           colors={colors}

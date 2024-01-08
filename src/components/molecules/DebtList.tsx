@@ -88,6 +88,8 @@ const DebtList: React.FC<DebtListProps> = ({
     currentGroup.push(debt);
     groupedExpenses.set(date, currentGroup);
   });
+  console.log('groupeeddddddddddddddd', groupedExpenses);
+  console.log('debtssssssss', individualDebts);
 
   return (
     <View style={styles.debtsMainContainer}>

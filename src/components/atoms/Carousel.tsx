@@ -61,7 +61,7 @@ const Carousel = () => {
         />
       }
       paginationStyle={{
-        bottom: '15%',
+        bottom: 100,
         left: 0,
         right: 0,
       }}

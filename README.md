@@ -1,24 +1,6 @@
-<div align="center">
-    <img src="assets/images/zer0.png" height="128">
-    <h1 align="center">zer0 - Minimal Expense Manager</h1>
-</div>
+# zero - Expense Tracker
 
 Zero is a lightweight, open-source Android application designed to empower users to effortlessly manage their expenses while prioritizing privacy. With a minimalistic user interface, dark and light themes, and a commitment to keeping user data entirely on their devices, Zero ensures a seamless and secure expense tracking experience.
-
-## Screen Shots
-
-<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center;">
-   <img src="assets/screenshots/zero_home_screen_dark.png" width="200"/>
-   <img src="assets/screenshots/zero_home_screen_light.png" width="200"/>
-   <img src="assets/screenshots/zero_report_screen_dark.png" width="200"/>
-   <img src="assets/screenshots/zero_report_screen_light.png" width="200"/>
-   <img src="assets/screenshots/zero_debts_screen_dark.png" width="200"/>
-   <img src="assets/screenshots/zero_debts_screen_light.png" width="200"/>
-   <img src="assets/screenshots/zero_settings_screen_dark.png" width="200"/>
-   <img src="assets/screenshots/zero_settings_screen_light.png" width="200"/>
-   <img src="assets/screenshots/zero_categories_screen_dark.png" width="200"/>
-   <img src="assets/screenshots/zero_categories_screen_light.png" width="200"/>
-</div>
 
 ## Features
 
@@ -64,29 +46,29 @@ Zero is a lightweight, open-source Android application designed to empower users
 
 The project's folder structure is organized as follows:
 
-- `src/` - Contains the source code for the zer0 app.
-  - `components/` - React Native components used throughout the app.
-  - `screens/` - React Native screens.
-    - index.tsx - Main React component file for the screen, responsible for rendering the UI.
-    - useScreenName.ts - Custom hook for storing business logic specific to the screen named "ScreenName".
-    - style.ts - Styles specific to the "ScreenName" screen, maintaining separation of concerns.
-  - `hooks/` - React Global hooks defined here.
-  - `redux/` - Redux store configuration and slices.
-  - `schemas/` - Realm database schemas defined here.
-  - `services/` - Static assets such as images and fonts.
-  - `navigation/` - Navigation configurations.
-  - `utils/` - Utility functions and helpers.
-  - `styles` - Global stylesheet defined here.
-  - `android/` - Android-specific project files and configurations.
-  - `ios/` - iOS-specific project files and configurations.
+- `src/` - Contains the source code for the zero app.
+   - `components/` - React Native components used throughout the app.
+   - `screens/` - React Native screens.
+      - index.tsx - Main React component file for the screen, responsible for rendering the UI.
+      - useScreenName.ts - Custom hook for storing business logic specific to the screen named "ScreenName".
+      - style.ts - Styles specific to the "ScreenName" screen, maintaining separation of concerns.
+   - `hooks/` - React Global hooks defined here.
+   - `redux/` - Redux store configuration and slices.
+   - `schemas/` - Realm database schemas defined here.
+   - `services/` - Static assets such as images and fonts.
+   - `navigation/` - Navigation configurations.
+   - `utils/` - Utility functions and helpers.
+   - `styles` - Global stylesheet defined here.
+   - `android/` - Android-specific project files and configurations.
+   - `ios/` - iOS-specific project files and configurations.
 - `assets` - All assets for the project is stored here
-  - `fonts` - Store font files such as .ttf or .otf here.
-  - `images` - Store image assets such as PNGs, JPGs, etc., here.
-  - `jsons` - Store JSON data files here, which may be used for configuration or other structured data.
+   - `fonts` - Store font files such as .ttf or .otf here.
+   - `images` - Store image assets such as PNGs, JPGs, etc., here.
+   - `jsons` - Store JSON data files here, which may be used for configuration or other structured data.
 
 ## Getting Started with the code
 
-To use zer0, simply download the app from the playstore and use it.
+To use zero, simply download the app from the playstore and use it.
 
 OR
 
@@ -108,13 +90,13 @@ Follow these steps to run the FoodTechApp project locally:
 
 6. Once the cloning process is complete, navigate to the project's root directory:
 
-   ```shell
-   cd zero
-   ```
+    ```shell
+    cd zero
+    ```
 
 7. Run the command to install all required dependencies:
 
-   ```shell
+    ```shell
    yarn install
    ```
 

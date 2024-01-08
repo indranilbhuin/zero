@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "zer0.app"
-               BlueprintName = "zer0"
-               ReferencedContainer = "container:zer0.xcodeproj">
+               BuildableName = "zero.app"
+               BlueprintName = "zero"
+               ReferencedContainer = "container:zero.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "zer0Tests.xctest"
-               BlueprintName = "zer0Tests"
-               ReferencedContainer = "container:zer0.xcodeproj">
+               BuildableName = "zeroTests.xctest"
+               BlueprintName = "zeroTests"
+               ReferencedContainer = "container:zero.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "zer0.app"
-            BlueprintName = "zer0"
-            ReferencedContainer = "container:zer0.xcodeproj">
+            BuildableName = "zero.app"
+            BlueprintName = "zero"
+            ReferencedContainer = "container:zero.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "zer0.app"
-            BlueprintName = "zer0"
-            ReferencedContainer = "container:zer0.xcodeproj">
+            BuildableName = "zero.app"
+            BlueprintName = "zero"
+            ReferencedContainer = "container:zero.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
