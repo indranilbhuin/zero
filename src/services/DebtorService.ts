@@ -111,3 +111,21 @@ export const getAllDebtorsByUserId = async (userId: Realm.BSON.ObjectId) => {
 
   return debtorsByUserId;
 };
+
+export const getDebtorByDebtorId = async (debtorId: Realm.BSON.ObjectId) => {
+  const realm = await getRealm();
+
+  try {
+    const debtor = realm.objectForPrimaryKey('Debtor', debtorId);
+
+    if (debtor) {
+      return debtor;
+    } else {
+      console.error('Debtor not found.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error retrieving debtor name:', error);
+    return null;
+  }
+};
