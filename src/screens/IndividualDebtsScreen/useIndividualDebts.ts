@@ -20,6 +20,10 @@ import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import moment from 'moment';
 import Debt from '../../schemas/DebtSchema';
 import useAmountColor from '../../hooks/useAmountColor';
+import {
+  getIndividualDebtorRequest,
+  selectIndividualDebtorData,
+} from '../../redux/slice/IndividualDebtorSlice';
 
 export type IndividualDebtsScreenRouteProp = RouteProp<
   {
@@ -49,7 +53,9 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const [paidToastVisible, setPaidToastVisible] = useState(false);
   const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
   const {debtorId, debtorType} = route.params;
-  const debtorName = individualDebtsCopy[0]?.debtor.title;
+  const individualDebtor = useSelector(selectIndividualDebtorData);
+  console.log('individuallll', individualDebtor);
+  const debtorName = individualDebtor?.title;
 
   const borrowings = individualDebtsCopy.filter(
     (debt: Debt) => debt.type === 'Borrow',
@@ -153,11 +159,17 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
 
   useEffect(() => {
     dispatch(getDebtRequest(debtorId));
+    dispatch(
+      getIndividualDebtorRequest(
+        Realm.BSON.ObjectID.createFromHexString(debtorId),
+      ),
+    );
   }, [debtorId]);
 
   useEffect(() => {
     if (refreshing) {
       dispatch(getDebtRequest(debtorId));
+      dispatch(getIndividualDebtorRequest(debtorId));
       setRefreshing(false);
     }
   }, [refreshing]);
