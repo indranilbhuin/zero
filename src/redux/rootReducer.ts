@@ -12,6 +12,7 @@ import debtReducer from './slice/debtDataSlice';
 import allDebtReducer from './slice/allDebtDataSlice';
 import everydayExpenseReducer from './slice/everydayExpenseDataSlice';
 import allDataReducer from './slice/allDataSlice';
+import individualDebtorReducer from './slice/IndividualDebtorSlice';
 
 const rootReducer = combineReducers({
   userOnboarding: userOnboardingReducer,
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   allDebt: allDebtReducer,
   everydayExpense: everydayExpenseReducer,
   allData: allDataReducer,
+  individualDebtor: individualDebtorReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
