@@ -1,10 +1,7 @@
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useMemo, useState} from 'react';
 import AsyncStorageService from '../utils/asyncStorageService';
-import {
-  selectIsOnboarded,
-  setIsOnboarded,
-} from '../redux/slice/isOnboardedSlice';
+import {selectIsOnboarded, setIsOnboarded} from '../redux/slice/isOnboardedSlice';
 import HomeStack from './HomeStack';
 import OnboardingStack from './OnboardingStack';
 import {useTheme} from '../context/ThemeContext';
@@ -45,7 +42,6 @@ const MainStack = () => {
 
   const memoizedStack = useMemo(() => stack, [stack]);
 
-  // Show loader while theme or onboarding state is loading
   if (isLoading || isThemeLoading) {
     return <CustomLoader colors={colors} />;
   }

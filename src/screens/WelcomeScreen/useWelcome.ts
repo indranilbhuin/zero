@@ -19,7 +19,6 @@ const useWelcome = () => {
       await debugLogAllData();
     } catch (error) {
       console.error('Error deleting data for existing user:', error);
-      // Continue anyway - for existing user we'll import their data
     }
     console.log('Navigating to ExistingUserScreen...');
     navigate('ExistingUserScreen');
@@ -40,7 +39,6 @@ const useWelcome = () => {
       await debugLogAllData();
     } catch (error) {
       console.error('Error deleting data for new user:', error);
-      // Continue anyway - for new user there's likely no data to delete
     }
     console.log('Navigating to PersonalizeScreen...');
     navigate('PersonalizeScreen');

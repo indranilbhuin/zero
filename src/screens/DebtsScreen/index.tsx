@@ -67,7 +67,7 @@ const DebtsScreen = () => {
   }
 
   return (
-    <PrimaryView colors={colors}>
+    <PrimaryView colors={colors} useBottomPadding={false}>
       <View style={{marginBottom: 15}}>
         <HeaderContainer headerText={'Debts'} />
       </View>

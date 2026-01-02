@@ -5,13 +5,9 @@ import PrimaryText from '../atoms/PrimaryText';
 import {FlashList} from '@shopify/flash-list';
 
 interface Currency {
+  code: string;
   name: string;
   symbol: string;
-  symbolNative: string;
-  decimalDigits: number;
-  rounding: number;
-  code: string;
-  namePlural: string;
 }
 
 interface CurrencySymbolPickerProps {
@@ -43,7 +39,7 @@ const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
           ]}>
           <View style={styles.symbolContainer}>
             <PrimaryText style={{color: colors.primaryText, fontSize: 20}}>
-              {currency.symbolNative}
+              {currency.symbol}
             </PrimaryText>
             <PrimaryText style={{color: colors.primaryText, fontSize: 13}}>
               {currency.code}

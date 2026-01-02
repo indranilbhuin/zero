@@ -8,7 +8,6 @@ import {Colors} from '../../hooks/useThemeColors';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
 
-// Extended debt type with optional debtor populated from Redux (for backward compatibility)
 interface Debt extends DebtDocType {
   debtor?: {_id?: {toString(): string}};
 }

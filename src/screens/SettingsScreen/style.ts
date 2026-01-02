@@ -12,17 +12,17 @@ const settingsStyles = StyleSheet.create({
     alignItems: 'center',
   },
   settingsContainer: {
-    marginTop: 15,
-    borderWidth: 1,
-    borderRadius: 8,
+    marginTop: 10,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   individualSettingsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 65,
+    minHeight: 60,
     alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   modalContainer: {
     width: '100%',

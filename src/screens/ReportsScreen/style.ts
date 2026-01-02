@@ -54,11 +54,54 @@ const reportsStyles = StyleSheet.create({
     marginBottom: 15
   },
   calendarDay: {
-    width: '14.28%',
-    height: 30,
+    width: '13.5%',
+    height: 34,
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 0.5,
+  },
+  heatmapCell: {
+    borderRadius: 4,
+    borderWidth: 1,
+  },
+  heatmapLegend: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    marginBottom: 20,
+    gap: 4,
+  },
+  legendCell: {
+    width: 16,
+    height: 16,
+    borderRadius: 3,
+    borderWidth: 1,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  statsCard: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  statsLabel: {
+    fontSize: 12,
+    fontFamily: 'FiraCode-Regular',
+  },
+  statsValue: {
+    fontSize: 13,
+    fontFamily: 'FiraCode-SemiBold',
   },
 });
+
 
 export default reportsStyles;

@@ -16,7 +16,6 @@ const everydayExpenseDataSlice = createSlice({
       state.error = null;
     },
     getEverydayExpenseSuccess: (state, action) => {
-      console.log(action.payload);
       state.isLoading = false;
       state.error = null;
       state.expenseData = action.payload;

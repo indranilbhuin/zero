@@ -1,10 +1,11 @@
-import {Keyboard, Modal, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
-import React, {useState} from 'react';
+import {Keyboard, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useCallback} from 'react';
 import Icon from './Icons';
 import PrimaryText from './PrimaryText';
 import {formatDate} from '../../utils/dateUtils';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import useThemeColors from '../../hooks/useThemeColors';
+import {SheetManager} from 'react-native-actions-sheet';
 
 interface DatePickerProps {
   createdAt: string;
@@ -15,36 +16,35 @@ interface DatePickerProps {
 
 const DatePicker: React.FC<DatePickerProps> = ({setShowDatePicker, createdAt, showDatePicker, setCreatedAt}) => {
   const colors = useThemeColors();
-  const [tempDate, setTempDate] = useState(new Date(createdAt));
 
-  const handleDateChange = (_event: DateTimePickerEvent, selectedDate?: Date | undefined) => {
-    if (Platform.OS === 'android') {
+  const handleDateChange = useCallback(
+    (_event: DateTimePickerEvent, selectedDate?: Date) => {
       setShowDatePicker(false);
       if (selectedDate) {
         const formattedDateValue = formatDate(selectedDate, 'YYYY-MM-DDTHH:mm:ss');
         setCreatedAt(formattedDateValue);
       }
-    } else if (selectedDate) {
-      setTempDate(selectedDate);
-    }
-  };
+    },
+    [setCreatedAt, setShowDatePicker],
+  );
 
-  const handleIOSConfirm = () => {
-    const formattedDateValue = formatDate(tempDate, 'YYYY-MM-DDTHH:mm:ss');
-    setCreatedAt(formattedDateValue);
-    setShowDatePicker(false);
-  };
-
-  const handleIOSCancel = () => {
-    setTempDate(new Date(createdAt));
-    setShowDatePicker(false);
-  };
-
-  const handleOpenDatePicker = () => {
+  const handleOpenDatePicker = useCallback(() => {
     Keyboard.dismiss();
-    setTempDate(new Date(createdAt));
-    setShowDatePicker(true);
-  };
+
+    if (Platform.OS === 'ios') {
+      SheetManager.show('date-picker-sheet', {
+        payload: {
+          selectedDate: createdAt,
+          onSelect: (date: Date) => {
+            const formattedDateValue = formatDate(date, 'YYYY-MM-DDTHH:mm:ss');
+            setCreatedAt(formattedDateValue);
+          },
+        },
+      });
+    } else {
+      setShowDatePicker(true);
+    }
+  }, [createdAt, setCreatedAt, setShowDatePicker]);
 
   return (
     <View style={styles.dateContainer}>
@@ -71,38 +71,6 @@ const DatePicker: React.FC<DatePickerProps> = ({setShowDatePicker, createdAt, sh
           onChange={handleDateChange}
         />
       )}
-
-      {Platform.OS === 'ios' && (
-        <Modal
-          visible={showDatePicker}
-          transparent
-          animationType="slide"
-          onRequestClose={handleIOSCancel}>
-          <TouchableWithoutFeedback onPress={handleIOSCancel}>
-            <View style={styles.modalOverlay}>
-              <TouchableWithoutFeedback>
-                <View style={[styles.modalContent, {backgroundColor: colors.primaryBackground}]}>
-                  <View style={styles.modalHeader}>
-                    <TouchableOpacity onPress={handleIOSCancel}>
-                      <PrimaryText style={{color: colors.accentRed}}>Cancel</PrimaryText>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleIOSConfirm}>
-                      <PrimaryText style={{color: colors.accentGreen}}>Done</PrimaryText>
-                    </TouchableOpacity>
-                  </View>
-                  <DateTimePicker
-                    value={tempDate}
-                    mode="date"
-                    display="spinner"
-                    onChange={handleDateChange}
-                    style={styles.iosPicker}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      )}
     </View>
   );
 };
@@ -127,26 +95,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     marginRight: 10,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 30,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(128, 128, 128, 0.2)',
-  },
-  iosPicker: {
-    height: 200,
   },
 });

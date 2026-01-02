@@ -247,6 +247,5 @@ const styles = StyleSheet.create({
   },
   submitButtonContainer: {
     marginTop: 5,
-    // marginBottom: 15,
   },
 });

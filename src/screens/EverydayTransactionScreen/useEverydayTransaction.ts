@@ -23,11 +23,8 @@ export type EverydayTransactionRouteProp = RouteProp<
 const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   const dispatch = useDispatch();
   const allEverdayTransaction = useSelector(selectEverydayExpenseData);
-  const allEverdayTransactionCopy = JSON.parse(
-    JSON.stringify(allEverdayTransaction),
-  );
+  const allEverdayTransactionCopy = JSON.parse(JSON.stringify(allEverdayTransaction));
   const expenseDate = route.params.isDate;
-  console.log('no ', expenseDate);
   const formattedDate = formatDate(expenseDate, 'MMM Do YY');
   const formattedDateDisplay = formatDate(expenseDate, 'MMM Do YY');
   const colors = useThemeColors();

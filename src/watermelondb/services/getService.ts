@@ -6,56 +6,48 @@ import Currency from '../models/Currency';
 import Debtor from '../models/Debtor';
 import Debt from '../models/Debt';
 
-interface AllData {
-  users: {id: string; username: string; email: string}[];
-  categories: {
-    id: string;
+// Export format interface - compatible with import in ExistingUserScreen
+interface ExportData {
+  users: Array<{
+    username: string;
+    email: string;
+  }>;
+  categories: Array<{
     name: string;
-    categoryStatus: boolean;
-    userId: string;
     icon?: string;
-    color: string;
-  }[];
-  expenses: {
-    id: string;
+    color?: string;
+  }>;
+  expenses: Array<{
     title: string;
     amount: number;
     description?: string;
-    categoryId: string;
-    userId: string;
+    category: {name: string};
     date: string;
-  }[];
-  currencies: {
-    id: string;
+  }>;
+  currencies: Array<{
     code: string;
     symbol: string;
     name: string;
-    userId: string;
-  }[];
-  debtors: {
-    id: string;
+  }>;
+  debtors: Array<{
     title: string;
-    type: string;
-    debtorStatus: boolean;
-    userId: string;
     icon?: string;
-    color: string;
-  }[];
-  debts: {
-    id: string;
-    description: string;
+    type?: string;
+    color?: string;
+  }>;
+  debts: Array<{
     amount: number;
-    debtorId: string;
-    userId: string;
+    description: string;
+    debtor: {title: string};
     date: string;
     type: string;
-  }[];
+  }>;
 }
 
 /**
- * Gets all data from the database
+ * Gets all data from the database in a format suitable for export/import
  */
-export const getAllData = async (): Promise<AllData | null> => {
+export const getAllData = async (): Promise<ExportData | null> => {
   try {
     const [users, categories, expenses, currencies, debtors, debts] =
       await Promise.all([
@@ -67,51 +59,49 @@ export const getAllData = async (): Promise<AllData | null> => {
         database.get<Debt>('debts').query().fetch(),
       ]);
 
+    // Create lookup maps for category and debtor names
+    const categoryMap = new Map<string, string>();
+    categories.forEach(c => {
+      categoryMap.set(c.id, c.name);
+    });
+
+    const debtorMap = new Map<string, string>();
+    debtors.forEach(d => {
+      debtorMap.set(d.id, d.title);
+    });
+
     return {
       users: users.map(u => ({
-        id: u.id,
         username: u.username,
         email: u.email,
       })),
       categories: categories.map(c => ({
-        id: c.id,
         name: c.name,
-        categoryStatus: c.categoryStatus,
-        userId: c.userId,
         icon: c.icon,
         color: c.color,
       })),
       expenses: expenses.map(e => ({
-        id: e.id,
         title: e.title,
         amount: e.amount,
         description: e.description,
-        categoryId: e.categoryId,
-        userId: e.userId,
+        category: {name: categoryMap.get(e.categoryId) ?? 'Unknown'},
         date: e.date,
       })),
       currencies: currencies.map(c => ({
-        id: c.id,
         code: c.code,
         symbol: c.symbol,
         name: c.name,
-        userId: c.userId,
       })),
       debtors: debtors.map(d => ({
-        id: d.id,
         title: d.title,
-        type: d.type,
-        debtorStatus: d.debtorStatus,
-        userId: d.userId,
         icon: d.icon,
+        type: d.type,
         color: d.color,
       })),
       debts: debts.map(d => ({
-        id: d.id,
-        description: d.description,
         amount: d.amount,
-        debtorId: d.debtorId,
-        userId: d.userId,
+        description: d.description,
+        debtor: {title: debtorMap.get(d.debtorId) ?? 'Unknown'},
         date: d.date,
         type: d.type,
       })),

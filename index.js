@@ -1,8 +1,3 @@
-/**
- * @format
- */
-
-// Must be imported first before any other imports
 import 'react-native-get-random-values';
 
 import {AppRegistry} from 'react-native';

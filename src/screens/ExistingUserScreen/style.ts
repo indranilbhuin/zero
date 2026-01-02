@@ -11,10 +11,20 @@ const existingUserStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
-    marginRight: 5,
+    marginRight: 10,
   },
   uploadContent: {
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  syncProgressContainer: {
+    marginTop: 30,
+    paddingVertical: 20,
+  },
+  syncStatusItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
   },
   settingsContainer: {
     borderWidth: 2,

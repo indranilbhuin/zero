@@ -10,14 +10,10 @@ import {
   getDaysInMonth,
   DateInput,
 } from '../../utils/dateUtils';
-import {
-  getExpenseRequest,
-  selectExpenseData,
-} from '../../redux/slice/expenseDataSlice';
+import {getExpenseRequest, selectExpenseData} from '../../redux/slice/expenseDataSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {ExpenseData as ExpenseDocType} from '../../watermelondb/services';
 
-// Extended type for expenses with optional category info
 interface TransactionWithCategory extends ExpenseDocType {
   category?: {
     name?: string;
@@ -38,23 +34,15 @@ const useReports = () => {
 
   const dayNames = getWeekdayShortNames();
 
-  // Memoize to prevent infinite re-renders
-  const allTransactionsCopy = useMemo(
-    () => JSON.parse(JSON.stringify(allTransactions)),
-    [allTransactions],
-  );
+  const allTransactionsCopy = useMemo(() => JSON.parse(JSON.stringify(allTransactions)), [allTransactions]);
 
   const filterTransactions = useCallback(
     (year: number, month: string) => {
-      const filtered = allTransactionsCopy?.filter(
-        (item: {date: DateInput}) => {
-          const transactionYear = getYear(item.date);
-          const transactionMonth = getMonthName(item.date);
-          return (
-            transactionYear === year && (!month || transactionMonth === month)
-          );
-        },
-      );
+      const filtered = allTransactionsCopy?.filter((item: {date: DateInput}) => {
+        const transactionYear = getYear(item.date);
+        const transactionMonth = getMonthName(item.date);
+        return transactionYear === year && (!month || transactionMonth === month);
+      });
 
       setFilteredTransactions(filtered?.length > 0 ? filtered : []);
     },

@@ -1,12 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  ReactNode,
-} from 'react';
+import React, {createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode} from 'react';
 import {useColorScheme, Appearance} from 'react-native';
 import AsyncStorageService from '../utils/asyncStorageService';
 
@@ -93,7 +85,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Resolve the actual theme based on mode and system preference
   const resolvedTheme: ResolvedTheme = useMemo(() => {
     if (themeMode === 'system') {
       return systemColorScheme === 'dark' ? 'dark' : 'light';
@@ -107,7 +98,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
 
   const isDark = resolvedTheme === 'dark';
 
-  // Load theme from storage on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
@@ -125,17 +115,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
     loadTheme();
   }, []);
 
-  // Listen for system theme changes
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({colorScheme}) => {
-      // This will trigger a re-render if themeMode is 'system'
       console.log('System theme changed to:', colorScheme);
     });
 
     return () => subscription.remove();
   }, []);
 
-  // Set theme mode and persist to storage
   const setThemeMode = useCallback(async (mode: ThemeMode) => {
     try {
       await AsyncStorageService.setItem('themePreference', mode);
@@ -157,9 +144,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
     [themeMode, resolvedTheme, colors, isDark, setThemeMode, isLoading],
   );
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = (): ThemeContextType => {
@@ -170,7 +155,6 @@ export const useTheme = (): ThemeContextType => {
   return context;
 };
 
-// Convenience hook for just colors (backwards compatibility)
 export const useThemeColors = (): ThemeColors => {
   const {colors} = useTheme();
   return colors;

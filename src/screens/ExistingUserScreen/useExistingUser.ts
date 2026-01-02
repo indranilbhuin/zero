@@ -1,36 +1,10 @@
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
-import {selectUserName} from '../../redux/slice/userNameSlice';
-import {selectUserId} from '../../redux/slice/userIdSlice';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
-import {useEffect, useState} from 'react';
-import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
+import {useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import {requestStoragePermission} from '../../utils/dataUtils';
 import {pick, types} from '@react-native-documents/picker';
 import RNFS from 'react-native-fs';
-
-// Type for imported data from JSON file
-interface ImportedData {
-  users: Array<{username: string; email: string}>;
-  categories: Array<{name: string; icon?: string; color?: string}>;
-  currencies: Array<{code: string; symbol: string; name: string}>;
-  expenses: Array<{
-    title: string;
-    amount: number;
-    description?: string;
-    category: {name: string};
-    date: string;
-  }>;
-  debtors: Array<{title: string; icon?: string; type?: string; color?: string}>;
-  debts: Array<{
-    amount: number;
-    description: string;
-    debtor: {title: string};
-    date: string;
-    type: string;
-  }>;
-}
 import {
   createUser,
   deleteAllData,
@@ -51,25 +25,62 @@ import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 import AsyncStorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 
+interface ImportedData {
+  users: Array<{username: string; email: string}>;
+  categories: Array<{name: string; icon?: string; color?: string}>;
+  currencies: Array<{code: string; symbol: string; name: string}>;
+  expenses: Array<{
+    title: string;
+    amount: number;
+    description?: string;
+    category: {name: string};
+    date: string;
+  }>;
+  debtors: Array<{title: string; icon?: string; type?: string; color?: string}>;
+  debts: Array<{
+    amount: number;
+    description: string;
+    debtor: {title: string};
+    date: string;
+    type: string;
+  }>;
+}
+
+interface SyncStatus {
+  user: 'pending' | 'syncing' | 'done' | 'error';
+  categories: 'pending' | 'syncing' | 'done' | 'error';
+  debtors: 'pending' | 'syncing' | 'done' | 'error';
+  currencies: 'pending' | 'syncing' | 'done' | 'error';
+  expenses: 'pending' | 'syncing' | 'done' | 'error';
+  debts: 'pending' | 'syncing' | 'done' | 'error';
+}
+
 const useExistingUser = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const userName = useSelector(selectUserName);
-  const userId = useSelector(selectUserId);
-  const allCategories = useSelector(selectCategoryData);
-  console.log('kkkk', allCategories);
-  const allCategoriesCopy = allCategories;
-  const [allData, setAllData] = useState<ImportedData | null>(null);
-  const [fileKey, setFileKey] = useState<string | null>(null);
-  const [uploadMessage, setUploadMessage] = useState('Upload your file');
+
   const [fileName, setFileName] = useState<string | null>(null);
-  const allDebtors = useSelector(selectDebtorData);
+  const [uploadMessage, setUploadMessage] = useState('Upload your file');
   const [isStorageModalVisible, setIsStorageModalVisible] = useState(false);
-  const debtorsCopy = allDebtors;
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isSyncComplete, setIsSyncComplete] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    user: 'pending',
+    categories: 'pending',
+    debtors: 'pending',
+    currencies: 'pending',
+    expenses: 'pending',
+    debts: 'pending',
+  });
+  const [syncStats, setSyncStats] = useState({
+    categories: 0,
+    expenses: 0,
+    debtors: 0,
+    debts: 0,
+  });
 
-  console.log('lklklkla', debtorsCopy);
-
-  function normalizePath(path: string | undefined): string {
+  const normalizePath = (path: string | undefined): string => {
     try {
       if (path === undefined) {
         throw new Error('Path is undefined');
@@ -86,17 +97,136 @@ const useExistingUser = () => {
       console.error({msg: 'Failed to normalize path', data: e});
       return '';
     }
-  }
+  };
+
+  const isValidKey = (key: string | null): boolean => {
+    if (!key || key.length !== 20) {
+      return false;
+    }
+    const prefix = key.slice(0, 4);
+    if (prefix !== 'zero') {
+      return false;
+    }
+    const alphanumericPart = key.slice(4);
+    return /^[a-zA-Z0-9]+$/.test(alphanumericPart);
+  };
+
+  const syncAllData = async (data: ImportedData, userId: string) => {
+    const categoryIdMap = new Map<string, string>();
+    const debtorIdMap = new Map<string, string>();
+
+    setSyncStatus(prev => ({...prev, categories: 'syncing'}));
+    try {
+      for (const categoryData of data.categories) {
+        const {name, icon, color} = categoryData;
+        const newCategoryId = await createCategory(name, userId, icon ?? null, color ?? null);
+        if (newCategoryId) {
+          categoryIdMap.set(name, newCategoryId);
+        }
+      }
+      setSyncStats(prev => ({...prev, categories: data.categories.length}));
+      setSyncStatus(prev => ({...prev, categories: 'done'}));
+      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+    } catch (error) {
+      console.error('Error syncing categories:', error);
+      setSyncStatus(prev => ({...prev, categories: 'error'}));
+      throw error;
+    }
+
+    setSyncStatus(prev => ({...prev, debtors: 'syncing'}));
+    try {
+      for (const debtorData of data.debtors) {
+        const {title, icon, type, color} = debtorData;
+        const newDebtorId = await createDebtor(title, userId, icon ?? null, type ?? 'Other', color ?? null);
+        if (newDebtorId) {
+          debtorIdMap.set(title, newDebtorId);
+        }
+      }
+      setSyncStats(prev => ({...prev, debtors: data.debtors.length}));
+      setSyncStatus(prev => ({...prev, debtors: 'done'}));
+      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+    } catch (error) {
+      console.error('Error syncing debtors:', error);
+      setSyncStatus(prev => ({...prev, debtors: 'error'}));
+      throw error;
+    }
+
+    setSyncStatus(prev => ({...prev, currencies: 'syncing'}));
+    try {
+      for (const currencyData of data.currencies) {
+        const {code, symbol, name} = currencyData;
+        await createCurrency(code, symbol, name, userId);
+      }
+      setSyncStatus(prev => ({...prev, currencies: 'done'}));
+      dispatch({type: FETCH_CURRENCY_DATA});
+    } catch (error) {
+      console.error('Error syncing currencies:', error);
+      setSyncStatus(prev => ({...prev, currencies: 'error'}));
+      throw error;
+    }
+
+    setSyncStatus(prev => ({...prev, expenses: 'syncing'}));
+    try {
+      let expenseCount = 0;
+      for (const expenseData of data.expenses) {
+        const {title, amount, description, category, date} = expenseData;
+        const categoryId = categoryIdMap.get(category.name);
+        if (categoryId) {
+          await createExpense(userId, title, amount, description ?? '', categoryId, date);
+          expenseCount++;
+        }
+      }
+      setSyncStats(prev => ({...prev, expenses: expenseCount}));
+      setSyncStatus(prev => ({...prev, expenses: 'done'}));
+      dispatch(getExpenseRequest());
+    } catch (error) {
+      console.error('Error syncing expenses:', error);
+      setSyncStatus(prev => ({...prev, expenses: 'error'}));
+      throw error;
+    }
+
+    setSyncStatus(prev => ({...prev, debts: 'syncing'}));
+    try {
+      let debtCount = 0;
+      for (const debtData of data.debts) {
+        const {amount, description, debtor, date, type} = debtData;
+        const debtorId = debtorIdMap.get(debtor.title);
+        if (debtorId) {
+          await createDebt(userId, amount, description, debtorId, date, type);
+          debtCount++;
+        }
+      }
+      setSyncStats(prev => ({...prev, debts: debtCount}));
+      setSyncStatus(prev => ({...prev, debts: 'done'}));
+      dispatch(getAllDebtRequest());
+    } catch (error) {
+      console.error('Error syncing debts:', error);
+      setSyncStatus(prev => ({...prev, debts: 'error'}));
+      throw error;
+    }
+  };
 
   const importData = async () => {
     try {
+      setIsSyncing(false);
+      setIsSyncComplete(false);
+      setSyncError(null);
+      setSyncStatus({
+        user: 'pending',
+        categories: 'pending',
+        debtors: 'pending',
+        currencies: 'pending',
+        expenses: 'pending',
+        debts: 'pending',
+      });
+
       const storagePermissionGranted = await requestStoragePermission();
 
       if (!storagePermissionGranted) {
-        console.log('Storage permission denied.');
         setIsStorageModalVisible(true);
         return;
       }
+
       const result = await pick({
         type: [types.allFiles],
         allowMultiSelection: false,
@@ -104,35 +234,46 @@ const useExistingUser = () => {
 
       const {0: res} = result;
       const path = normalizePath(res.uri);
-      if (path === undefined) {
-        throw console.error('undefined');
+      if (!path) {
+        setUploadMessage('Invalid file path');
+        return;
       }
 
-      console.log(res);
       const fileContent = await RNFS.readFile(path, 'utf8');
-
       const jsonData = JSON.parse(fileContent);
 
       const {key, data} = jsonData;
-      if (!key) {
-        setUploadMessage('Invalid key. Please upload a valid file.');
+      if (!key || !isValidKey(key)) {
+        setUploadMessage('Invalid key. Please upload a valid zero export file.');
         return;
       }
-      console.log(isValidKey(key));
-      if (!isValidKey(key)) {
-        setUploadMessage('Invalid key. Please upload a valid file.');
-        return;
-      }
-      setFileKey(key);
-      const {users} = data;
+
+      setFileName(res.name ?? 'data.json');
+      setUploadMessage('Syncing your data...');
+      setIsSyncing(true);
+
+      setSyncStatus(prev => ({...prev, user: 'syncing'}));
+      const {users} = data as ImportedData;
       const {username, email} = users[0];
-      await createUser(username, email);
+      const newUserId = await createUser(username, email);
+
+      if (!newUserId) {
+        throw new Error('Failed to create user');
+      }
+
+      setSyncStatus(prev => ({...prev, user: 'done'}));
       dispatch({type: FETCH_ALL_USER_DATA});
 
-      setAllData(data);
-      setFileName(res.name);
+      await syncAllData(data as ImportedData, newUserId);
+
+      setIsSyncing(false);
+      setIsSyncComplete(true);
+      setUploadMessage('All data synced successfully!');
     } catch (error) {
-      console.error('Error picking or reading file:', error);
+      console.error('Error importing data:', error);
+      setIsSyncing(false);
+      setSyncError('Failed to sync data. Please try again.');
+      setUploadMessage('Error syncing data. Try again.');
     }
   };
 
@@ -140,133 +281,39 @@ const useExistingUser = () => {
     await deleteAllData();
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
     dispatch({type: FETCH_ALL_DEBTOR_DATA});
+    dispatch({type: FETCH_ALL_USER_DATA});
+    setFileName(null);
+    setIsSyncComplete(false);
+    setSyncError(null);
+    setSyncStats({categories: 0, expenses: 0, debtors: 0, debts: 0});
     await importData();
   };
 
-  const isValidKey = (key: string | null): boolean => {
-    if (!key || key.length !== 20) {
-      return false;
-    }
-
-    const prefix = key.slice(0, 4);
-    if (prefix !== 'zero') {
-      return false;
-    }
-
-    const alphanumericPart = key.slice(4);
-    return /^[a-zA-Z0-9]+$/.test(alphanumericPart);
+  const handleContinue = async () => {
+    await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
+    dispatch(setIsOnboarded(true));
   };
-
-  const populateCategory = async () => {
-    if (!allData) return;
-    const {categories} = allData;
-
-    for (const categoryData of categories) {
-      const {name, icon, color} = categoryData;
-      await createCategory(name, userId, icon ?? null, color ?? null);
-    }
-
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
-  };
-
-  const populate = async () => {
-    if (!allData) return;
-    const {debtors} = allData;
-
-    for (const debtorData of debtors) {
-      const {title, icon, type, color} = debtorData;
-      await createDebtor(title, userId, icon ?? null, type ?? 'Borrow', color ?? null);
-    }
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-  };
-
-  useEffect(() => {
-    dispatch({type: FETCH_ALL_USER_DATA});
-    dispatch({type: FETCH_CURRENCY_DATA});
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-  }, [dispatch]);
-
-  const getCategoryById = (categories: Array<{id?: string; name?: string}>, categoryName: string): string => {
-    const category = categories.find(item => item.name === categoryName);
-    return category?.id ?? '';
-  };
-
-  const getDebtorById = (debtors: Array<{id?: string; title?: string}>, debtorname: string): string => {
-    const debtor = debtors.find(item => item.title === debtorname);
-    return debtor?.id ?? '';
-  };
-
-  const handleDataSubmit = async () => {
-    if (allData) {
-      const {currencies, expenses, debts} = allData;
-
-      for (const currencyData of currencies) {
-        const {code, symbol, name} = currencyData;
-        await createCurrency(code, symbol, name, userId);
-      }
-
-      for (const expenseData of expenses) {
-        const {title, amount, description, category, date} = expenseData;
-        console.log(category.name);
-        const categoryId = getCategoryById(allCategoriesCopy, category.name);
-        console.log(typeof categoryId, categoryId);
-        await createExpense(userId, title, amount, description ?? '', categoryId, date);
-      }
-
-      for (const debtData of debts) {
-        const {amount, description, debtor, date, type} = debtData;
-        console.log(debtor);
-        const debtorId = getDebtorById(debtorsCopy, debtor.title);
-
-        await createDebt(userId, amount, description, debtorId, date, type);
-      }
-
-      console.log('Data populated successfully!');
-      dispatch({type: FETCH_ALL_USER_DATA});
-      dispatch({type: FETCH_CURRENCY_DATA});
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
-      dispatch({type: FETCH_ALL_DEBTOR_DATA});
-      dispatch(getExpenseRequest());
-      dispatch(getAllDebtRequest());
-
-      await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
-      dispatch(setIsOnboarded(true));
-    }
-  };
-
-  console.log(allCategoriesCopy.length > 0 && debtorsCopy.length > 0);
 
   const handleAccessStorageOk = async () => {
     Linking.openSettings();
   };
+
   const handleAccessStorageCancel = () => {
     setIsStorageModalVisible(false);
-  };
-
-  const isDisable = () => {
-    return (
-      ((allData?.categories?.length ?? 0) > 0 && allCategoriesCopy.length === 0) ||
-      ((allData?.debtors?.length ?? 0) > 0 && debtorsCopy.length === 0)
-    );
   };
 
   return {
     colors,
     importData,
-    isValidKey,
-    fileKey,
-    userName,
-    uploadMessage,
     fileName,
+    uploadMessage,
     reUpload,
-    allData,
-    allCategoriesCopy,
-    populateCategory,
-    populate,
-    debtorsCopy,
-    handleDataSubmit,
-    isDisable,
+    handleContinue,
+    isSyncing,
+    isSyncComplete,
+    syncError,
+    syncStatus,
+    syncStats,
     isStorageModalVisible,
     handleAccessStorageOk,
     handleAccessStorageCancel,

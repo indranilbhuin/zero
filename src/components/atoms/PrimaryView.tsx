@@ -16,6 +16,7 @@ interface PrimaryViewProps {
   children?: ReactNode;
   style?: ViewStyle;
   dismissKeyboardOnTouch?: boolean;
+  useBottomPadding?: boolean;
 }
 
 const PrimaryView: React.FC<PrimaryViewProps> = ({
@@ -23,11 +24,18 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
   children,
   style,
   dismissKeyboardOnTouch = false,
+  useBottomPadding = true,
 }) => {
   const insets = useSafeAreaInsets();
   const {colors: contextColors, isDark} = useTheme();
 
   const colors = propColors || contextColors;
+
+  const bottomPadding = useBottomPadding
+    ? Platform.OS === 'ios'
+      ? insets.bottom
+      : insets.bottom + 10
+    : 0;
 
   const content = (
     <View
@@ -36,8 +44,7 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
         {
           backgroundColor: colors.primaryBackground,
           paddingTop: insets.top,
-          paddingBottom:
-            Platform.OS === 'ios' ? insets.bottom : insets.bottom + 10,
+          paddingBottom: bottomPadding,
         },
         style,
       ]}>

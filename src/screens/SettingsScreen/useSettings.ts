@@ -2,14 +2,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {selectUserName, setUserName} from '../../redux/slice/userNameSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {
-  selectCurrencyCode,
   selectCurrencyId,
   selectCurrencyName,
   selectCurrencySymbol,
   setCurrencyData,
 } from '../../redux/slice/currencyDataSlice';
-import {useEffect, useState} from 'react';
-import currencies from '../../../assets/jsons/currencies.json';
+import {useCallback, useEffect, useState} from 'react';
 import {getAppVersion} from '../../utils/getVersion';
 import {useTheme, ThemeMode} from '../../context/ThemeContext';
 import AsyncStorageService from '../../utils/asyncStorageService';
@@ -22,19 +20,11 @@ const useSettings = () => {
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
   const currencyId = useSelector(selectCurrencyId);
-  const currencyCode = useSelector(selectCurrencyCode);
   const currencyName = useSelector(selectCurrencyName);
   const currencySymbol = useSelector(selectCurrencySymbol);
   const allData = useSelector(selectAllData);
 
-  // Use the theme context
   const {colors, themeMode, setThemeMode} = useTheme();
-
-  const currencyData = {
-    code: currencyCode,
-    name: currencyName,
-    symbol: currencySymbol,
-  };
 
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
@@ -45,10 +35,6 @@ const useSettings = () => {
   const [isDownloadError, setIsDownloadError] = useState(false);
 
   const [name, setName] = useState(userName);
-  const [searchText, setSearchText] = useState('');
-  const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState(currencyData);
-  const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
   const appVersion = getAppVersion();
 
   const dispatch = useDispatch();
@@ -63,18 +49,6 @@ const useSettings = () => {
 
   const handleNameModalClose = () => {
     setIsNameModalVisible(false);
-  };
-
-  const handleCurrencyModalClose = () => {
-    setIsCurrencyModalVisible(false);
-  };
-
-  const handleCurrencySelect = (currency: {
-    code: string;
-    name: string;
-    symbol: string;
-  }) => {
-    setSelectedCurrency(currency);
   };
 
   const handleThemeSelection = async (theme: string) => {
@@ -98,41 +72,27 @@ const useSettings = () => {
     }
   };
 
-  const handleSearch = (text: string) => {
-    setSearchText(text);
-    const filtered = currencies.filter(currency => {
-      const {code, name, symbol, symbolNative} = currency;
-      const searchItem = text.toLowerCase();
-
-      return (
-        code.toLowerCase().includes(searchItem) ||
-        name.toLowerCase().includes(searchItem) ||
-        symbol.toLowerCase().includes(searchItem) ||
-        symbolNative.toLowerCase().includes(searchItem)
-      );
-    });
-    setFilteredCurrencies(filtered);
-  };
-
-  const handleCurrencyUpdate = async () => {
-    try {
-      await updateCurrencyById(currencyId, {
-        name: selectedCurrency.name,
-        code: selectedCurrency.code,
-        symbol: selectedCurrency.symbol,
-      });
-      const currencyData = {
-        currencyId,
-        currencyName: selectedCurrency.name,
-        currencySymbol: selectedCurrency.symbol,
-        currencyCode: selectedCurrency.code,
-      };
-      dispatch(setCurrencyData(currencyData));
-      setIsCurrencyModalVisible(false);
-    } catch (error) {
-      console.error('Error updating the currency:', error);
-    }
-  };
+  const handleCurrencyUpdate = useCallback(
+    async (currency: {code: string; name: string; symbol: string}) => {
+      try {
+        await updateCurrencyById(currencyId, {
+          name: currency.name,
+          code: currency.code,
+          symbol: currency.symbol,
+        });
+        const updatedCurrencyData = {
+          currencyId,
+          currencyName: currency.name,
+          currencySymbol: currency.symbol,
+          currencyCode: currency.code,
+        };
+        dispatch(setCurrencyData(updatedCurrencyData));
+      } catch (error) {
+        console.error('Error updating the currency:', error);
+      }
+    },
+    [currencyId, dispatch],
+  );
 
   const handleRateNow = () => {
     console.log('rate on playstore');
@@ -140,17 +100,12 @@ const useSettings = () => {
 
   const handleGithub = () => {
     const githubRepoURL = 'https://github.com/indranilbhuin/zero';
-    Linking.openURL(githubRepoURL).catch(err =>
-      console.error('Error opening GitHub:', err),
-    );
+    Linking.openURL(githubRepoURL).catch(err => console.error('Error opening GitHub:', err));
   };
 
   const handlePrivacyPolicy = () => {
-    const privacyPolicyURL =
-      'https://github.com/indranilbhuin/zero/blob/master/PRIVACYPOLICY.md';
-    Linking.openURL(privacyPolicyURL).catch(err =>
-      console.error('Error opening GitHub:', err),
-    );
+    const privacyPolicyURL = 'https://github.com/indranilbhuin/zero/blob/master/PRIVACYPOLICY.md';
+    Linking.openURL(privacyPolicyURL).catch(err => console.error('Error opening GitHub:', err));
   };
 
   const handleDeleteAllDataOk = async () => {
@@ -190,23 +145,13 @@ const useSettings = () => {
     setIsNameModalVisible,
     name,
     setName,
-    searchText,
-    setSearchText,
-    isCurrencyModalVisible,
-    setIsCurrencyModalVisible,
-    filteredCurrencies,
-    setFilteredCurrencies,
     appVersion,
     colors,
     handleThemeModalClose,
     handleNameModalClose,
-    handleCurrencyModalClose,
-    handleCurrencySelect,
     handleThemeSelection,
     handleNameUpdate,
-    handleSearch,
     handleCurrencyUpdate,
-    selectedCurrency,
     selectedTheme: themeMode,
     userName,
     currencySymbol,

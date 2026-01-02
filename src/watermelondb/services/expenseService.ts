@@ -158,16 +158,31 @@ export const getAllExpensesByUserIdWithCategory = async (
 };
 
 /**
- * Gets all expenses by user ID and date
+ * Gets all expenses by user ID and date with category data
  */
 export const getAllExpensesByDate = async (
   userId: string,
   targetDate: string,
-): Promise<ExpenseData[]> => {
+): Promise<ExpenseWithCategory[]> => {
+  // Get all expenses for the user
   const expenses = await database
     .get<Expense>('expenses')
     .query(Q.where('user_id', userId))
     .fetch();
+
+  // Get all categories for the user
+  const categories = await database
+    .get<Category>('categories')
+    .query(Q.where('user_id', userId))
+    .fetch();
+
+  // Create a map of categoryId -> category for fast lookup
+  const categoryMap = new Map(
+    categories.map(cat => [
+      cat.id,
+      {id: cat.id, name: cat.name, icon: cat.icon, color: cat.color},
+    ]),
+  );
 
   // Filter by date in memory since date format may vary
   const expensesByDate = expenses.filter(expense => {
@@ -175,15 +190,20 @@ export const getAllExpensesByDate = async (
     return formattedExpenseDate === targetDate;
   });
 
-  return expensesByDate.map(e => ({
-    id: e.id,
-    title: e.title,
-    amount: e.amount,
-    description: e.description,
-    categoryId: e.categoryId,
-    userId: e.userId,
-    date: e.date,
-  }));
+  // Return expenses with category data
+  return expensesByDate.map(e => {
+    const category = categoryMap.get(e.categoryId);
+    return {
+      id: e.id,
+      title: e.title,
+      amount: e.amount,
+      description: e.description,
+      categoryId: e.categoryId,
+      userId: e.userId,
+      date: e.date,
+      category,
+    };
+  });
 };
 
 /**

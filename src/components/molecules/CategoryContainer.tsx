@@ -4,7 +4,6 @@ import Icon from '../atoms/Icons';
 import PrimaryText from '../atoms/PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
 
-// Generic category type that works for both RxDB categories and JSON categories
 interface Category {
   id?: string;
   _id?: string;
@@ -32,7 +31,7 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
     <View style={styles.categoryMainContainer}>
       {categories.map(category => (
         <TouchableOpacity
-          key={String(category.id)}
+          key={String(category.id || category._id || category.name)}
           onPress={() => toggleCategorySelection(category)}>
           <View
             style={[

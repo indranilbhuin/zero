@@ -37,24 +37,14 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const categoryData = route?.params;
   const isAddButton = type === 'Add';
 
-  const [categoryName, setCategoryName] = useState(
-    isAddButton ? '' : categoryData.categoryName,
-  );
-  const [selectedIcon, setSelectedIcon] = useState(
-    isAddButton ? 'null' : categoryData.categoryIcon,
-  );
-  const [selectedColor, setSelectedColor] = useState(
-    isAddButton ? 'null' : categoryData.categoryColor,
-  );
-  const [selectedCategories, setSelectedCategories] = useState<
-    Array<CategorySelection>
-  >([]);
+  const [categoryName, setCategoryName] = useState(isAddButton ? '' : categoryData.categoryName);
+  const [selectedIcon, setSelectedIcon] = useState(isAddButton ? 'null' : categoryData.categoryIcon);
+  const [selectedColor, setSelectedColor] = useState(isAddButton ? 'null' : categoryData.categoryColor);
+  const [selectedCategories, setSelectedCategories] = useState<Array<CategorySelection>>([]);
 
   const allCategories = useSelector(selectCategoryData);
   const existingCategoryNames = allCategories.map(category => category.name);
-  const filteredCategories = defaultCategories.filter(
-    category => !existingCategoryNames.includes(category.name),
-  );
+  const filteredCategories = defaultCategories.filter(category => !existingCategoryNames.includes(category.name));
 
   const userId = useSelector(selectUserId);
   const isValid = categorySchema.safeParse(categoryName).success;
@@ -71,12 +61,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const handleAddFromDefaultCategory = async () => {
     for (const category of selectedCategories) {
-      await createCategory(
-        category.name,
-        userId,
-        category.icon ?? null,
-        category.color ?? null,
-      );
+      await createCategory(category.name, userId, category.icon ?? null, category.color ?? null);
     }
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
     goBack();
@@ -84,12 +69,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const handleUpdateCategory = async () => {
     try {
-      await updateCategoryById(
-        categoryData.categoryId,
-        categoryName,
-        selectedIcon,
-        selectedColor,
-      );
+      await updateCategoryById(categoryData.categoryId, categoryName, selectedIcon, selectedColor);
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
@@ -136,9 +116,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const toggleCategorySelection = useCallback(
     (category: CategorySelection) => {
       if (selectedCategories.some(c => c.name === category.name)) {
-        setSelectedCategories(
-          selectedCategories.filter(item => item.name !== category.name),
-        );
+        setSelectedCategories(selectedCategories.filter(item => item.name !== category.name));
       } else {
         setSelectedCategories([...selectedCategories, category]);
       }
@@ -161,19 +139,13 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           ]}>
           {category.icon !== undefined ? (
             <View style={onboardingStyles.iconContainer}>
-              <Icon
-                name={category.icon}
-                size={20}
-                color={category.color}
-              />
+              <Icon name={category.icon} size={20} color={category.color} />
             </View>
           ) : null}
 
           <PrimaryText
             style={{
-              color: selectedCategories?.includes(category)
-                ? colors.buttonText
-                : colors.primaryText,
+              color: selectedCategories?.includes(category) ? colors.buttonText : colors.primaryText,
               fontSize: 13,
             }}>
             {category.name}
@@ -185,10 +157,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   );
 
   return (
-    <PrimaryView
-      colors={colors}
-      style={{justifyContent: 'space-between'}}
-      dismissKeyboardOnTouch>
+    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
       <View>
         <View style={mainStyles.headerContainer}>
           <AppHeader onPress={goBack} colors={colors} text="Add Category" />
@@ -203,9 +172,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           schema={categorySchema}
         />
 
-        <PrimaryText style={{marginBottom: 10}}>
-          Pick your own icon and color
-        </PrimaryText>
+        <PrimaryText style={{marginBottom: 10}}>Pick your own icon and color</PrimaryText>
         <View style={styles.dateContainer}>
           <TouchableOpacity
             style={[
@@ -217,17 +184,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
             ]}
             onPress={handleOpenIconPicker}>
             {selectedIcon === 'null' ? (
-              <Icon
-                name="more-horizontal"
-                size={25}
-                color={colors.primaryText}
-              />
+              <Icon name="more-horizontal" size={25} color={colors.primaryText} />
             ) : (
-              <Icon
-                name={selectedIcon}
-                size={25}
-                color={colors.primaryText}
-              />
+              <Icon name={selectedIcon} size={25} color={colors.primaryText} />
             )}
           </TouchableOpacity>
           <TouchableOpacity onPress={handleOpenIconPicker}>
@@ -246,16 +205,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
             ]}
             onPress={handleOpenColorPicker}>
             {selectedColor === 'null' ? (
-              <View
-                style={[
-                  styles.colorCircle,
-                  {backgroundColor: colors.accentGreen},
-                ]}
-              />
+              <View style={[styles.colorCircle, {backgroundColor: colors.accentGreen}]} />
             ) : (
-              <View
-                style={[styles.colorCircle, {backgroundColor: selectedColor}]}
-              />
+              <View style={[styles.colorCircle, {backgroundColor: selectedColor}]} />
             )}
           </TouchableOpacity>
           <TouchableOpacity onPress={handleOpenColorPicker}>
@@ -286,14 +238,12 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
         ) : null}
       </View>
 
-      <View style={{marginBottom: '10%'}}>
-        <PrimaryButton
-          onPress={handleAddFromDefaultOrAddCategory}
-          colors={colors}
-          buttonTitle={type}
-          disabled={!isValid && selectedCategories.length === 0}
-        />
-      </View>
+      <PrimaryButton
+        onPress={handleAddFromDefaultOrAddCategory}
+        colors={colors}
+        buttonTitle={type}
+        disabled={!isValid && selectedCategories.length === 0}
+      />
     </PrimaryView>
   );
 };

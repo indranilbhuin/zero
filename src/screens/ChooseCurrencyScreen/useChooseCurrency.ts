@@ -40,14 +40,13 @@ const useChooseCurrency = () => {
   const handleSearch = (text: string) => {
     setSearch(text);
     const filtered = currencies.filter(currency => {
-      const {code, name, symbol, symbolNative} = currency;
+      const {code, name, symbol} = currency;
       const searchItem = text.toLowerCase();
 
       return (
         code.toLowerCase().includes(searchItem) ||
         name.toLowerCase().includes(searchItem) ||
-        symbol.toLowerCase().includes(searchItem) ||
-        symbolNative.toLowerCase().includes(searchItem)
+        symbol.toLowerCase().includes(searchItem)
       );
     });
     setFilteredCurrencies(filtered);

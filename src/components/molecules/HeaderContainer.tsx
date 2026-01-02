@@ -102,9 +102,7 @@ const styles = StyleSheet.create({
   greetingsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: '-2%',
-    marginRight: '-2%',
-    width: '80%',
+    flex: 1,
   },
   initialsContainer: {
     height: 40,

@@ -16,7 +16,6 @@ import UndoModal from '../atoms/UndoModal';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
 
-// Extended expense type with optional category populated from Redux
 interface CategoryInfo {
   id?: string;
   name?: string;
@@ -350,7 +349,6 @@ export default TransactionList;
 const styles = StyleSheet.create({
   mainContainer: {
     marginTop: 10,
-    minHeight: 2,
   },
   transactionContainer: {
     height: 60,

@@ -1,30 +1,17 @@
-import {
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import React from 'react';
-import PrimaryButton from '../../components/atoms/PrimaryButton';
+import {Modal, ScrollView, Text, TouchableOpacity, View, Platform, Share} from 'react-native';
+import React, {useCallback} from 'react';
 import Icon from '../../components/atoms/Icons';
 import {goBack} from '../../utils/navigationUtils';
 import useSettings from './useSettings';
 import styles from './style';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
-import textInputStyles from '../../styles/textInput';
-import CurrencySymbolPicker from '../../components/molecules/CurrencySymbolPicker';
 import CustomToast from '../../components/molecules/CustomToast';
 import RNFS from 'react-native-fs';
-import {
-  generateUniqueKey,
-  requestStoragePermission,
-} from '../../utils/dataUtils';
+import {generateUniqueKey, requestStoragePermission} from '../../utils/dataUtils';
 import {getTimestamp} from '../../utils/dateUtils';
 import ChangeNameModal from '../../components/molecules/ChangeNameModal';
+import {SheetManager} from 'react-native-actions-sheet';
 
 const SettingsScreen = () => {
   const {
@@ -34,21 +21,13 @@ const SettingsScreen = () => {
     setIsNameModalVisible,
     name,
     setName,
-    searchText,
-    isCurrencyModalVisible,
-    setIsCurrencyModalVisible,
-    filteredCurrencies,
     appVersion,
     colors,
     handleThemeModalClose,
     handleNameModalClose,
-    handleCurrencyModalClose,
-    handleCurrencySelect,
     handleThemeSelection,
     handleNameUpdate,
-    handleSearch,
     handleCurrencyUpdate,
-    selectedCurrency,
     selectedTheme,
     userName,
     currencySymbol,
@@ -73,47 +52,59 @@ const SettingsScreen = () => {
     handleDownloadError,
   } = useSettings();
 
-  const exportData = async (allData: unknown) => {
+  const handleOpenCurrencySheet = useCallback(() => {
+    void SheetManager.show('currency-picker-sheet', {
+      payload: {
+        selectedCurrency: {code: '', name: currencyName, symbol: currencySymbol},
+        onSelect: (currency: {code: string; name: string; symbol: string}) => {
+          handleCurrencyUpdate(currency);
+        },
+      },
+    });
+  }, [currencyName, currencySymbol, handleCurrencyUpdate]);
+
+  const exportData = async (dataToExport: unknown) => {
     try {
-      console.log(allData);
-
-      const storagePermissionGranted = await requestStoragePermission();
-
-      if (!storagePermissionGranted) {
-        console.log('Storage permission denied.');
-        setIsStorageModalVisible(true);
+      if (!dataToExport) {
+        setIsDownloadError(true);
         return;
       }
 
       const currentDateAndTime = getTimestamp();
-      const jsonData = JSON.stringify(
-        {key: generateUniqueKey(), data: allData},
-        null,
-        2,
-      );
-      console.log(jsonData);
-      const path = `${RNFS.DownloadDirectoryPath}/zero${currentDateAndTime}.json`;
+      const fileName = `zero${currentDateAndTime}.json`;
+      const jsonData = JSON.stringify({key: generateUniqueKey(), data: dataToExport}, null, 2);
 
-      RNFS.writeFile(path, jsonData, 'utf8')
-        .then(() => {
-          setIsDownloadSuccessful(true);
-          console.log('File written successfully!');
-          console.log('File path:', path);
-        })
-        .catch(() => {
-          setIsDownloadError(true);
+      if (Platform.OS === 'ios') {
+        const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+        await RNFS.writeFile(path, jsonData, 'utf8');
+
+        await Share.share({
+          url: `file://${path}`,
+          title: 'Export Zero Data',
         });
 
-      console.log('File saved successfully at: ', path);
+        setIsDownloadSuccessful(true);
+      } else {
+        const storagePermissionGranted = await requestStoragePermission();
+
+        if (!storagePermissionGranted) {
+          setIsStorageModalVisible(true);
+          return;
+        }
+
+        const path = `${RNFS.DownloadDirectoryPath}/${fileName}`;
+
+        await RNFS.writeFile(path, jsonData, 'utf8');
+        setIsDownloadSuccessful(true);
+      }
     } catch (error) {
       console.error('Error saving file:', error);
+      setIsDownloadError(true);
     }
   };
 
-  const renderRadioButtons = (onThemeSelect: {
-    (theme: any): Promise<void>;
-    (arg0: string): void;
-  }) => {
+  const renderRadioButtons = (onThemeSelect: {(theme: any): Promise<void>; (arg0: string): void}) => {
     const themes = ['light', 'dark', 'system'];
     return themes.map(theme => (
       <TouchableOpacity key={theme} onPress={() => onThemeSelect(theme)}>
@@ -121,12 +112,7 @@ const SettingsScreen = () => {
           <PrimaryText>{theme}</PrimaryText>
           <View style={[styles.radioButton, {borderColor: colors.primaryText}]}>
             {selectedTheme === theme && (
-              <View
-                style={[
-                  styles.radioButtonSelected,
-                  {backgroundColor: colors.primaryText},
-                ]}
-              />
+              <View style={[styles.radioButtonSelected, {backgroundColor: colors.primaryText}]} />
             )}
           </View>
         </View>
@@ -140,202 +126,86 @@ const SettingsScreen = () => {
         <View style={styles.greetingsContainer}>
           <View style={styles.iconButtonContainer}>
             <TouchableOpacity onPress={() => goBack()}>
-              <Icon
-                name="arrow-left"
-                size={25}
-                color={colors.primaryText}
-              />
+              <Icon name="arrow-left" size={25} color={colors.primaryText} />
             </TouchableOpacity>
           </View>
           <PrimaryText style={{fontSize: 25}}>zero</PrimaryText>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
-          Appearance & Personalization
-        </PrimaryText>
-        <View
-          style={[
-            styles.settingsContainer,
-            {
-              backgroundColor: colors.containerColor,
-              borderColor: colors.secondaryText,
-            },
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, marginTop: 20}}>Appearance & Personalization</PrimaryText>
+        <View style={[styles.settingsContainer, {backgroundColor: colors.containerColor}]}>
           <TouchableOpacity onPress={() => setIsThemeModalVisible(true)}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  borderColor: colors.secondaryText,
-                },
-              ]}>
+            <View style={styles.individualSettingsContainer}>
               <PrimaryText>Choose Theme</PrimaryText>
-              <PrimaryText>{selectedTheme}</PrimaryText>
+              <PrimaryText style={{color: colors.secondaryText}}>{selectedTheme}</PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsNameModalVisible(true)}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  backgroundColor: colors.containerColor,
-                  borderColor: colors.secondaryText,
-                },
-              ]}>
+            <View style={styles.individualSettingsContainer}>
               <PrimaryText>Change Name</PrimaryText>
-              <PrimaryText>{userName}</PrimaryText>
+              <PrimaryText style={{color: colors.secondaryText}}>{userName}</PrimaryText>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsCurrencyModalVisible(true)}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  backgroundColor: colors.containerColor,
-                  borderBottomWidth: 0,
-                  borderBottomLeftRadius: 8,
-                  borderBottomRightRadius: 8,
-                },
-              ]}>
-              <PrimaryText style={{width: '50%'}}>
-                Change Currency Symbol
-              </PrimaryText>
+          <TouchableOpacity onPress={handleOpenCurrencySheet}>
+            <View style={styles.individualSettingsContainer}>
+              <PrimaryText style={{width: '50%'}}>Change Currency Symbol</PrimaryText>
               <View style={{alignItems: 'flex-end'}}>
-                <PrimaryText>{currencySymbol}</PrimaryText>
-                <PrimaryText>{currencyName}</PrimaryText>
+                <PrimaryText style={{color: colors.secondaryText}}>{currencySymbol}</PrimaryText>
+                <PrimaryText style={{color: colors.secondaryText, fontSize: 11}}>{currencyName}</PrimaryText>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
-          Manage your Data
-        </PrimaryText>
-        <View
-          style={[
-            styles.settingsContainer,
-            {
-              backgroundColor: colors.containerColor,
-              borderColor: colors.secondaryText,
-            },
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, marginTop: 20}}>Manage your Data</PrimaryText>
+        <View style={[styles.settingsContainer, {backgroundColor: colors.containerColor}]}>
           <TouchableOpacity onPress={() => exportData(allData)}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  borderColor: colors.secondaryText,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                },
-              ]}>
+            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
               <PrimaryText>Download your data</PrimaryText>
-              <PrimaryText style={{fontSize: 11}}>
+              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
                 You can import this data in a new device
               </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDeleteAllData}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  borderColor: colors.secondaryText,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                  borderBottomWidth: 0,
-                },
-              ]}>
+            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
               <PrimaryText>Delete all data</PrimaryText>
-              <PrimaryText style={{fontSize: 11}}>
+              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
                 All data associated with zero will be deleted
               </PrimaryText>
             </View>
           </TouchableOpacity>
         </View>
 
-        <PrimaryText style={{color: colors.accentGreen, marginTop: 15}}>
-          Help & Feedback
-        </PrimaryText>
-        <View
-          style={[
-            styles.settingsContainer,
-            {
-              backgroundColor: colors.containerColor,
-              borderColor: colors.secondaryText,
-            },
-          ]}>
+        <PrimaryText style={{color: colors.accentGreen, marginTop: 20}}>Help & Feedback</PrimaryText>
+        <View style={[styles.settingsContainer, {backgroundColor: colors.containerColor}]}>
           <TouchableOpacity onPress={handleRateNow}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  borderColor: colors.secondaryText,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                },
-              ]}>
+            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
               <PrimaryText>Rate the app</PrimaryText>
-              <PrimaryText style={{fontSize: 11}}>
-                Enjoying Expense Tracker? Your feedback helps us improve!
+              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
+                Enjoying zero? Your feedback helps us improve!
               </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleGithub}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  borderColor: colors.secondaryText,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                },
-              ]}>
+            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
               <PrimaryText>Github</PrimaryText>
-              <PrimaryText style={{fontSize: 11}}>
-                Explore the Source Code
-              </PrimaryText>
+              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>Explore the Source Code</PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handlePrivacyPolicy}>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  borderColor: colors.secondaryText,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                },
-              ]}>
+            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
               <PrimaryText>Privacy Policy</PrimaryText>
-              <PrimaryText style={{fontSize: 11}}>
+              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
                 Your Data, Your Device: zero Servers, zero Access.
               </PrimaryText>
             </View>
           </TouchableOpacity>
-          <TouchableWithoutFeedback>
-            <View
-              style={[
-                styles.individualSettingsContainer,
-                {
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                  borderBottomWidth: 0,
-                  borderBottomLeftRadius: 8,
-                  borderBottomRightRadius: 8,
-                },
-              ]}>
-              <PrimaryText>Version</PrimaryText>
-              <PrimaryText style={{fontSize: 11}}>v{appVersion}</PrimaryText>
-            </View>
-          </TouchableWithoutFeedback>
+          <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+            <PrimaryText>Version</PrimaryText>
+            <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>v{appVersion}</PrimaryText>
+          </View>
         </View>
         <PrimaryText
           style={{
@@ -355,8 +225,7 @@ const SettingsScreen = () => {
             textAlign: 'center',
             marginBottom: '5%',
           }}>
-          Developed with{' '}
-          <Text style={{color: colors.accentGreen}}>passion</Text> in India.
+          Developed with <Text style={{color: colors.accentGreen}}>passion</Text> in India.
         </PrimaryText>
       </ScrollView>
 
@@ -366,8 +235,7 @@ const SettingsScreen = () => {
         visible={isThemeModalVisible}
         onRequestClose={handleThemeModalClose}>
         <View style={[styles.modalContainer]}>
-          <View
-            style={[styles.modal, {backgroundColor: colors.containerColor}]}>
+          <View style={[styles.modal, {backgroundColor: colors.containerColor}]}>
             <PrimaryText
               style={{
                 color: colors.primaryText,
@@ -392,67 +260,6 @@ const SettingsScreen = () => {
         handleNameUpdate={handleNameUpdate}
       />
 
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isCurrencyModalVisible}
-        onRequestClose={handleCurrencyModalClose}>
-        <View style={[styles.modalContainer]}>
-          <View
-            style={[styles.modal, {backgroundColor: colors.containerColor}]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <PrimaryText
-                style={{
-                  color: colors.primaryText,
-                  fontSize: 17,
-                  marginTop: 10,
-                  marginBottom: 30,
-                  fontFamily: 'FiraCode-SemiBold',
-                }}>
-                Select Currency Symbol
-              </PrimaryText>
-
-              <View
-                style={[
-                  textInputStyles.textInputContainer,
-                  {
-                    borderColor: colors.secondaryContainerColor,
-                    backgroundColor: colors.secondaryAccent,
-                  },
-                ]}>
-                <Icon
-                  name="search"
-                  size={20}
-                  color={colors.primaryText}
-                />
-                <TextInput
-                  style={[
-                    textInputStyles.textInputWithIcon,
-                    {
-                      color: colors.primaryText,
-                    },
-                  ]}
-                  value={searchText}
-                  onChangeText={handleSearch}
-                  placeholder={'eg. INR'}
-                  placeholderTextColor={colors.secondaryText}
-                />
-              </View>
-              <CurrencySymbolPicker
-                filteredCurrencies={filteredCurrencies}
-                selectedCurrency={selectedCurrency}
-                handleCurrencySelect={handleCurrencySelect}
-              />
-              <PrimaryButton
-                onPress={handleCurrencyUpdate}
-                colors={colors}
-                buttonTitle={'Update'}
-              />
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
       <CustomToast
         visible={isDeleteModalVisible}
         message={'Are you sure you want to delete all your data'}
@@ -463,9 +270,7 @@ const SettingsScreen = () => {
 
       <CustomToast
         visible={isStorageModalVisible}
-        message={
-          'You need to manually give permission for the storage to download your data'
-        }
+        message={'You need to manually give permission for the storage to download your data'}
         type="warning"
         onOk={handleAccessStorageOk}
         onCancel={handleAccessStorageCancel}

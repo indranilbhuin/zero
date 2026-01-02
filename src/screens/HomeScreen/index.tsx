@@ -37,7 +37,7 @@ const HomeScreen = () => {
 
   return (
     <>
-      <PrimaryView colors={colors}>
+      <PrimaryView colors={colors} useBottomPadding={false}>
         <HeaderContainer headerText={`Hey, ${userName}`} />
 
         <ScrollView

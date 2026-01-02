@@ -13,8 +13,7 @@ import EmptyState from '../../components/atoms/EmptyState';
 import {FlashList} from '@shopify/flash-list';
 
 const CategoryScreen = () => {
-  const {colors, refreshing, onRefresh, categories, handleEdit, handleDelete} =
-    useCategory();
+  const {colors, refreshing, onRefresh, categories, handleEdit, handleDelete} = useCategory();
 
   const renderCategoryItem = useCallback(
     ({item: category}: {item: Category}) => (
@@ -26,16 +25,8 @@ const CategoryScreen = () => {
           },
         ]}>
         <View style={styles.iconNameContainer}>
-          <View
-            style={[
-              styles.iconContainer,
-              {backgroundColor: colors.iconContainer},
-            ]}>
-            <Icon
-              name={category.icon ?? 'shapes'}
-              size={20}
-              color={category.color ?? colors.primaryText}
-            />
+          <View style={[styles.iconContainer, {backgroundColor: colors.iconContainer}]}>
+            <Icon name={category.icon ?? 'shapes'} size={20} color={category.color ?? colors.primaryText} />
           </View>
           <View>
             <PrimaryText>{category.name}</PrimaryText>
@@ -52,20 +43,10 @@ const CategoryScreen = () => {
                 category.color ?? colors.primaryText,
               )
             }>
-            <Icon
-              name="pencil"
-              size={20}
-              color={colors.accentGreen}
-            />
+            <Icon name="pencil" size={20} color={colors.accentGreen} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleDelete(category.id)}>
-            <Icon
-              name="trash-2"
-              size={20}
-              color={colors.accentOrange}
-            />
+          <TouchableOpacity style={styles.actionButton} onPress={() => handleDelete(category.id)}>
+            <Icon name="trash-2" size={20} color={colors.accentOrange} />
           </TouchableOpacity>
         </View>
       </View>
@@ -74,19 +55,13 @@ const CategoryScreen = () => {
   );
 
   const ListEmptyComponent = useCallback(
-    () => (
-      <EmptyState
-        colors={colors}
-        type={'Categories'}
-        style={{marginTop: '30%'}}
-      />
-    ),
+    () => <EmptyState colors={colors} type={'Categories'} style={{marginTop: '30%'}} />,
     [colors],
   );
 
   return (
     <>
-      <PrimaryView colors={colors}>
+      <PrimaryView colors={colors} useBottomPadding={false}>
         <View style={{marginBottom: 15}}>
           <HeaderContainer headerText={'Categories'} />
         </View>
@@ -96,26 +71,16 @@ const CategoryScreen = () => {
             renderItem={renderCategoryItem}
             keyExtractor={item => String(item.id)}
             showsVerticalScrollIndicator={false}
-            // contentContainerStyle={{paddingBottom: 80 + insets.bottom}}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             ListEmptyComponent={ListEmptyComponent}
           />
         </View>
       </PrimaryView>
       <View style={homeStyles.addButtonContainer}>
         <TouchableOpacity
-          style={[
-            homeStyles.addButton,
-            {backgroundColor: colors.secondaryBackground},
-          ]}
+          style={[homeStyles.addButton, {backgroundColor: colors.secondaryBackground}]}
           onPress={() => navigate('AddCategoryScreen')}>
-          <Icon
-            name="plus"
-            size={30}
-            color={colors.primaryText}
-          />
+          <Icon name="plus" size={30} color={colors.primaryText} />
         </TouchableOpacity>
       </View>
     </>
