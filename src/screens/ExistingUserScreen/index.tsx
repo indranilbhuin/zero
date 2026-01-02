@@ -11,7 +11,7 @@ import useExistingUser from './useExistingUser';
 const ExistingUserScreen = () => {
   const {
     colors,
-    importRealmData,
+    importData,
     isValidKey,
     fileKey,
     userName,
@@ -65,7 +65,7 @@ const ExistingUserScreen = () => {
               ]}>
               <TouchableOpacity
                 style={styles.uploadContent}
-                onPress={importRealmData}
+                onPress={importData}
                 disabled={isValidKey(fileKey)}>
                 <Icon
                   name={'file-upload'}

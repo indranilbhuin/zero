@@ -88,7 +88,7 @@ const useExistingUser = () => {
     }
   }
 
-  const importRealmData = async () => {
+  const importData = async () => {
     try {
       const storagePermissionGranted = await requestStoragePermission();
 
@@ -140,7 +140,7 @@ const useExistingUser = () => {
     await deleteAllData();
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
     dispatch({type: FETCH_ALL_DEBTOR_DATA});
-    await importRealmData();
+    await importData();
   };
 
   const isValidKey = (key: string | null): boolean => {
@@ -253,7 +253,7 @@ const useExistingUser = () => {
 
   return {
     colors,
-    importRealmData,
+    importData,
     isValidKey,
     fileKey,
     userName,

@@ -73,7 +73,7 @@ const SettingsScreen = () => {
     handleDownloadError,
   } = useSettings();
 
-  const exportRealmData = async (allData: unknown) => {
+  const exportData = async (allData: unknown) => {
     try {
       console.log(allData);
 
@@ -221,7 +221,7 @@ const SettingsScreen = () => {
               borderColor: colors.secondaryText,
             },
           ]}>
-          <TouchableOpacity onPress={() => exportRealmData(allData)}>
+          <TouchableOpacity onPress={() => exportData(allData)}>
             <View
               style={[
                 styles.individualSettingsContainer,
