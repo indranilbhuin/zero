@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "zer0",
+      "name": "zero",
       "dependencies": {
         "@babel/runtime": "^7.28.4",
         "@nozbe/simdjson": "^3.9.4",

@@ -13,7 +13,7 @@ const SplashScreen = () => {
       <View>
         <PrimaryText
           style={{color: colors.primaryText, fontSize: 90, paddingTop: '20%'}}>
-          zer0
+          zero
         </PrimaryText>
         <PrimaryText style={{color: colors.secondaryText, fontSize: 25}}>
           Count Every
@@ -23,16 +23,14 @@ const SplashScreen = () => {
             color: colors.secondaryText,
             fontSize: 25,
           }}>
-          Penny with zer0
+          Penny with zero
         </PrimaryText>
       </View>
-      <View style={{marginBottom: '10%'}}>
-        <PrimaryButton
-          onPress={handleClick}
-          colors={colors}
-          buttonTitle={'Get Started'}
-        />
-      </View>
+      <PrimaryButton
+        onPress={handleClick}
+        colors={colors}
+        buttonTitle={'Get Started'}
+      />
     </PrimaryView>
   );
 };

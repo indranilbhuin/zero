@@ -1,5 +1,6 @@
 import {
   Keyboard,
+  Platform,
   StatusBar,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -25,7 +26,7 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const {colors: contextColors, isDark} = useTheme();
-  
+
   const colors = propColors || contextColors;
 
   const content = (
@@ -35,7 +36,8 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
         {
           backgroundColor: colors.primaryBackground,
           paddingTop: insets.top,
-          paddingBottom: insets.bottom,
+          paddingBottom:
+            Platform.OS === 'ios' ? insets.bottom : insets.bottom + 10,
         },
         style,
       ]}>
