@@ -36,7 +36,9 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const [debtorTitle, setDebtorTitle] = useState(
     isAddButton ? '' : debtorData.debtorName,
   );
-  const [selectedCategories, setSelectedCategories] = useState<Array<DebtCategory>>(
+  const [selectedCategories, setSelectedCategories] = useState<
+    Array<DebtCategory>
+  >(
     isAddButton
       ? []
       : debtCategories.filter(
@@ -89,7 +91,10 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   };
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
+    <PrimaryView
+      colors={colors}
+      style={{justifyContent: 'space-between'}}
+      dismissKeyboardOnTouch>
       <View>
         <View style={mainStyles.headerContainer}>
           <AppHeader onPress={goBack} colors={colors} text={`${type} Debtor`} />
@@ -116,14 +121,12 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
           schema={nameSchema}
         />
       </View>
-      <View style={{marginBottom: '10%'}}>
-        <PrimaryButton
-          onPress={isAddButton ? handleAddDebtor : handleUpdateDebtor}
-          colors={colors}
-          buttonTitle={type}
-          disabled={!isValid}
-        />
-      </View>
+      <PrimaryButton
+        onPress={isAddButton ? handleAddDebtor : handleUpdateDebtor}
+        colors={colors}
+        buttonTitle={type}
+        disabled={!isValid}
+      />
     </PrimaryView>
   );
 };

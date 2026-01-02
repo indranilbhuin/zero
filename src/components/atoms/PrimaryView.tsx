@@ -26,7 +26,6 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
   const insets = useSafeAreaInsets();
   const {colors: contextColors, isDark} = useTheme();
   
-  // Use prop colors if provided, otherwise use context colors
   const colors = propColors || contextColors;
 
   const content = (

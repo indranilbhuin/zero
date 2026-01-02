@@ -78,9 +78,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.zer0"
+    namespace "com.anotherwhy.zero"
     defaultConfig {
-        applicationId "com.zer0"
+        applicationId "com.anotherwhy.zero"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2

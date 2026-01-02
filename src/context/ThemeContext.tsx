@@ -20,6 +20,7 @@ export interface ThemeColors {
   secondaryText: string;
   accentGreen: string;
   accentOrange: string;
+  accentBlue: string;
   buttonText: string;
   containerColor: string;
   cardBackground: string;
@@ -39,6 +40,7 @@ const LightColors: ThemeColors = {
   secondaryText: '#333333',
   accentGreen: '#6E8B3D',
   accentOrange: '#FFA500',
+  accentBlue: '#1E90FF',
   buttonText: '#FFFFFF',
   containerColor: '#F4F4F0',
   cardBackground: '#EFEFEF',
@@ -58,6 +60,7 @@ const DarkColors: ThemeColors = {
   secondaryText: '#CCCCCC',
   accentGreen: '#B1FB98',
   accentOrange: '#FFA500',
+  accentBlue: '#1E90FF',
   buttonText: '#000000',
   containerColor: '#1f1f1f',
   cardBackground: '#262626',

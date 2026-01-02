@@ -1,4 +1,4 @@
-package com.zer0
+package com.anotherwhy.zero
 
 import android.app.Application
 import com.facebook.react.PackageList

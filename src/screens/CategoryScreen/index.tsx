@@ -93,12 +93,13 @@ const CategoryScreen = () => {
         <View style={{marginBottom: 15}}>
           <HeaderContainer headerText={'Categories'} />
         </View>
-        <View style={{flex: 1, marginBottom: 65}}>
+        <View style={{flex: 1}}>
           <FlashList
             data={categories}
             renderItem={renderCategoryItem}
             keyExtractor={item => String(item.id)}
             showsVerticalScrollIndicator={false}
+            // contentContainerStyle={{paddingBottom: 80 + insets.bottom}}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
