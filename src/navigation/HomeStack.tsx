@@ -24,41 +24,41 @@ const screenOptions = {
   headerShown: false,
 };
 
-const HomeIcon = ({color}: any) => (
-  <View style={{alignItems: 'center'}}>
-    <Icon
-      name={'home'}
-      size={28}
-      type={'MaterialIcons'}
-      color={color}
-    />
-    <Text style={[styles.labelText, {color: color}]}>Home</Text>
+const ICON_SIZE = 24;
+
+const HomeIcon = ({color}: {color: string}) => (
+  <View style={styles.iconContainer}>
+    <View style={styles.iconWrapper}>
+      <Icon name={'home'} size={ICON_SIZE} type={'MaterialIcons'} color={color} />
+    </View>
+    <Text style={[styles.labelText, {color}]}>Home</Text>
   </View>
 );
 
-const ReportsIcon = ({color}: any) => (
-  <View style={{alignItems: 'center'}}>
-    <Icon name={'analytics'} size={25} type={'MaterialIcons'} color={color} />
-    <Text style={[styles.labelText, {color: color}]}>Reports</Text>
+const ReportsIcon = ({color}: {color: string}) => (
+  <View style={styles.iconContainer}>
+    <View style={styles.iconWrapper}>
+      <Icon name={'analytics'} size={ICON_SIZE} type={'MaterialIcons'} color={color} />
+    </View>
+    <Text style={[styles.labelText, {color}]}>Reports</Text>
   </View>
 );
 
-const DebtIcon = ({color}: any) => (
-  <View style={{alignItems: 'center'}}>
-    <Icon name={'credit-card'} size={25} type={'MaterialIcons'} color={color} />
-    <Text style={[styles.labelText, {color: color}]}>Debts</Text>
+const DebtIcon = ({color}: {color: string}) => (
+  <View style={styles.iconContainer}>
+    <View style={styles.iconWrapper}>
+      <Icon name={'credit-card'} size={ICON_SIZE} type={'MaterialIcons'} color={color} />
+    </View>
+    <Text style={[styles.labelText, {color}]}>Debts</Text>
   </View>
 );
 
-const CategoriesIcon = ({color}: any) => (
-  <View style={{alignItems: 'center'}}>
-    <Icon
-      name={'shape'}
-      size={25}
-      type={'MaterialCommunityIcons'}
-      color={color}
-    />
-    <Text style={[styles.labelText, {color: color}]}>Categories</Text>
+const CategoriesIcon = ({color}: {color: string}) => (
+  <View style={styles.iconContainer}>
+    <View style={styles.iconWrapper}>
+      <Icon name={'shape'} size={ICON_SIZE} type={'MaterialCommunityIcons'} color={color} />
+    </View>
+    <Text style={[styles.labelText, {color}]}>Categories</Text>
   </View>
 );
 
@@ -67,6 +67,15 @@ const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
   const colors = useThemeColors();
+
+  const tabBarStyle = {
+    backgroundColor: colors.containerColor,
+    height: 65,
+    paddingTop: 8,
+    paddingBottom: 8,
+    borderTopWidth: 0,
+  };
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -74,6 +83,7 @@ const TabStack = () => {
         tabBarActiveTintColor: colors.accentGreen,
         tabBarInactiveTintColor: colors.primaryText,
         tabBarShowLabel: false,
+        tabBarStyle: tabBarStyle,
       }}>
       <Tab.Screen
         name="HomeScreen"
@@ -81,10 +91,6 @@ const TabStack = () => {
         options={{
           headerShown: false,
           tabBarIcon: HomeIcon,
-          tabBarStyle: {
-            backgroundColor: colors.containerColor,
-            height: 55,
-          },
         }}
       />
       <Tab.Screen
@@ -93,10 +99,6 @@ const TabStack = () => {
         options={{
           headerShown: false,
           tabBarIcon: ReportsIcon,
-          tabBarStyle: {
-            backgroundColor: colors.containerColor,
-            height: 55,
-          },
         }}
       />
       <Tab.Screen
@@ -105,10 +107,6 @@ const TabStack = () => {
         options={{
           headerShown: false,
           tabBarIcon: CategoriesIcon,
-          tabBarStyle: {
-            backgroundColor: colors.containerColor,
-            height: 55,
-          },
         }}
       />
       <Tab.Screen
@@ -117,10 +115,6 @@ const TabStack = () => {
         options={{
           headerShown: false,
           tabBarIcon: DebtIcon,
-          tabBarStyle: {
-            backgroundColor: colors.containerColor,
-            height: 55,
-          },
         }}
       />
     </Tab.Navigator>
@@ -165,9 +159,21 @@ const HomeStack = () => {
 export default HomeStack;
 
 const styles = StyleSheet.create({
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 70,
+  },
+  iconWrapper: {
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   labelText: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'FiraCode-Medium',
     includeFontPadding: false,
+    textAlign: 'center',
+    marginTop: 2,
   },
 });

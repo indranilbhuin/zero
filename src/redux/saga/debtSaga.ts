@@ -8,7 +8,7 @@ import {
 import {
   getAllDebtsByUserId,
   getAllDebtsByUserIdAndDebtorId,
-} from '../../services/DebtService';
+} from '../../watermelondb/services';
 import {
   getAllDebtFaliure,
   getAllDebtRequest,

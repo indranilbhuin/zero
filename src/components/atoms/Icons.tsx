@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -19,6 +19,7 @@ const Icon: React.FC<IconProps> = ({name, size, color, type}) => {
     size,
     color,
   };
+  console.log('Icon props:', { name, size, color, type });
 
   switch (type) {
     case 'AntDesign':
@@ -38,4 +39,4 @@ const Icon: React.FC<IconProps> = ({name, size, color, type}) => {
   }
 };
 
-export default Icon;
+export default memo(Icon);

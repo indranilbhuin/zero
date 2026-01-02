@@ -8,8 +8,7 @@ import {
 import {useEffect, useState} from 'react';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
-import Debtor from '../../schemas/DebtorSchema';
-import Debt from '../../schemas/DebtSchema';
+import {DebtorData as Debtor, DebtData as Debt} from '../../watermelondb/services';
 
 const useDebts = () => {
   const colors = useThemeColors();
@@ -76,7 +75,7 @@ const useDebts = () => {
   useEffect(() => {
     dispatch({type: FETCH_ALL_DEBTOR_DATA});
     dispatch(getAllDebtRequest());
-  }, []);
+  }, [dispatch]);
 
   return {
     colors,

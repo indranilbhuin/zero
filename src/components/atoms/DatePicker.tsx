@@ -23,7 +23,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   const colors = useThemeColors();
   const handleDateChange = (
-    event: DateTimePickerEvent,
+    _event: DateTimePickerEvent,
     selectedDate?: Date | undefined,
   ) => {
     const currentDate = selectedDate ?? createdAt;
@@ -31,9 +31,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
     const formattedDate = moment(currentDate).format('YYYY-MM-DDTHH:mm:ss');
     setCreatedAt(formattedDate);
     setShowDatePicker(false);
-    console.log("this is selected date", currentDate, utcDate, formattedDate)
+    console.log('this is selected date', currentDate, utcDate, formattedDate);
   };
-  console.log("this is current date", createdAt)
+  console.log('this is current date', createdAt);
 
   return (
     <View style={styles.dateContainer}>

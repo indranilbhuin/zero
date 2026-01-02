@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import React, {useState} from 'react';
 import PrimaryView from '../atoms/PrimaryView';
 import mainStyles from '../../styles/main';
@@ -10,13 +10,18 @@ import CategoryContainer from './CategoryContainer';
 import CustomInput from '../atoms/CustomInput';
 import PrimaryButton from '../atoms/PrimaryButton';
 import {useDispatch, useSelector} from 'react-redux';
-import Category from '../../schemas/CategorySchema';
 import {selectUserId} from '../../redux/slice/userIdSlice';
-import {createDebtor, updateDebtorById} from '../../services/DebtorService';
+import {createDebtor, updateDebtorById} from '../../watermelondb/services';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import debtCategories from '../../../assets/jsons/defaultDebtAccounts.json';
 import {nameSchema} from '../../utils/validationSchema';
 import {getDebtRequest} from '../../redux/slice/debtDataSlice';
+
+interface DebtCategory {
+  name: string;
+  icon?: string;
+  color?: string;
+}
 
 interface DebtorEntryProps {
   type: string;
@@ -31,7 +36,7 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const [debtorTitle, setDebtorTitle] = useState(
     isAddButton ? '' : debtorData.debtorName,
   );
-  const [selectedCategories, setSelectedCategories] = useState<Array<any>>(
+  const [selectedCategories, setSelectedCategories] = useState<Array<DebtCategory>>(
     isAddButton
       ? []
       : debtCategories.filter(
@@ -42,22 +47,22 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const userId = useSelector(selectUserId);
   const isValid = nameSchema.safeParse(debtorTitle).success;
 
-  const toggleCategorySelection = (category: Category) => {
-    if (selectedCategories.includes(category)) {
+  const toggleCategorySelection = (category: DebtCategory) => {
+    if (selectedCategories.some(c => c.name === category.name)) {
       setSelectedCategories([]);
     } else {
       setSelectedCategories([category]);
     }
   };
 
-  const handleAddDebtor = () => {
+  const handleAddDebtor = async () => {
     try {
-      createDebtor(
+      await createDebtor(
         debtorTitle,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        selectedCategories[0].icon,
-        selectedCategories[0].name,
-        selectedCategories[0].color,
+        userId,
+        selectedCategories[0]?.icon ?? null,
+        selectedCategories[0]?.name ?? '',
+        selectedCategories[0]?.color ?? null,
       );
       dispatch({type: FETCH_ALL_DEBTOR_DATA});
       goBack();
@@ -66,10 +71,10 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
     }
   };
 
-  const handleUpdateDebtor = () => {
+  const handleUpdateDebtor = async () => {
     try {
-      updateDebtorById(
-        Realm.BSON.ObjectID.createFromHexString(debtorData.debtorId),
+      await updateDebtorById(
+        debtorData.debtorId,
         debtorTitle,
         selectedCategories[0].icon,
         selectedCategories[0].name,
@@ -79,12 +84,12 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
       dispatch(getDebtRequest(debtorData.debtorId));
       goBack();
     } catch (error) {
-      console.error('Error creating debtor:', error);
+      console.error('Error updating debtor:', error);
     }
   };
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
+    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
       <View>
         <View style={mainStyles.headerContainer}>
           <AppHeader onPress={goBack} colors={colors} text={`${type} Debtor`} />
@@ -124,5 +129,3 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
 };
 
 export default DebtorEntry;
-
-const styles = StyleSheet.create({});

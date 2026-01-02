@@ -15,7 +15,7 @@ import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-import {createExpense, updateExpenseById} from '../../services/ExpenseService';
+import {createExpense, updateExpenseById} from '../../watermelondb/services';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
@@ -25,6 +25,7 @@ import {
   expenseDescriptionSchema,
   expenseSchema,
 } from '../../utils/validationSchema';
+import {CategoryData as CategoryDocType} from '../../watermelondb/services';
 
 interface ExpenseEntryProps {
   type: string;
@@ -36,12 +37,13 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const isAddButton = type === 'Add';
   const [hasInteracted, setHasInteracted] = useState(false);
   const categories = useSelector(selectActiveCategories);
-  const [selectedCategories, setSelectedCategories] = useState(
+  const [selectedCategories, setSelectedCategories] = useState<CategoryDocType[]>(
     isAddButton
       ? []
       : categories?.filter(
-          category => category?.name === expenseData?.category.name,
-        ),
+          (category: CategoryDocType) =>
+            category?.name === expenseData?.category?.name,
+        ) ?? [],
   );
 
   const [createdAt, setCreatedAt] = useState(
@@ -61,7 +63,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   );
 
   const expenseAmountError = hasInteracted
-    ? expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.errors || []
+    ? expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.issues || []
     : [];
 
   const isValid =
@@ -77,7 +79,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
 
   useEffect(() => {
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
-  }, []);
+  }, [dispatch]);
 
   const handleAddCategory = () => {
     navigate('AddCategoryScreen');
@@ -87,14 +89,14 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     setHasInteracted(true);
   };
 
-  const handleAddExpense = () => {
+  const handleAddExpense = async () => {
     if (!isValid || selectedCategories.length === 0) {
       return;
     }
-    const categoryId = selectedCategories[0]._id;
+    const categoryId = selectedCategories[0].id;
     try {
-      createExpense(
-        Realm.BSON.ObjectID.createFromHexString(userId),
+      await createExpense(
+        userId,
         expenseTitle,
         Number(expenseAmount),
         expenseDescription,
@@ -109,15 +111,15 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     }
   };
 
-  const handleUpdateExpense = () => {
+  const handleUpdateExpense = async () => {
     if (!isValid || selectedCategories.length === 0) {
       return;
     }
-    const categoryId = String(selectedCategories[0]._id);
+    const categoryId = selectedCategories[0].id;
     try {
-      updateExpenseById(
-        Realm.BSON.ObjectID.createFromHexString(expenseData.expenseId),
-        Realm.BSON.ObjectID.createFromHexString(categoryId),
+      await updateExpenseById(
+        expenseData.expenseId,
+        categoryId,
         expenseTitle,
         Number(expenseAmount),
         expenseDescription,
@@ -131,7 +133,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     }
   };
 
-  const toggleCategorySelection = (category: any) => {
+  const toggleCategorySelection = (category: CategoryDocType) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories([]);
     } else {
@@ -140,7 +142,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   };
 
   return (
-    <PrimaryView colors={colors}>
+    <PrimaryView colors={colors} dismissKeyboardOnTouch>
       <View style={mainStyles.headerContainer}>
         <AppHeader
           onPress={() => goBack(() => dispatch(getExpenseRequest()))}
@@ -193,7 +195,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
       </View>
       {expenseAmountError.length > 0 && (
         <View style={{marginBottom: 10}}>
-          {expenseAmountError.map(error => (
+          {expenseAmountError.map((error: {message: string}) => (
             <View key={error.message}>
               <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
                 {error.message}
@@ -245,6 +247,6 @@ const styles = StyleSheet.create({
   },
   submitButtonContainer: {
     marginTop: 5,
-    marginBottom: 15,
+    // marginBottom: 15,
   },
 });

@@ -39,6 +39,10 @@ const reportsStyles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomWidth: 0.8,
   },
+  yearListContainer: {
+    flex: 1,
+    minHeight: 200,
+  },
   chartContainer: {
     marginTop: '8%',
     marginBottom: '12%',

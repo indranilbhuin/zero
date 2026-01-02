@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import PrimaryView from '../atoms/PrimaryView';
 import AppHeader from '../atoms/AppHeader';
 import CustomInput from '../atoms/CustomInput';
@@ -19,17 +19,20 @@ import allIcons from '../../../assets/jsons/categoryIcons.json';
 import allColors from '../../../assets/jsons/categoryColors.json';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
-import {
-  createCategory,
-  updateCategoryById,
-} from '../../services/CategoryService';
+import {createCategory, updateCategoryById} from '../../watermelondb/services';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 import mainStyles from '../../styles/main';
 import {categorySchema} from '../../utils/validationSchema';
 import onboardingStyles from '../../screens/OnboardingScreen/style';
-import Category from '../../schemas/CategorySchema';
 import defaultCategories from '../../../assets/jsons/defaultCategories.json';
 import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
+import {FlashList} from '@shopify/flash-list';
+
+interface CategorySelection {
+  name: string;
+  icon?: string;
+  color?: string;
+}
 
 interface CategoryEntryProps {
   type: string;
@@ -53,9 +56,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const [selectedColor, setSelectedColor] = useState(
     isAddButton ? 'null' : categoryData.categoryColor,
   );
-  const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
-    [],
-  );
+  const [selectedCategories, setSelectedCategories] = useState<
+    Array<CategorySelection>
+  >([]);
   console.log('ggggggggggg', selectedCategories);
   const allCategories = useSelector(selectCategoryData);
 
@@ -70,14 +73,13 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const isValid = categorySchema.safeParse(categoryName).success;
 
-  const handleAddCategory = () => {
+  const screenWidth = Dimensions.get('window').width;
+  const iconsPerRow = 6;
+  const iconSize = (screenWidth * 0.7) / iconsPerRow;
+
+  const handleAddCategory = async () => {
     try {
-      createCategory(
-        categoryName,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        selectedIcon,
-        selectedColor,
-      );
+      await createCategory(categoryName, userId, selectedIcon, selectedColor);
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
@@ -89,19 +91,19 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     for (const category of selectedCategories) {
       await createCategory(
         category.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        category.icon,
-        category.color,
+        userId,
+        category.icon ?? null,
+        category.color ?? null,
       );
     }
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
     goBack();
   };
 
-  const handleUpdateCategory = () => {
+  const handleUpdateCategory = async () => {
     try {
-      updateCategoryById(
-        Realm.BSON.ObjectID.createFromHexString(categoryData.categoryId),
+      await updateCategoryById(
+        categoryData.categoryId,
         categoryName,
         selectedIcon,
         selectedColor,
@@ -109,7 +111,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
-      console.error('Error creating category:', error);
+      console.error('Error updating category:', error);
     }
   };
 
@@ -140,19 +142,21 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     );
   }, [searchText]);
 
-  const renderIcons = () => {
-    const handleSelectIcon = (iconName: string) => {
-      setSelectedIcon(iconName);
-      setIsIconModalVisible(false);
-    };
+  const colorsList = useMemo(() => Object.keys(allColors), []);
 
-    const screenWidth = Dimensions.get('window').width;
-    const iconsPerRow = 6;
-    const iconSize = (screenWidth * 0.7) / iconsPerRow;
+  const handleSelectIcon = useCallback((iconName: string) => {
+    setSelectedIcon(iconName);
+    setIsIconModalVisible(false);
+  }, []);
 
-    return filteredIcons.map(iconName => (
+  const handleSelectColor = useCallback((color: string) => {
+    setSelectedColor(color);
+    setIsColorModalVisible(false);
+  }, []);
+
+  const renderIconItem = useCallback(
+    ({item: iconName}: {item: string}) => (
       <TouchableOpacity
-        key={iconName}
         style={[
           styles.iconItem,
           {
@@ -174,50 +178,86 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           type={'MaterialCommunityIcons'}
         />
       </TouchableOpacity>
-    ));
-  };
+    ),
+    [colors, selectedIcon, iconSize, handleSelectIcon],
+  );
 
-  const renderColors = () => {
-    const handleSelectColor = (color: string) => {
-      setSelectedColor(color);
-      setIsColorModalVisible(false);
-    };
-
-    const screenWidth = Dimensions.get('window').width;
-    const colorsPerRow = 6;
-    const colorSize = (screenWidth * 0.7) / colorsPerRow;
-    console.log(allColors);
-
-    return Object.keys(allColors).map(color => (
+  const renderColorItem = useCallback(
+    ({item: color}: {item: string}) => (
       <TouchableOpacity
-        key={color}
         style={[
           styles.iconItem,
           {
-            width: colorSize,
-            height: colorSize,
+            width: iconSize,
+            height: iconSize,
             backgroundColor:
-              selectedIcon === color ? colors.primaryText : undefined,
+              selectedColor === color ? colors.primaryText : undefined,
           },
         ]}
         onPress={() => handleSelectColor(color)}>
         <View style={[styles.colorCircle, {backgroundColor: color}]} />
       </TouchableOpacity>
-    ));
-  };
+    ),
+    [colors, selectedColor, iconSize, handleSelectColor],
+  );
 
-  const toggleCategorySelection = (category: Category) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter(item => item !== category),
-      );
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
-  };
+  const toggleCategorySelection = useCallback(
+    (category: CategorySelection) => {
+      if (selectedCategories.some(c => c.name === category.name)) {
+        setSelectedCategories(
+          selectedCategories.filter(item => item.name !== category.name),
+        );
+      } else {
+        setSelectedCategories([...selectedCategories, category]);
+      }
+    },
+    [selectedCategories],
+  );
+
+  const renderDefaultCategoryItem = useCallback(
+    ({item: category}: {item: any}) => (
+      <TouchableOpacity onPress={() => toggleCategorySelection(category)}>
+        <View
+          style={[
+            onboardingStyles.categoryContainer,
+            {
+              backgroundColor: selectedCategories?.includes(category)
+                ? `${colors.accentGreen}75`
+                : colors.secondaryAccent,
+              borderColor: colors.secondaryContainerColor,
+            },
+          ]}>
+          {category.icon !== undefined ? (
+            <View style={onboardingStyles.iconContainer}>
+              <Icon
+                name={category.icon}
+                size={20}
+                color={category.color}
+                type="MaterialCommunityIcons"
+              />
+            </View>
+          ) : null}
+
+          <PrimaryText
+            style={{
+              color: selectedCategories?.includes(category)
+                ? colors.buttonText
+                : colors.primaryText,
+              fontSize: 13,
+            }}>
+            {category.name}
+          </PrimaryText>
+        </View>
+      </TouchableOpacity>
+    ),
+    [colors, selectedCategories, toggleCategorySelection],
+  );
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
+    <PrimaryView
+      colors={colors}
+      style={{justifyContent: 'space-between'}}
+      dismissKeyboardOnTouch>
       <View>
         <View style={mainStyles.headerContainer}>
           <AppHeader onPress={goBack} colors={colors} text="Add Category" />
@@ -304,44 +344,14 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
               or
             </PrimaryText>
             <PrimaryText>Add from default categories</PrimaryText>
-            <View style={onboardingStyles.categoryMainContainer}>
-              {filteredCategories?.map((category: any) => (
-                <TouchableOpacity
-                  key={String(category._id)}
-                  onPress={() => toggleCategorySelection(category)}>
-                  <View
-                    style={[
-                      onboardingStyles.categoryContainer,
-                      {
-                        backgroundColor: selectedCategories?.includes(category)
-                          ? `${colors.accentGreen}75`
-                          : colors.secondaryAccent,
-                        borderColor: colors.secondaryContainerColor,
-                      },
-                    ]}>
-                    {category.icon !== undefined ? (
-                      <View style={onboardingStyles.iconContainer}>
-                        <Icon
-                          name={category.icon}
-                          size={20}
-                          color={category.color}
-                          type="MaterialCommunityIcons"
-                        />
-                      </View>
-                    ) : null}
-
-                    <PrimaryText
-                      style={{
-                        color: selectedCategories?.includes(category)
-                          ? colors.buttonText
-                          : colors.primaryText,
-                        fontSize: 13,
-                      }}>
-                      {category.name}
-                    </PrimaryText>
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <View style={styles.defaultCategoriesContainer}>
+              <FlashList
+                data={filteredCategories}
+                renderItem={renderDefaultCategoryItem}
+                keyExtractor={item => item.name}
+                scrollEnabled={false}
+                horizontal
+              />
             </View>
           </>
         ) : null}
@@ -364,37 +374,34 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
         <View style={[styles.modalContainer]}>
           <View
             style={[styles.modal, {backgroundColor: colors.containerColor}]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <PrimaryText
-                style={{
-                  color: colors.primaryText,
-                  fontSize: 17,
-                  marginTop: 10,
-                  marginBottom: 30,
-                  fontFamily: 'FiraCode-SemiBold',
-                }}>
-                Select Icon
-              </PrimaryText>
+            <PrimaryText
+              style={{
+                color: colors.primaryText,
+                fontSize: 17,
+                marginTop: 10,
+                marginBottom: 30,
+                fontFamily: 'FiraCode-SemiBold',
+              }}>
+              Select Icon
+            </PrimaryText>
 
-              <CustomInput
-                input={searchText}
-                label={undefined}
-                colors={colors}
-                placeholder={'Search Icons'}
-                setInput={setSearchText}
-                schema={undefined}
+            <CustomInput
+              input={searchText}
+              label={undefined}
+              colors={colors}
+              placeholder={'Search Icons'}
+              setInput={setSearchText}
+              schema={undefined}
+            />
+
+            <View style={styles.iconListContainer}>
+              <FlashList
+                data={filteredIcons}
+                renderItem={renderIconItem}
+                numColumns={6}
+                keyExtractor={item => item}
               />
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                {renderIcons()}
-              </View>
-            </ScrollView>
+            </View>
           </View>
         </View>
       </Modal>
@@ -418,14 +425,14 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
                 }}>
                 Select Color
               </PrimaryText>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                {renderColors()}
+              <View style={styles.colorListContainer}>
+                <FlashList
+                  data={colorsList}
+                  renderItem={renderColorItem}
+                  numColumns={6}
+                  keyExtractor={item => item}
+                  scrollEnabled={false}
+                />
               </View>
             </ScrollView>
           </View>
@@ -448,6 +455,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     padding: 15,
+    maxHeight: '80%',
   },
   iconItem: {
     height: 30,
@@ -482,5 +490,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     marginRight: 10,
+  },
+  iconListContainer: {
+    flex: 1,
+    minHeight: 300,
+  },
+  colorListContainer: {
+    minHeight: 200,
+  },
+  defaultCategoriesContainer: {
+    minHeight: 55,
+    marginTop: 5,
   },
 });

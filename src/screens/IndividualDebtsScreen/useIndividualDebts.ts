@@ -9,16 +9,16 @@ import {
 } from '../../redux/slice/debtDataSlice';
 import {goBack, navigate} from '../../utils/navigationUtils';
 import {
-  deleteAllDebtsbyDebtorId,
+  deleteAllDebtsByDebtorId,
   deleteDebtById,
-} from '../../services/DebtService';
+  deleteDebtorById,
+} from '../../watermelondb/services';
 import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 import {RouteProp} from '@react-navigation/native';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
-import {deleteDebtorById} from '../../services/DebtorService';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import moment from 'moment';
-import Debt from '../../schemas/DebtSchema';
+import {DebtData as DebtDocType} from '../../watermelondb/services';
 import useAmountColor from '../../hooks/useAmountColor';
 import {
   getIndividualDebtorRequest,
@@ -58,10 +58,10 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const debtorName = individualDebtor?.title;
 
   const borrowings = individualDebtsCopy.filter(
-    (debt: Debt) => debt.type === 'Borrow',
+    (debt: DebtDocType) => debt.type === 'Borrow',
   );
   const lendings = individualDebtsCopy.filter(
-    (debt: Debt) => debt.type === 'Lend',
+    (debt: DebtDocType) => debt.type === 'Lend',
   );
 
   console.log('first', borrowings);
@@ -113,16 +113,16 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     });
   };
 
-  const handleDeleteDebt = (debtId: string) => {
-    deleteDebtById(Realm.BSON.ObjectID.createFromHexString(debtId));
+  const handleDeleteDebt = async (debtId: string) => {
+    await deleteDebtById(debtId);
     dispatch(getDebtRequest(debtorId));
     dispatch(getAllDebtRequest());
     setRefreshing(true);
   };
 
-  const handleDeleteDebtor = () => {
+  const handleDeleteDebtor = async () => {
     if (individualDebtsCopy.length === 0) {
-      deleteDebtorById(Realm.BSON.ObjectID.createFromHexString(debtorId));
+      await deleteDebtorById(debtorId);
       dispatch({type: FETCH_ALL_DEBTOR_DATA});
       goBack();
     } else {
@@ -134,8 +134,8 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     setPaidToastVisible(true);
   };
 
-  const handleOk = () => {
-    deleteAllDebtsbyDebtorId(Realm.BSON.ObjectID.createFromHexString(debtorId));
+  const handleOk = async () => {
+    await deleteAllDebtsByDebtorId(debtorId);
     dispatch(getDebtRequest(debtorId));
     dispatch(getAllDebtRequest());
     setPaidToastVisible(false);
@@ -159,12 +159,8 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
 
   useEffect(() => {
     dispatch(getDebtRequest(debtorId));
-    dispatch(
-      getIndividualDebtorRequest(
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
-      ),
-    );
-  }, [debtorId]);
+    dispatch(getIndividualDebtorRequest(debtorId));
+  }, [debtorId, dispatch]);
 
   useEffect(() => {
     if (refreshing) {
@@ -172,7 +168,7 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
       dispatch(getIndividualDebtorRequest(debtorId));
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [dispatch, debtorId, refreshing]);
 
   return {
     colors,

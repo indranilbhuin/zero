@@ -4,7 +4,7 @@ import {FETCH_ALL_DEBTOR_DATA} from '../actionTypes';
 import {
   getAllDebtorsByUserId,
   getDebtorByDebtorId,
-} from '../../services/DebtorService';
+} from '../../watermelondb/services';
 import {setDebtorData} from '../slice/debtorDataSlice';
 import {
   getIndividualDebtorFaliure,

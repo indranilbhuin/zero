@@ -17,11 +17,9 @@ import currencies from '../../../assets/jsons/currencies.json';
 import {getAppVersion} from '../../utils/getVersion';
 import useThemeColors from '../../hooks/useThemeColors';
 import AsyncStorageService from '../../utils/asyncStorageService';
-import {updateUserById} from '../../services/UserService';
-import {updateCurrencyById} from '../../services/CurrencyService';
+import {updateUserById, updateCurrencyById, deleteAllData} from '../../watermelondb/services';
 import {Linking} from 'react-native';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
-import {deleteAllData} from '../../services/DeleteService';
 import {getAllDataRequest, selectAllData} from '../../redux/slice/allDataSlice';
 
 const useSettings = () => {
@@ -61,7 +59,7 @@ const useSettings = () => {
 
   useEffect(() => {
     dispatch(getAllDataRequest());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const getThemePreference = async () => {
@@ -78,7 +76,7 @@ const useSettings = () => {
     };
 
     getThemePreference();
-  }, [selectedTheme]);
+  }, [dispatch, selectedTheme]);
 
   const handleThemeModalClose = () => {
     setIsThemeModalVisible(false);
@@ -92,7 +90,11 @@ const useSettings = () => {
     setIsCurrencyModalVisible(false);
   };
 
-  const handleCurrencySelect = currency => {
+  const handleCurrencySelect = (currency: {
+    code: string;
+    name: string;
+    symbol: string;
+  }) => {
     setSelectedCurrency(currency);
   };
 
@@ -112,7 +114,7 @@ const useSettings = () => {
 
   const handleNameUpdate = async () => {
     try {
-      await updateUserById(Realm.BSON.ObjectID.createFromHexString(userId), {
+      await updateUserById(userId, {
         username: name,
       });
       dispatch(setUserName(name));
@@ -140,14 +142,11 @@ const useSettings = () => {
 
   const handleCurrencyUpdate = async () => {
     try {
-      await updateCurrencyById(
-        Realm.BSON.ObjectID.createFromHexString(currencyId),
-        {
-          name: selectedCurrency.name,
-          code: selectedCurrency.code,
-          symbol: selectedCurrency.symbol,
-        },
-      );
+      await updateCurrencyById(currencyId, {
+        name: selectedCurrency.name,
+        code: selectedCurrency.code,
+        symbol: selectedCurrency.symbol,
+      });
       const currencyData = {
         currencyId,
         currencyName: selectedCurrency.name,

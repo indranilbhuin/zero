@@ -1,8 +1,12 @@
-import {createSelector, createSlice} from '@reduxjs/toolkit';
+import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
-import Category from '../../schemas/CategorySchema';
+import {CategoryData as Category} from '../../watermelondb/services';
 
-const initialState = {
+interface CategoryDataState {
+  categoryData: Category[];
+}
+
+const initialState: CategoryDataState = {
   categoryData: [],
 };
 
@@ -10,8 +14,8 @@ const categoryDataSlice = createSlice({
   name: 'category',
   initialState,
   reducers: {
-    setCategoryData: (state, action) => {
-      console.log("hhhh", action.payload);
+    setCategoryData: (state, action: PayloadAction<Category[]>) => {
+      console.log('hhhh', action.payload);
       state.categoryData = action.payload;
     },
   },

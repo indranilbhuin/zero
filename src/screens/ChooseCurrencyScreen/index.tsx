@@ -21,7 +21,7 @@ const ChooseCurrencyScreen = () => {
   } = useChooseCurrency();
 
   return (
-    <PrimaryView colors={colors}>
+    <PrimaryView colors={colors} dismissKeyboardOnTouch>
       <View style={styles.titleTextContainer}>
         <PrimaryText style={{fontSize: 24}}>Your money,</PrimaryText>
         <PrimaryText style={{fontSize: 24}}>your currency.</PrimaryText>

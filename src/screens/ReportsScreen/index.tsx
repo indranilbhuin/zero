@@ -1,5 +1,5 @@
 import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
 import moment from 'moment';
@@ -9,9 +9,10 @@ import useReports from './useReports';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PieChartLabels from '../../components/atoms/PieChartLabels';
-import Expense from '../../schemas/ExpenseSchema';
+import {ExpenseData as Expense} from '../../watermelondb/services';
 import EmptyState from '../../components/atoms/EmptyState';
 import {formatCurrency} from '../../utils/numberUtils';
+import {FlashList} from '@shopify/flash-list';
 
 const ReportsScreen = () => {
   const {
@@ -31,7 +32,7 @@ const ReportsScreen = () => {
     daysInMonth,
   } = useReports();
 
-  const daysWithTransactions = filteredTransactions.reduce(
+  const daysWithTransactions = filteredTransactions.reduce<number[]>(
     (days, transaction) => {
       const transactionDay = moment(transaction.date).date();
       if (!days.includes(transactionDay)) {
@@ -57,52 +58,39 @@ const ReportsScreen = () => {
     'December',
   ];
 
-  const renderYearPickerItems = () => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        {years.map(year => (
-          <TouchableOpacity key={year} onPress={() => handleYearSelect(year)}>
-            <View
-              style={[
-                styles.yearContainer,
-                {
-                  backgroundColor:
-                    year === selectedYear
-                      ? colors.primaryText
-                      : colors.containerColor,
-                  borderColor: colors.secondaryText,
-                },
-              ]}>
-              <PrimaryText
-                style={{
-                  color:
-                    year === selectedYear
-                      ? colors.buttonText
-                      : colors.primaryText,
-                  fontSize: 13,
-                }}>
-                {year}
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
+  const renderYearItem = useCallback(
+    ({item: year}: {item: number}) => (
+      <TouchableOpacity onPress={() => handleYearSelect(year)}>
+        <View
+          style={[
+            styles.yearContainer,
+            {
+              backgroundColor:
+                year === selectedYear
+                  ? colors.primaryText
+                  : colors.containerColor,
+              borderColor: colors.secondaryText,
+            },
+          ]}>
+          <PrimaryText
+            style={{
+              color:
+                year === selectedYear ? colors.buttonText : colors.primaryText,
+              fontSize: 13,
+            }}>
+            {year}
+          </PrimaryText>
+        </View>
+      </TouchableOpacity>
+    ),
+    [colors, selectedYear, handleYearSelect],
+  );
 
   const renderMonths = () => {
     return (
       <>
         {months.map(month => (
-          <TouchableOpacity
-            key={month}
-            onPress={() => handleMonthSelect(month)}>
+          <TouchableOpacity key={month} onPress={() => handleMonthSelect(month)}>
             <View
               style={[
                 styles.categoryContainer,
@@ -185,9 +173,14 @@ const ReportsScreen = () => {
                     {selectedYear}
                   </PrimaryText>
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  {renderYearPickerItems()}
-                </ScrollView>
+                <View style={styles.yearListContainer}>
+                  <FlashList
+                    data={years}
+                    renderItem={renderYearItem}
+                    numColumns={4}
+                    keyExtractor={item => String(item)}
+                  />
+                </View>
                 <View
                   style={[
                     styles.buttonContainer,
@@ -212,7 +205,9 @@ const ReportsScreen = () => {
     filteredTransactions?.forEach((transaction: any) => {
       const {amount, category} = transaction;
 
-      const categoryName = category.name;
+      // Handle case where category might be undefined
+      const categoryName = category?.name ?? 'Unknown';
+      const categoryColor = category?.color ?? '#808080';
 
       if (categoryMap.has(categoryName)) {
         categoryMap.set(categoryName, {
@@ -221,7 +216,11 @@ const ReportsScreen = () => {
         });
       } else {
         categoryMap.set(categoryName, {
-          category: {name: categoryName, ...category},
+          category: {
+            name: categoryName,
+            color: categoryColor,
+            ...category,
+          },
           amount,
         });
       }
@@ -231,11 +230,11 @@ const ReportsScreen = () => {
       aggregateData.push(value);
     });
 
-    const data = aggregateData.map((item, index) => ({
+    const data = aggregateData.map(item => ({
       key: item.category.name,
       value: item.amount,
       svg: {
-        fill: item.category.color,
+        fill: item.category.color ?? '#808080',
         onPress: () => console.log('press', item),
       },
       label: `${item.category.name}: ${currencySymbol} ${item.amount}`,
@@ -414,9 +413,7 @@ const ReportsScreen = () => {
             {filteredTransactions.length === 0
               ? 0
               : formatCurrency(
-                  (totalAmountForMonth / daysWithTransactions.length).toFixed(
-                    2,
-                  ),
+                  Number((totalAmountForMonth / daysWithTransactions.length).toFixed(2)),
                 )}
           </PrimaryText>
         </View>

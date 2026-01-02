@@ -1,6 +1,6 @@
 import {createSelector, createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
-import Debtor from '../../schemas/DebtorSchema';
+import {DebtorData as Debtor} from '../../watermelondb/services';
 
 const initialState = {
   debtorData: [],

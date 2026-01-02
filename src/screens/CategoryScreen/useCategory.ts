@@ -4,7 +4,7 @@ import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {useEffect, useState} from 'react';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 import {navigate} from '../../utils/navigationUtils';
-import {softDeleteCategoryById} from '../../services/CategoryService';
+import {softDeleteCategoryById} from '../../watermelondb/services';
 
 const useCategory = () => {
   const colors = useThemeColors();
@@ -14,14 +14,14 @@ const useCategory = () => {
 
   useEffect(() => {
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (refreshing) {
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [refreshing, dispatch]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -41,16 +41,16 @@ const useCategory = () => {
     });
   };
 
-  const handleDelete = async (categoryId: Realm.BSON.ObjectId) => {
+  const handleDelete = async (categoryId: string) => {
     try {
       await softDeleteCategoryById(categoryId);
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       setRefreshing(true);
     } catch (error) {
-      console.log('this category is deleting', categoryId);
+      console.log('Error deleting category:', categoryId, error);
     }
   };
-  
+
   return {
     colors,
     refreshing,

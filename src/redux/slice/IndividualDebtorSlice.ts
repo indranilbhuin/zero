@@ -1,8 +1,15 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
+import {DebtorData as DebtorDocType} from '../../watermelondb/services';
 
-const initialState = {
-  individualDebtorData: [],
+interface IndividualDebtorState {
+  individualDebtorData: DebtorDocType | null;
+  isLoading: boolean;
+  error: unknown;
+}
+
+const initialState: IndividualDebtorState = {
+  individualDebtorData: null,
   isLoading: false,
   error: null,
 };
@@ -11,17 +18,20 @@ const individualDebtorSlice = createSlice({
   name: 'individualDebtor',
   initialState,
   reducers: {
-    getIndividualDebtorRequest: (state, _debtorId) => {
+    getIndividualDebtorRequest: (state, _debtorId: PayloadAction<string>) => {
       state.isLoading = true;
       state.error = null;
     },
-    getIndividualDebtorSuccess: (state, action) => {
+    getIndividualDebtorSuccess: (
+      state,
+      action: PayloadAction<DebtorDocType | null>,
+    ) => {
       console.log(action.payload);
       state.isLoading = false;
       state.error = null;
       state.individualDebtorData = action.payload;
     },
-    getIndividualDebtorFaliure: (state, action) => {
+    getIndividualDebtorFaliure: (state, action: PayloadAction<unknown>) => {
       state.isLoading = false;
       state.error = action.payload;
     },

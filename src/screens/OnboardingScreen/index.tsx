@@ -43,7 +43,7 @@ const OnboardingScreen = () => {
         <View style={styles.categoryMainContainer}>
           {defaultCategories?.map((category: any) => (
             <TouchableOpacity
-              key={String(category._id)}
+              key={category.name}
               onPress={() => toggleCategorySelection(category)}>
               <View
                 style={[

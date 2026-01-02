@@ -39,7 +39,7 @@ export default PrimaryButton;
 
 const styles = StyleSheet.create({
   touchableButtonContainer: {
-    height: 60,
+    height: 48,
     width: '100%',
     borderRadius: 10,
     alignItems: 'center',

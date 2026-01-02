@@ -8,8 +8,8 @@ import {navigate} from '../../utils/navigationUtils';
 import PrimaryText from '../atoms/PrimaryText';
 import useSettings from '../../screens/SettingsScreen/useSettings';
 import ChangeNameModal from './ChangeNameModal';
-import { updateUserById } from '../../services/UserService';
-import { selectUserId } from '../../redux/slice/userIdSlice';
+import {updateUserById} from '../../watermelondb/services';
+import {selectUserId} from '../../redux/slice/userIdSlice';
 
 interface HeaderContainerProps {
   headerText: string;
@@ -30,7 +30,7 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
 
   const handleNameUpdate = async () => {
     try {
-      await updateUserById(Realm.BSON.ObjectID.createFromHexString(userId), {
+      await updateUserById(userId, {
         username: name,
       });
       dispatch(setUserName(name));

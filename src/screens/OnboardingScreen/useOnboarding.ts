@@ -4,16 +4,21 @@ import {useEffect, useState} from 'react';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {navigate} from '../../utils/navigationUtils';
 import {FETCH_ALL_USER_DATA} from '../../redux/actionTypes';
-import {createCategory} from '../../services/CategoryService';
-import Category from '../../schemas/CategorySchema';
+import {createCategory} from '../../watermelondb/services';
+
+interface CategorySelection {
+  name: string;
+  icon?: string;
+  color?: string;
+}
 
 const useOnboarding = () => {
   const colors = useThemeColors();
-  const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
-    [],
-  );
+  const [selectedCategories, setSelectedCategories] = useState<
+    Array<CategorySelection>
+  >([]);
 
-  console.log(selectedCategories)
+  console.log(selectedCategories);
   const userId = useSelector(selectUserId);
 
   const dispatch = useDispatch();
@@ -23,26 +28,27 @@ const useOnboarding = () => {
 
   useEffect(() => {
     dispatch({type: FETCH_ALL_USER_DATA});
-  }, []);
+  }, [dispatch]);
 
-  console.log('outaise', userId);
+  console.log('userId:', userId);
 
   const handleSubmit = async () => {
     for (const category of selectedCategories) {
       await createCategory(
         category.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        category.icon,
-        category.color,
+        userId,
+        category.icon ?? null,
+        category.color ?? null,
       );
     }
     navigate('ChooseCurrencyScreen');
   };
 
-  const toggleCategorySelection = (category: Category) => {
-    if (selectedCategories.includes(category)) {
+  const toggleCategorySelection = (category: CategorySelection) => {
+    const isSelected = selectedCategories.some(c => c.name === category.name);
+    if (isSelected) {
       setSelectedCategories(
-        selectedCategories.filter(item => item !== category),
+        selectedCategories.filter(item => item.name !== category.name),
       );
     } else {
       setSelectedCategories([...selectedCategories, category]);
