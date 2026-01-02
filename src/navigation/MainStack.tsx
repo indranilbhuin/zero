@@ -7,36 +7,26 @@ import {
 } from '../redux/slice/isOnboardedSlice';
 import HomeStack from './HomeStack';
 import OnboardingStack from './OnboardingStack';
-import useThemeColors from '../hooks/useThemeColors';
+import {useTheme} from '../context/ThemeContext';
 import CustomLoader from '../components/atoms/CustomLoader';
 
 const MainStack = () => {
   const dispatch = useDispatch();
-  const colors = useThemeColors();
+  const {colors, isLoading: isThemeLoading} = useTheme();
   const isOnboarded = useSelector(selectIsOnboarded);
   const [isLoading, setIsLoading] = useState(true);
 
   const [stack, setStack] = useState<React.ReactNode>(null);
-
-  console.log('isOnboarded', isOnboarded);
 
   useEffect(() => {
     const getIsOnboarded = async () => {
       try {
         const value = await AsyncStorageService.getItem('isOnboarded');
         const parsedValue = value ? JSON.parse(value) : false;
-        console.log(
-          'this is the value of isOnboarded',
-          typeof parsedValue,
-          parsedValue,
-          value,
-        );
         if (parsedValue) {
           dispatch(setIsOnboarded(true));
-          console.log('Fetched isOnboarded from AsyncStorage');
         } else {
           dispatch(setIsOnboarded(false));
-          console.log('Fetched isOnboarded from AsyncStorage');
         }
       } catch (error) {
         console.error('Error getting isOnboarded:', error);
@@ -55,7 +45,12 @@ const MainStack = () => {
 
   const memoizedStack = useMemo(() => stack, [stack]);
 
-  return isLoading ? <CustomLoader colors={colors} /> : memoizedStack;
+  // Show loader while theme or onboarding state is loading
+  if (isLoading || isThemeLoading) {
+    return <CustomLoader colors={colors} />;
+  }
+
+  return memoizedStack;
 };
 
 export default MainStack;

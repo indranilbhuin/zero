@@ -1,6 +1,6 @@
 {
   "name": "zer0",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -9,7 +9,8 @@
     "start": "react-native start",
     "start:reset": "react-native start --reset-cache",
     "test": "jest",
-    "typecheck": "tsc --strict"
+    "typecheck": "tsc --strict",
+    "postversion": "react-native-version"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
@@ -62,6 +63,7 @@
     "jest": "^29.6.3",
     "prettier": "2.8.8",
     "react-native-svg-transformer": "^1.5.2",
+    "react-native-version": "^4.0.0",
     "react-test-renderer": "19.1.0",
     "typescript": "^5.8.3"
   },

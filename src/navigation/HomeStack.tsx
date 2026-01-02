@@ -3,9 +3,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import Icon from '../components/atoms/Icons';
 import useThemeColors from '../hooks/useThemeColors';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ReportsScreen from '../screens/ReportsScreen';
 import DebtsScreen from '../screens/DebtsScreen';
 import AddTransactionsScreen from '../screens/AddTransactionsScreen';
@@ -67,12 +68,15 @@ const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
+
+  const bottomPadding = Math.max(insets.bottom, 8);
 
   const tabBarStyle = {
     backgroundColor: colors.containerColor,
-    height: 65,
+    height: 65 + bottomPadding - (Platform.OS === 'ios' ? 20 : 0),
     paddingTop: 8,
-    paddingBottom: 8,
+    paddingBottom: bottomPadding,
     borderTopWidth: 0,
   };
 

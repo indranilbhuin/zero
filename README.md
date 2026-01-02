@@ -1,5 +1,9 @@
 <div align="center">
-    <img src="assets/images/zer0.png" height="128">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="assets/icons/adaptive-icon-light.png" height="128">
+        <source media="(prefers-color-scheme: light)" srcset="assets/icons/adaptive-icon-dark.png" height="128">
+        <img src="assets/icons/adaptive-icon-dark.png" height="128" alt="zer0 logo">
+    </picture>
     <h1 align="center">zer0 - Minimal Expense Manager</h1>
 </div>
 

@@ -8,14 +8,10 @@ import {
   selectCurrencySymbol,
   setCurrencyData,
 } from '../../redux/slice/currencyDataSlice';
-import {
-  selectThemePreference,
-  setThemePreference,
-} from '../../redux/slice/themePreferenceSlice';
 import {useEffect, useState} from 'react';
 import currencies from '../../../assets/jsons/currencies.json';
 import {getAppVersion} from '../../utils/getVersion';
-import useThemeColors from '../../hooks/useThemeColors';
+import {useTheme, ThemeMode} from '../../context/ThemeContext';
 import AsyncStorageService from '../../utils/asyncStorageService';
 import {updateUserById, updateCurrencyById, deleteAllData} from '../../watermelondb/services';
 import {Linking} from 'react-native';
@@ -29,9 +25,10 @@ const useSettings = () => {
   const currencyCode = useSelector(selectCurrencyCode);
   const currencyName = useSelector(selectCurrencyName);
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const selectedTheme = useSelector(selectThemePreference);
   const allData = useSelector(selectAllData);
-  console.log(allData);
+
+  // Use the theme context
+  const {colors, themeMode, setThemeMode} = useTheme();
 
   const currencyData = {
     code: currencyCode,
@@ -54,29 +51,11 @@ const useSettings = () => {
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
   const appVersion = getAppVersion();
 
-  const colors = useThemeColors();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllDataRequest());
   }, [dispatch]);
-
-  useEffect(() => {
-    const getThemePreference = async () => {
-      try {
-        const theme = await AsyncStorageService.getItem('themePreference');
-        if (theme === null) {
-          dispatch(setThemePreference('system'));
-        } else {
-          dispatch(setThemePreference(theme));
-        }
-      } catch (error) {
-        console.error('Error getting theme preference:', error);
-      }
-    };
-
-    getThemePreference();
-  }, [dispatch, selectedTheme]);
 
   const handleThemeModalClose = () => {
     setIsThemeModalVisible(false);
@@ -100,13 +79,8 @@ const useSettings = () => {
 
   const handleThemeSelection = async (theme: string) => {
     try {
-      if (theme === 'system') {
-        dispatch(setThemePreference(null));
-      } else {
-        dispatch(setThemePreference(theme));
-      }
+      await setThemeMode(theme as ThemeMode);
       setIsThemeModalVisible(false);
-      await AsyncStorageService.setItem('themePreference', theme);
     } catch (error) {
       console.error('Error saving theme preference:', error);
     }
@@ -184,6 +158,7 @@ const useSettings = () => {
     await AsyncStorageService.setItem('isOnboarded', JSON.stringify(false));
     dispatch(setIsOnboarded(false));
   };
+
   const handleDeleteAllDataCancel = () => {
     setIsDeleteModalVisible(false);
   };
@@ -191,6 +166,7 @@ const useSettings = () => {
   const handleAccessStorageOk = async () => {
     Linking.openSettings();
   };
+
   const handleAccessStorageCancel = () => {
     setIsStorageModalVisible(false);
   };
@@ -231,7 +207,7 @@ const useSettings = () => {
     handleSearch,
     handleCurrencyUpdate,
     selectedCurrency,
-    selectedTheme,
+    selectedTheme: themeMode,
     userName,
     currencySymbol,
     currencyName,

@@ -8,23 +8,26 @@ import {
 } from 'react-native';
 import React, {ReactNode} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Colors} from '../../hooks/useThemeColors';
+import {useTheme, ThemeColors} from '../../context/ThemeContext';
 
 interface PrimaryViewProps {
-  colors: Colors;
+  colors?: ThemeColors;
   children?: ReactNode;
   style?: ViewStyle;
   dismissKeyboardOnTouch?: boolean;
 }
 
 const PrimaryView: React.FC<PrimaryViewProps> = ({
-  colors,
+  colors: propColors,
   children,
   style,
   dismissKeyboardOnTouch = false,
 }) => {
   const insets = useSafeAreaInsets();
-  const isDark = colors.primaryBackground === '#0F0F0F';
+  const {colors: contextColors, isDark} = useTheme();
+  
+  // Use prop colors if provided, otherwise use context colors
+  const colors = propColors || contextColors;
 
   const content = (
     <View

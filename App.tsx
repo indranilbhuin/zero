@@ -6,6 +6,7 @@ import store from './src/redux/store';
 import MainStack from './src/navigation/MainStack';
 import {LogBox} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {ThemeProvider} from './src/context/ThemeContext';
 
 const App = () => {
   LogBox.ignoreAllLogs();
@@ -13,9 +14,11 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-        <NavigationContainer ref={setNavigationRef}>
-          <MainStack />
-        </NavigationContainer>
+        <ThemeProvider>
+          <NavigationContainer ref={setNavigationRef}>
+            <MainStack />
+          </NavigationContainer>
+        </ThemeProvider>
       </Provider>
     </SafeAreaProvider>
   );

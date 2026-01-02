@@ -1,22 +1,24 @@
-import {ActivityIndicator, Image, StyleSheet} from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 import React from 'react';
 import PrimaryView from './PrimaryView';
-import {Colors} from '../../hooks/useThemeColors';
+import {useTheme, ThemeColors} from '../../context/ThemeContext';
+
+const darkIcon = require('../../../assets/icons/adaptive-icon-dark.png');
+const lightIcon = require('../../../assets/icons/adaptive-icon-light.png');
 
 interface CustomLoaderProps {
-  colors: Colors;
+  colors?: ThemeColors;
 }
 
-const CustomLoader: React.FC<CustomLoaderProps> = ({colors}) => {
+const CustomLoader: React.FC<CustomLoaderProps> = ({colors: propColors}) => {
+  const {colors: contextColors, isDark} = useTheme();
+  const colors = propColors || contextColors;
+
   return (
     <PrimaryView
       colors={colors}
       style={{justifyContent: 'center', alignItems: 'center'}}>
-      <Image
-        source={require('../../../assets/images/zer0.png')}
-        style={styles.image}
-      />
-      <ActivityIndicator color={colors.primaryText} size={90} />
+      <Image source={isDark ? lightIcon : darkIcon} style={styles.image} />
     </PrimaryView>
   );
 };
@@ -27,7 +29,7 @@ const styles = StyleSheet.create({
   image: {
     position: 'absolute',
     zIndex: 2,
-    height: 50,
-    width: 50,
+    height: 160,
+    width: 160,
   },
 });
