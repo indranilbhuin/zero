@@ -6,7 +6,7 @@ import PrimaryButton from '../../components/atoms/PrimaryButton';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import {goBack} from '../../utils/navigationUtils';
 import useThemeColors from '../../hooks/useThemeColors';
-import {createDebt, updateDebtById} from '../../services/DebtService';
+import {createDebt, updateDebtById} from '../../watermelondb/services';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
@@ -54,7 +54,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const userId = useSelector(selectUserId);
 
   const debtAmountError = hasInteracted
-    ? expenseAmountSchema?.safeParse(Number(debtAmount)).error?.errors || []
+    ? expenseAmountSchema?.safeParse(Number(debtAmount)).error?.issues || []
     : [];
 
   const isValid =
@@ -62,16 +62,16 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
     expenseAmountSchema.safeParse(Number(debtAmount)).success;
   console.log('debts', debtsType);
 
-  const handleAddDebt = () => {
+  const handleAddDebt = async () => {
     if (!isValid) {
       return;
     }
     try {
-      createDebt(
-        Realm.BSON.ObjectID.createFromHexString(userId),
+      await createDebt(
+        userId,
         Number(debtAmount),
         debtName,
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
+        debtorId,
         createdAt,
         debtsType,
       );
@@ -79,18 +79,18 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
       dispatch(getDebtRequest(debtorId));
       goBack();
     } catch (error) {
-      console.error('Error creating expense:', error);
+      console.error('Error creating debt:', error);
     }
   };
 
-  const handleUpdateDebt = () => {
+  const handleUpdateDebt = async () => {
     if (!isValid) {
       return;
     }
     try {
-      updateDebtById(
-        Realm.BSON.ObjectID.createFromHexString(debtId),
-        Realm.BSON.ObjectID.createFromHexString(debtorId),
+      await updateDebtById(
+        debtId,
+        debtorId,
         Number(debtAmount),
         debtDescription,
         createdAt,
@@ -101,7 +101,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
       dispatch(getDebtRequest(debtorId));
       goBack();
     } catch (error) {
-      console.error('Error updating expense:', error);
+      console.error('Error updating debt:', error);
     }
   };
 
@@ -236,7 +236,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         </View>
         {debtAmountError.length > 0 && (
           <View style={{marginBottom: 10}}>
-            {debtAmountError.map(error => (
+            {debtAmountError.map((error: {message: string}) => (
               <View key={error.message}>
                 <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
                   {error.message}

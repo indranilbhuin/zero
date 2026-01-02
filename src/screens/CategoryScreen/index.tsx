@@ -8,7 +8,7 @@ import styles from './style';
 import useCategory from './useCategory';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
-import Category from '../../schemas/CategorySchema';
+import {CategoryData as Category} from '../../watermelondb/services';
 import EmptyState from '../../components/atoms/EmptyState';
 import {FlashList} from '@shopify/flash-list';
 
@@ -47,7 +47,7 @@ const CategoryScreen = () => {
             style={styles.actionButton}
             onPress={() =>
               handleEdit(
-                String(category._id),
+                String(category.id),
                 category.name,
                 category.icon ?? 'shape',
                 category.color ?? colors.primaryText,
@@ -62,7 +62,7 @@ const CategoryScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => handleDelete(category._id)}>
+            onPress={() => handleDelete(category.id)}>
             <Icon
               name={'delete-empty'}
               size={20}
@@ -97,7 +97,7 @@ const CategoryScreen = () => {
           <FlashList
             data={categories}
             renderItem={renderCategoryItem}
-            keyExtractor={item => String(item._id)}
+            keyExtractor={item => String(item.id)}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

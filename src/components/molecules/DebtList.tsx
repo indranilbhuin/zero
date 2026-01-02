@@ -1,6 +1,6 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
-import Debt from '../../schemas/DebtSchema';
+import {DebtData as Debt} from '../../watermelondb/services';
 import PrimaryText from '../atoms/PrimaryText';
 import Icon from '../atoms/Icons';
 import moment from 'moment';
@@ -52,7 +52,7 @@ const DebtItem: React.FC<DebtItemProps> = ({
           <TouchableOpacity
             onPress={() =>
               handleEditDebt(
-                String(debt._id),
+                String(debt.id),
                 debt.description,
                 debt.amount,
                 debt.date,
@@ -69,7 +69,7 @@ const DebtItem: React.FC<DebtItemProps> = ({
               {formatCurrency(debt.amount)}
             </PrimaryText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleDeleteDebt(String(debt._id))}>
+          <TouchableOpacity onPress={() => handleDeleteDebt(String(debt.id))}>
             <Icon
               name={'delete-empty'}
               size={20}
@@ -90,7 +90,7 @@ const DebtItem: React.FC<DebtItemProps> = ({
         <FlashList
           data={individualDebts}
           renderItem={renderDebtItem}
-          keyExtractor={item => String(item._id)}
+          keyExtractor={item => String(item.id)}
           scrollEnabled={false}
           horizontal
         />

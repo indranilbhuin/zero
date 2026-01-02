@@ -16,7 +16,7 @@ const MainStack = () => {
   const isOnboarded = useSelector(selectIsOnboarded);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [stack, setStack] = useState(null);
+  const [stack, setStack] = useState<React.ReactNode>(null);
 
   console.log('isOnboarded', isOnboarded);
 
@@ -24,14 +24,14 @@ const MainStack = () => {
     const getIsOnboarded = async () => {
       try {
         const value = await AsyncStorageService.getItem('isOnboarded');
-        const isOnboarded = JSON.parse(value);
+        const parsedValue = value ? JSON.parse(value) : false;
         console.log(
           'this is the value of isOnboarded',
-          typeof isOnboarded,
-          isOnboarded,
+          typeof parsedValue,
+          parsedValue,
           value,
         );
-        if (isOnboarded) {
+        if (parsedValue) {
           dispatch(setIsOnboarded(true));
           console.log('Fetched isOnboarded from AsyncStorage');
         } else {

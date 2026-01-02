@@ -19,18 +19,20 @@ import allIcons from '../../../assets/jsons/categoryIcons.json';
 import allColors from '../../../assets/jsons/categoryColors.json';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
-import {
-  createCategory,
-  updateCategoryById,
-} from '../../services/CategoryService';
+import {createCategory, updateCategoryById} from '../../watermelondb/services';
 import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
 import mainStyles from '../../styles/main';
 import {categorySchema} from '../../utils/validationSchema';
 import onboardingStyles from '../../screens/OnboardingScreen/style';
-import Category from '../../schemas/CategorySchema';
 import defaultCategories from '../../../assets/jsons/defaultCategories.json';
 import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
 import {FlashList} from '@shopify/flash-list';
+
+interface CategorySelection {
+  name: string;
+  icon?: string;
+  color?: string;
+}
 
 interface CategoryEntryProps {
   type: string;
@@ -54,9 +56,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const [selectedColor, setSelectedColor] = useState(
     isAddButton ? 'null' : categoryData.categoryColor,
   );
-  const [selectedCategories, setSelectedCategories] = useState<Array<Category>>(
-    [],
-  );
+  const [selectedCategories, setSelectedCategories] = useState<
+    Array<CategorySelection>
+  >([]);
   console.log('ggggggggggg', selectedCategories);
   const allCategories = useSelector(selectCategoryData);
 
@@ -75,14 +77,9 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const iconsPerRow = 6;
   const iconSize = (screenWidth * 0.7) / iconsPerRow;
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     try {
-      createCategory(
-        categoryName,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        selectedIcon,
-        selectedColor,
-      );
+      await createCategory(categoryName, userId, selectedIcon, selectedColor);
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
@@ -94,19 +91,19 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     for (const category of selectedCategories) {
       await createCategory(
         category.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        category.icon,
-        category.color,
+        userId,
+        category.icon ?? null,
+        category.color ?? null,
       );
     }
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
     goBack();
   };
 
-  const handleUpdateCategory = () => {
+  const handleUpdateCategory = async () => {
     try {
-      updateCategoryById(
-        Realm.BSON.ObjectID.createFromHexString(categoryData.categoryId),
+      await updateCategoryById(
+        categoryData.categoryId,
         categoryName,
         selectedIcon,
         selectedColor,
@@ -114,7 +111,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
       dispatch({type: FETCH_ALL_CATEGORY_DATA});
       goBack();
     } catch (error) {
-      console.error('Error creating category:', error);
+      console.error('Error updating category:', error);
     }
   };
 
@@ -205,10 +202,10 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   );
 
   const toggleCategorySelection = useCallback(
-    (category: Category) => {
-      if (selectedCategories.includes(category)) {
+    (category: CategorySelection) => {
+      if (selectedCategories.some(c => c.name === category.name)) {
         setSelectedCategories(
-          selectedCategories.filter(item => item !== category),
+          selectedCategories.filter(item => item.name !== category.name),
         );
       } else {
         setSelectedCategories([...selectedCategories, category]);
@@ -351,7 +348,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
               <FlashList
                 data={filteredCategories}
                 renderItem={renderDefaultCategoryItem}
-                keyExtractor={item => String(item._id)}
+                keyExtractor={item => item.name}
                 scrollEnabled={false}
                 horizontal
               />

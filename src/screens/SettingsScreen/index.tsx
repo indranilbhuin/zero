@@ -73,7 +73,7 @@ const SettingsScreen = () => {
     handleDownloadError,
   } = useSettings();
 
-  const exportRealmData = async allData => {
+  const exportRealmData = async (allData: unknown) => {
     try {
       console.log(allData);
 
@@ -95,12 +95,12 @@ const SettingsScreen = () => {
       const path = `${RNFS.DownloadDirectoryPath}/zero${currentDateAndTime}.json`;
 
       RNFS.writeFile(path, jsonData, 'utf8')
-        .then(success => {
+        .then(() => {
           setIsDownloadSuccessful(true);
           console.log('File written successfully!');
           console.log('File path:', path);
         })
-        .catch(error => {
+        .catch(() => {
           setIsDownloadError(true);
         });
 

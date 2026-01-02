@@ -5,17 +5,28 @@ import Icon from '../atoms/Icons';
 import moment from 'moment';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
 import {navigate} from '../../utils/navigationUtils';
-import Category from '../../schemas/CategorySchema';
-import {deleteExpenseById} from '../../services/ExpenseService';
+import {deleteExpenseById} from '../../watermelondb/services';
 import {useDispatch} from 'react-redux';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
-import Expense from '../../schemas/ExpenseSchema';
+import {ExpenseData as ExpenseDocType} from '../../watermelondb/services';
 import {Dispatch} from 'redux';
 import PrimaryText from '../atoms/PrimaryText';
 import {getEverydayExpenseRequest} from '../../redux/slice/everydayExpenseDataSlice';
 import UndoModal from '../atoms/UndoModal';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
+
+// Extended expense type with optional category populated from Redux
+interface CategoryInfo {
+  id?: string;
+  name?: string;
+  icon?: string;
+  color?: string;
+}
+
+interface Expense extends ExpenseDocType {
+  category?: CategoryInfo;
+}
 
 interface TransactionListProps {
   currencySymbol: string;
@@ -38,12 +49,12 @@ interface GroupedExpense {
   label: string;
 }
 
-const truncateString = (str: string | undefined, maxLength: number) => {
-  if (str?.length > maxLength) {
+const truncateString = (str: string | undefined, maxLength: number): string => {
+  if (!str) return '';
+  if (str.length > maxLength) {
     return str.substring(0, maxLength) + '..';
-  } else {
-    return str;
   }
+  return str;
 };
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -64,7 +75,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
     expenseId: string,
     expenseTitle: string,
     expenseDescription: string,
-    category: Category,
+    category: CategoryInfo | undefined,
     expenseDate: string,
     expenseAmount: number,
   ) => {
@@ -81,16 +92,18 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   const handleDelete = useCallback(
     (expenseId: string) => {
       const deletedExpense = expenses.find(
-        expense => String(expense._id) === expenseId,
+        expense => String(expense.id) === expenseId,
       );
       setExpenses(prevExpenses =>
-        prevExpenses.filter(expense => String(expense._id) !== expenseId),
+        prevExpenses.filter(
+          expense => String(expense.id) !== expenseId,
+        ),
       );
       setDeletedItem(deletedExpense || null);
 
-      const deletionTimeout = setTimeout(() => {
+      const deletionTimeout = setTimeout(async () => {
         if (!deletedItem) {
-          deleteExpenseById(Realm.BSON.ObjectID.createFromHexString(expenseId));
+          await deleteExpenseById(expenseId);
           dispatch(getExpenseRequest());
           dispatch(getEverydayExpenseRequest(targetDate));
         }
@@ -119,7 +132,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         <TouchableOpacity
           onPress={() =>
             handleEdit(
-              String(expense._id),
+              String(expense.id),
               expense.title,
               expense.description ?? '',
               expense.category,
@@ -161,7 +174,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
       return (
         <TouchableOpacity
           style={{flexDirection: 'row'}}
-          onPress={() => handleDelete(String(expense._id))}>
+          onPress={() => handleDelete(String(expense.id))}>
           <View
             style={[
               styles.stretchView,
@@ -272,7 +285,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
       <FlashList
         data={expenses}
         renderItem={renderExpenseItem}
-        keyExtractor={item => String(item._id)}
+        keyExtractor={item => String(item.id)}
         scrollEnabled={false}
       />
       <UndoModal

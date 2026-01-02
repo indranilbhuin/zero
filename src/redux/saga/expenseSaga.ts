@@ -2,8 +2,8 @@ import {call, put, select, takeEvery} from 'redux-saga/effects';
 import {selectUserId} from '../slice/userIdSlice';
 import {
   getAllExpensesByDate,
-  getAllExpensesByUserId,
-} from '../../services/ExpenseService';
+  getAllExpensesByUserIdWithCategory,
+} from '../../watermelondb/services';
 import {
   getExpenseFaliure,
   getExpenseRequest,
@@ -18,13 +18,13 @@ import {
 function* fetchAllExpenses(): Generator<any, void, any> {
   try {
     const userId = yield select(selectUserId);
-    const expenses = yield call(getAllExpensesByUserId, userId);
+    // Use the new function that includes category data
+    const expenses = yield call(getAllExpensesByUserIdWithCategory, userId);
     yield put(getExpenseSuccess(expenses));
-    console.log('in expenses', expenses);
-    console.log(expenses);
+    console.log('in expenses with categories', expenses);
   } catch (error) {
     yield put(getExpenseFaliure(error));
-    console.error('Error fetching categories:', error);
+    console.error('Error fetching expenses:', error);
   }
 }
 
@@ -34,10 +34,9 @@ function* fetchAllExpensesByDate(action: any): Generator<any, void, any> {
     const expenses = yield call(getAllExpensesByDate, userId, action.payload);
     yield put(getEverydayExpenseSuccess(expenses));
     console.log('in everyday expenses', expenses);
-    console.log(expenses);
   } catch (error) {
     yield put(getEverydayExpenseFaliure(error));
-    console.error('Error fetching everyday categories:', error);
+    console.error('Error fetching everyday expenses:', error);
   }
 }
 

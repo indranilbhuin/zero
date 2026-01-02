@@ -13,7 +13,7 @@ const PersonalizeScreen = () => {
   const isValid = nameSchema.safeParse(name).success;
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
+    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
       <View>
         <TouchableOpacity
           style={styles.skipButtonContainer}

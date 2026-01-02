@@ -2,23 +2,21 @@ import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {setCurrencyData} from '../slice/currencyDataSlice';
 import {FETCH_CURRENCY_DATA} from '../actionTypes';
 import {selectUserId} from '../slice/userIdSlice';
-import {getCurrencyByUserId} from '../../services/CurrencyService';
+import {getCurrencyByUserId} from '../../watermelondb/services';
 
 function* fetchCurrency(): Generator<any, void, any> {
   try {
     const userId = yield select(selectUserId);
-    const currencies = yield call(getCurrencyByUserId, userId);
-    const currencyId = String(currencies[0]?._id);
-    const currencyName = currencies[0]?.name;
-    const currencySymbol = currencies[0]?.symbol;
-    const currencyCode = currencies[0]?.code;
-    const currencyData = {
-      currencyId,
-      currencyName,
-      currencySymbol,
-      currencyCode,
-    };
-    yield put(setCurrencyData(currencyData));
+    const currency = yield call(getCurrencyByUserId, userId);
+    if (currency) {
+      const currencyData = {
+        currencyId: String(currency.id),
+        currencyName: currency.name,
+        currencySymbol: currency.symbol,
+        currencyCode: currency.code,
+      };
+      yield put(setCurrencyData(currencyData));
+    }
   } catch (error) {
     console.error('Error fetching currency:', error);
   }

@@ -53,7 +53,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       />
       {errors.length > 0 && (
         <View style={{marginBottom: 10}}>
-          {errors.map(error => (
+          {errors.map((error: {message: string}) => (
             <View key={error.message}>
               <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
                 {error.message}

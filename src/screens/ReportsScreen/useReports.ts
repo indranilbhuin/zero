@@ -1,12 +1,22 @@
 import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import moment from 'moment';
 import {
   getExpenseRequest,
   selectExpenseData,
 } from '../../redux/slice/expenseDataSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import {ExpenseData as ExpenseDocType} from '../../watermelondb/services';
+
+// Extended type for expenses with optional category info
+interface TransactionWithCategory extends ExpenseDocType {
+  category?: {
+    name?: string;
+    icon?: string;
+    color?: string;
+  };
+}
 
 const useReports = () => {
   const colors = useThemeColors();
@@ -14,35 +24,42 @@ const useReports = () => {
   const [selectedYear, setSelectedYear] = useState(Number(moment().format('YYYY')));
   const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
   const [showYearPicker, setShowYearPicker] = useState(false);
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<TransactionWithCategory[]>([]);
   const allTransactions = useSelector(selectExpenseData);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
   const dayNames = moment.weekdaysShort();
 
-  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
-  console.log('copy', allTransactionsCopy, 'real', allTransactions);
+  // Memoize to prevent infinite re-renders
+  const allTransactionsCopy = useMemo(
+    () => JSON.parse(JSON.stringify(allTransactions)),
+    [allTransactions],
+  );
 
-  const filterTransactions = (year: number, month: string) => {
-    const filtered = allTransactionsCopy?.filter(
-      (item: {date: moment.MomentInput}) => {
-        const transactionYear = moment(item.date).year();
-        const transactionMonth = moment(item.date).format('MMMM');
-        return (
-          transactionYear === year && (!month || transactionMonth === month)
-        );
-      },
-    );
+  const filterTransactions = useCallback(
+    (year: number, month: string) => {
+      const filtered = allTransactionsCopy?.filter(
+        (item: {date: moment.MomentInput}) => {
+          const transactionYear = moment(item.date).year();
+          const transactionMonth = moment(item.date).format('MMMM');
+          return (
+            transactionYear === year && (!month || transactionMonth === month)
+          );
+        },
+      );
 
-    setFilteredTransactions(filtered.length > 0 ? filtered : []);
-  };
-
-  console.log('this is filtered', filteredTransactions);
+      setFilteredTransactions(filtered?.length > 0 ? filtered : []);
+    },
+    [allTransactionsCopy],
+  );
 
   useEffect(() => {
     dispatch(getExpenseRequest());
+  }, [dispatch]);
+
+  useEffect(() => {
     filterTransactions(selectedYear, selectedMonth);
-  }, [selectedYear, selectedMonth, allTransactionsCopy?.length]);
+  }, [filterTransactions, selectedYear, selectedMonth]);
 
   const handleYearPicker = () => {
     setShowYearPicker(true);

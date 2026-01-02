@@ -2,30 +2,34 @@ import {useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
-import {createCurrency} from '../../services/CurrencyService';
+import {createCurrency} from '../../watermelondb/services';
 import AsyncStorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import currencies from '../../../assets/jsons/currencies.json';
-import Currency from '../../schemas/CurrencySchema';
+
+interface CurrencySelection {
+  code: string;
+  symbol: string;
+  name: string;
+}
 
 const useChooseCurrency = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(
-    null,
-  );
+  const [selectedCurrency, setSelectedCurrency] =
+    useState<CurrencySelection | null>(null);
   const userId = useSelector(selectUserId);
   const dispatch = useDispatch();
 
   const handleCurrencySubmit = async () => {
     if (selectedCurrency) {
-      console.log('second');
+      console.log('Creating currency...');
       await createCurrency(
         selectedCurrency.code,
         selectedCurrency.symbol,
         selectedCurrency.name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
+        userId,
       );
 
       await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
@@ -49,7 +53,7 @@ const useChooseCurrency = () => {
     setFilteredCurrencies(filtered);
   };
 
-  const handleCurrencySelect = (currency: any) => {
+  const handleCurrencySelect = (currency: CurrencySelection) => {
     setSelectedCurrency(currency);
   };
 

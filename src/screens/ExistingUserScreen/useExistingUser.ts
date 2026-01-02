@@ -7,21 +7,45 @@ import {useEffect, useState} from 'react';
 import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
 import {Linking, Platform} from 'react-native';
 import {requestStoragePermission} from '../../utils/dataUtils';
-import DocumentPicker from '@react-native-documents/picker';
+import {pick, types} from '@react-native-documents/picker';
 import RNFS from 'react-native-fs';
-import {createUser} from '../../services/UserService';
+
+// Type for imported data from JSON file
+interface ImportedData {
+  users: Array<{username: string; email: string}>;
+  categories: Array<{name: string; icon?: string; color?: string}>;
+  currencies: Array<{code: string; symbol: string; name: string}>;
+  expenses: Array<{
+    title: string;
+    amount: number;
+    description?: string;
+    category: {name: string};
+    date: string;
+  }>;
+  debtors: Array<{title: string; icon?: string; type?: string; color?: string}>;
+  debts: Array<{
+    amount: number;
+    description: string;
+    debtor: {title: string};
+    date: string;
+    type: string;
+  }>;
+}
+import {
+  createUser,
+  deleteAllData,
+  createCategory,
+  createDebtor,
+  createCurrency,
+  createExpense,
+  createDebt,
+} from '../../watermelondb/services';
 import {
   FETCH_ALL_CATEGORY_DATA,
   FETCH_ALL_DEBTOR_DATA,
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
-import {deleteAllData} from '../../services/DeleteService';
-import {createCategory} from '../../services/CategoryService';
-import {createDebtor} from '../../services/DebtorService';
-import {createCurrency} from '../../services/CurrencyService';
-import {createExpense} from '../../services/ExpenseService';
-import {createDebt} from '../../services/DebtService';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 import AsyncStorageService from '../../utils/asyncStorageService';
@@ -35,20 +59,20 @@ const useExistingUser = () => {
   const allCategories = useSelector(selectCategoryData);
   console.log('kkkk', allCategories);
   const allCategoriesCopy = allCategories;
-  const [allData, setAllData] = useState(null);
-  const [fileKey, setFileKey] = useState(null);
+  const [allData, setAllData] = useState<ImportedData | null>(null);
+  const [fileKey, setFileKey] = useState<string | null>(null);
   const [uploadMessage, setUploadMessage] = useState('Upload your file');
-  const [fileName, setFileName] = useState(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const allDebtors = useSelector(selectDebtorData);
   const [isStorageModalVisible, setIsStorageModalVisible] = useState(false);
   const debtorsCopy = allDebtors;
 
   console.log('lklklkla', debtorsCopy);
 
-  function normalizePath(path: string | undefined) {
+  function normalizePath(path: string | undefined): string {
     try {
       if (path === undefined) {
-        throw console.error('undefined');
+        throw new Error('Path is undefined');
       }
       if (Platform.OS === 'ios' || Platform.OS === 'android') {
         const filePrefix = 'file:';
@@ -56,10 +80,11 @@ const useExistingUser = () => {
           path = path.substring(filePrefix.length);
         }
         path = decodeURI(path);
-        return path;
       }
+      return path;
     } catch (e) {
       console.error({msg: 'Failed to normalize path', data: e});
+      return '';
     }
   }
 
@@ -72,8 +97,8 @@ const useExistingUser = () => {
         setIsStorageModalVisible(true);
         return;
       }
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+      const result = await pick({
+        type: [types.allFiles],
         allowMultiSelection: false,
       });
 
@@ -118,8 +143,8 @@ const useExistingUser = () => {
     await importRealmData();
   };
 
-  const isValidKey = key => {
-    if (key?.length !== 20) {
+  const isValidKey = (key: string | null): boolean => {
+    if (!key || key.length !== 20) {
       return false;
     }
 
@@ -133,33 +158,24 @@ const useExistingUser = () => {
   };
 
   const populateCategory = async () => {
+    if (!allData) return;
     const {categories} = allData;
 
     for (const categoryData of categories) {
       const {name, icon, color} = categoryData;
-      await createCategory(
-        name,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        icon,
-        color,
-      );
+      await createCategory(name, userId, icon ?? null, color ?? null);
     }
 
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
   };
 
   const populate = async () => {
+    if (!allData) return;
     const {debtors} = allData;
 
     for (const debtorData of debtors) {
       const {title, icon, type, color} = debtorData;
-      await createDebtor(
-        title,
-        Realm.BSON.ObjectID.createFromHexString(userId),
-        icon,
-        type,
-        color,
-      );
+      await createDebtor(title, userId, icon ?? null, type ?? 'Borrow', color ?? null);
     }
     dispatch({type: FETCH_ALL_DEBTOR_DATA});
   };
@@ -169,16 +185,16 @@ const useExistingUser = () => {
     dispatch({type: FETCH_CURRENCY_DATA});
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
     dispatch({type: FETCH_ALL_DEBTOR_DATA});
-  }, []);
+  }, [dispatch]);
 
-  const getCategoryById = (categories?: any, categoryName) => {
+  const getCategoryById = (categories: Array<{id?: string; name?: string}>, categoryName: string): string => {
     const category = categories.find(item => item.name === categoryName);
-    return category ? category._id : null;
+    return category?.id ?? '';
   };
 
-  const getDebtorById = (debtors?: any, debtorname) => {
+  const getDebtorById = (debtors: Array<{id?: string; title?: string}>, debtorname: string): string => {
     const debtor = debtors.find(item => item.title === debtorname);
-    return debtor ? debtor._id : null;
+    return debtor?.id ?? '';
   };
 
   const handleDataSubmit = async () => {
@@ -187,44 +203,23 @@ const useExistingUser = () => {
 
       for (const currencyData of currencies) {
         const {code, symbol, name} = currencyData;
-        await createCurrency(
-          code,
-          symbol,
-          name,
-          Realm.BSON.ObjectID.createFromHexString(userId),
-        );
+        await createCurrency(code, symbol, name, userId);
       }
 
       for (const expenseData of expenses) {
         const {title, amount, description, category, date} = expenseData;
         console.log(category.name);
-        const categoryId = String(
-          getCategoryById(allCategoriesCopy, category.name),
-        );
+        const categoryId = getCategoryById(allCategoriesCopy, category.name);
         console.log(typeof categoryId, categoryId);
-        await createExpense(
-          Realm.BSON.ObjectID.createFromHexString(userId),
-          title,
-          amount,
-          description,
-          Realm.BSON.ObjectID.createFromHexString(categoryId),
-          date,
-        );
+        await createExpense(userId, title, amount, description ?? '', categoryId, date);
       }
 
       for (const debtData of debts) {
         const {amount, description, debtor, date, type} = debtData;
         console.log(debtor);
-        const debtorId = String(getDebtorById(debtorsCopy, debtor.title));
+        const debtorId = getDebtorById(debtorsCopy, debtor.title);
 
-        await createDebt(
-          Realm.BSON.ObjectID.createFromHexString(userId),
-          amount,
-          description,
-          Realm.BSON.ObjectID.createFromHexString(debtorId),
-          date,
-          type,
-        );
+        await createDebt(userId, amount, description, debtorId, date, type);
       }
 
       console.log('Data populated successfully!');
@@ -251,8 +246,8 @@ const useExistingUser = () => {
 
   const isDisable = () => {
     return (
-      (allData?.categories.length > 0 && allCategoriesCopy.length === 0) ||
-      (allData?.debtors.length > 0 && debtorsCopy.length === 0)
+      ((allData?.categories?.length ?? 0) > 0 && allCategoriesCopy.length === 0) ||
+      ((allData?.debtors?.length ?? 0) > 0 && debtorsCopy.length === 0)
     );
   };
 

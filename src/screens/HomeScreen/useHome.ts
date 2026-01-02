@@ -16,7 +16,7 @@ import {
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
 import moment from 'moment';
-import Expense from '../../schemas/ExpenseSchema';
+import {ExpenseData as Expense} from '../../watermelondb/services';
 
 const useHome = () => {
   const colors = useThemeColors();
@@ -43,18 +43,18 @@ const useHome = () => {
     dispatch({type: FETCH_ALL_USER_DATA});
     dispatch({type: FETCH_CURRENCY_DATA});
     dispatch({type: FETCH_ALL_CATEGORY_DATA});
-  }, [userId, userName, currencySymbol]);
+  }, [dispatch, userId, userName, currencySymbol]);
 
   useEffect(() => {
     dispatch(getExpenseRequest());
-  }, [userId]);
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (refreshing) {
       dispatch(getExpenseRequest());
       setRefreshing(false);
     }
-  }, [refreshing]);
+  }, [dispatch, refreshing]);
 
   console.log('in home screen', allTransactions);
 

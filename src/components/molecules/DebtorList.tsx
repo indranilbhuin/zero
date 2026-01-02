@@ -2,12 +2,16 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useCallback} from 'react';
 import Icon from '../atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
-import Debtor from '../../schemas/DebtorSchema';
-import Debt from '../../schemas/DebtSchema';
+import {DebtorData as Debtor, DebtData as DebtDocType} from '../../watermelondb/services';
 import PrimaryText from '../atoms/PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
+
+// Extended debt type with optional debtor populated from Redux (for backward compatibility)
+interface Debt extends DebtDocType {
+  debtor?: {_id?: {toString(): string}};
+}
 
 interface DebtorListProps {
   currencySymbol: string;
@@ -37,7 +41,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
   const calculateTotalDebt = useCallback(
     (debtorId: string) => {
       const debtorDebts = allDebts.filter(
-        debt => debt.debtor?._id?.toString() === debtorId,
+        debt => (debt.debtorId ?? debt.debtor?._id?.toString()) === debtorId,
       );
 
       const debtorBorrowings = debtorDebts.filter(
@@ -82,9 +86,9 @@ const DebtorList: React.FC<DebtorListProps> = ({
       <View style={styles.debtorItemContainer}>
         <TouchableOpacity
           onPress={() =>
-            handleDebtor(String(debtor._id), debtor.title, debtor.type)
+            handleDebtor(String(debtor.id), debtor.title, debtor.type)
           }
-          onLongPress={() => handleLongPress(String(debtor._id))}
+          onLongPress={() => handleLongPress(String(debtor.id))}
           delayLongPress={500}
           style={{justifyContent: 'center', alignItems: 'center'}}>
           <View
@@ -124,13 +128,13 @@ const DebtorList: React.FC<DebtorListProps> = ({
           }}>
           <PrimaryText
             style={{
-              color: amountColor(String(debtor._id)),
+              color: amountColor(String(debtor.id)),
               fontSize: 11,
               textAlign: 'center',
               fontFamily: 'FiraCode-SemiBold',
             }}>
             {currencySymbol}
-            {formatCurrency(Math.abs(calculateTotalDebt(String(debtor._id))))}
+            {formatCurrency(Math.abs(calculateTotalDebt(String(debtor.id))))}
           </PrimaryText>
         </View>
       </View>
@@ -144,7 +148,7 @@ const DebtorList: React.FC<DebtorListProps> = ({
         data={debtors}
         renderItem={renderDebtorItem}
         numColumns={4}
-        keyExtractor={item => String(item._id)}
+        keyExtractor={item => String(item.id)}
         scrollEnabled={false}
       />
     </View>

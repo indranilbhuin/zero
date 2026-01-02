@@ -7,6 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import React, {ReactNode} from 'react';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Colors} from '../../hooks/useThemeColors';
 
 interface PrimaryViewProps {
@@ -22,13 +23,18 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
   style,
   dismissKeyboardOnTouch = false,
 }) => {
+  const insets = useSafeAreaInsets();
   const isDark = colors.primaryBackground === '#0F0F0F';
 
   const content = (
     <View
       style={[
         styles.mainContainer,
-        {backgroundColor: colors.primaryBackground},
+        {
+          backgroundColor: colors.primaryBackground,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
         style,
       ]}>
       <StatusBar

@@ -24,7 +24,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
   const colors = useThemeColors();
 
   useEffect(() => {
-    let toastTimeout: number;
+    let toastTimeout: ReturnType<typeof setTimeout> | undefined;
 
     if (visible) {
       setToastVisible(true);
@@ -39,7 +39,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
     }
 
     return () => {
-      clearTimeout(toastTimeout);
+      if (toastTimeout) clearTimeout(toastTimeout);
     };
   }, [visible, timeout]);
 

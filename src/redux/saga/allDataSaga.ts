@@ -1,5 +1,5 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
-import {getAllData} from '../../services/GetService';
+import {getAllData} from '../../watermelondb/services';
 import {
   getAllDataFaliure,
   getAllDataRequest,
@@ -9,7 +9,7 @@ import {
 function* fetchAllData(): Generator<any, void, any> {
   try {
     const allData = yield call(getAllData);
-    console.log("helll",allData);
+    console.log('All data:', allData);
     yield put(getAllDataSuccess(allData));
   } catch (error) {
     yield put(getAllDataFaliure(error));

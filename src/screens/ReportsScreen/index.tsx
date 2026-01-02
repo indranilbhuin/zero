@@ -9,7 +9,7 @@ import useReports from './useReports';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import PieChartLabels from '../../components/atoms/PieChartLabels';
-import Expense from '../../schemas/ExpenseSchema';
+import {ExpenseData as Expense} from '../../watermelondb/services';
 import EmptyState from '../../components/atoms/EmptyState';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
@@ -32,7 +32,7 @@ const ReportsScreen = () => {
     daysInMonth,
   } = useReports();
 
-  const daysWithTransactions = filteredTransactions.reduce(
+  const daysWithTransactions = filteredTransactions.reduce<number[]>(
     (days, transaction) => {
       const transactionDay = moment(transaction.date).date();
       if (!days.includes(transactionDay)) {
@@ -205,7 +205,9 @@ const ReportsScreen = () => {
     filteredTransactions?.forEach((transaction: any) => {
       const {amount, category} = transaction;
 
-      const categoryName = category.name;
+      // Handle case where category might be undefined
+      const categoryName = category?.name ?? 'Unknown';
+      const categoryColor = category?.color ?? '#808080';
 
       if (categoryMap.has(categoryName)) {
         categoryMap.set(categoryName, {
@@ -214,7 +216,11 @@ const ReportsScreen = () => {
         });
       } else {
         categoryMap.set(categoryName, {
-          category: {name: categoryName, ...category},
+          category: {
+            name: categoryName,
+            color: categoryColor,
+            ...category,
+          },
           amount,
         });
       }
@@ -228,7 +234,7 @@ const ReportsScreen = () => {
       key: item.category.name,
       value: item.amount,
       svg: {
-        fill: item.category.color,
+        fill: item.category.color ?? '#808080',
         onPress: () => console.log('press', item),
       },
       label: `${item.category.name}: ${currencySymbol} ${item.amount}`,

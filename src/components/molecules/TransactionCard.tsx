@@ -57,7 +57,7 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
           {currencySymbol}
           {Number.isInteger(totalSpent)
             ? formatCurrency(totalSpent)
-            : formatCurrency(totalSpent.toFixed(2))}
+            : formatCurrency(Number(totalSpent.toFixed(2)))}
         </PrimaryText>
       </View>
     </View>

@@ -1,10 +1,19 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback} from 'react';
+import React from 'react';
 import Icon from '../atoms/Icons';
-import Category from '../../schemas/CategorySchema';
 import PrimaryText from '../atoms/PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
-import {FlashList} from '@shopify/flash-list';
+
+// Generic category type that works for both RxDB categories and JSON categories
+interface Category {
+  id?: string;
+  _id?: string;
+  name: string;
+  icon?: string;
+  color?: string;
+  categoryStatus?: boolean;
+  userId?: string;
+}
 
 interface CategoryContainerProps {
   categories: Array<Category>;
@@ -19,57 +28,47 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
   toggleCategorySelection,
   selectedCategories,
 }) => {
-  const renderCategoryItem = useCallback(
-    ({item: category}: {item: Category}) => (
-      <TouchableOpacity onPress={() => toggleCategorySelection(category)}>
-        <View
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor:
-                category?.name === selectedCategories[0]?.name
-                  ? `${colors.accentGreen}75`
-                  : colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
-            },
-          ]}>
-          {category.icon !== undefined ? (
-            <View style={styles.iconContainer}>
-              <Icon
-                name={category.icon ?? 'shape'}
-                size={20}
-                color={category.color ?? colors.primaryText}
-                type="MaterialCommunityIcons"
-              />
-            </View>
-          ) : null}
-
-          <PrimaryText
-            style={{
-              color:
-                category?.name === selectedCategories[0]?.name
-                  ? colors.buttonText
-                  : colors.primaryText,
-              fontSize: 13,
-            }}>
-            {category.name}
-          </PrimaryText>
-        </View>
-      </TouchableOpacity>
-    ),
-    [colors, selectedCategories, toggleCategorySelection],
-  );
-
   return (
     <View style={styles.categoryMainContainer}>
-      <FlashList
-        data={categories}
-        renderItem={renderCategoryItem}
-        keyExtractor={item => String(item._id)}
-        scrollEnabled={false}
-        horizontal
-        contentContainerStyle={styles.listContent}
-      />
+      {categories.map(category => (
+        <TouchableOpacity
+          key={String(category.id)}
+          onPress={() => toggleCategorySelection(category)}>
+          <View
+            style={[
+              styles.categoryContainer,
+              {
+                backgroundColor:
+                  category?.name === selectedCategories[0]?.name
+                    ? `${colors.accentGreen}75`
+                    : colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
+              },
+            ]}>
+            {category.icon !== undefined ? (
+              <View style={styles.iconContainer}>
+                <Icon
+                  name={category.icon ?? 'shape'}
+                  size={20}
+                  color={category.color ?? colors.primaryText}
+                  type="MaterialCommunityIcons"
+                />
+              </View>
+            ) : null}
+
+            <PrimaryText
+              style={{
+                color:
+                  category?.name === selectedCategories[0]?.name
+                    ? colors.buttonText
+                    : colors.primaryText,
+                fontSize: 13,
+              }}>
+              {category.name}
+            </PrimaryText>
+          </View>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
@@ -78,16 +77,14 @@ export default CategoryContainer;
 
 const styles = StyleSheet.create({
   categoryMainContainer: {
-    minHeight: 55,
-  },
-  listContent: {
-    paddingRight: 5,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   categoryContainer: {
     height: 45,
     padding: 10,
-    marginRight: 5,
-    marginTop: 5,
+    marginRight: 8,
+    marginBottom: 8,
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',

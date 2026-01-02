@@ -1,8 +1,8 @@
 import {useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
-import {createUser} from '../../services/UserService';
+import {createUser} from '../../watermelondb/services';
 import {navigate} from '../../utils/navigationUtils';
-import { nameSchema } from '../../utils/validationSchema';
+import {nameSchema} from '../../utils/validationSchema';
 
 const usePersonalize = () => {
   const colors = useThemeColors();
@@ -15,7 +15,7 @@ const usePersonalize = () => {
       await createUser(name, email);
       navigate('OnboardingScreen');
     } catch (error) {
-      console.error('Error saving user data to Realm:', error);
+      console.error('Error saving user data:', error);
     }
   };
 
@@ -24,9 +24,8 @@ const usePersonalize = () => {
       await createUser('User', email);
       navigate('OnboardingScreen');
     } catch (error) {
-      console.error('Error saving demo user data to Realm:', error);
+      console.error('Error saving demo user data:', error);
     }
-    navigate('OnboardingScreen');
   };
 
   return {

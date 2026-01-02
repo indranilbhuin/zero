@@ -3,9 +3,19 @@ import React from 'react';
 import PrimaryText from '../atoms/PrimaryText';
 import CustomInput from '../atoms/CustomInput';
 import PrimaryButton from '../atoms/PrimaryButton';
-import { nameSchema } from '../../utils/validationSchema';
+import {nameSchema} from '../../utils/validationSchema';
+import {Colors} from '../../hooks/useThemeColors';
 
-const ChangeNameModal = ({
+interface ChangeNameModalProps {
+  colors: Colors;
+  isNameModalVisible: boolean;
+  handleNameModalClose: () => void;
+  name: string;
+  setName: (name: string) => void;
+  handleNameUpdate: () => void;
+}
+
+const ChangeNameModal: React.FC<ChangeNameModalProps> = ({
   colors,
   isNameModalVisible,
   handleNameModalClose,

@@ -23,7 +23,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   const colors = useThemeColors();
   const handleDateChange = (
-    event: DateTimePickerEvent,
+    _event: DateTimePickerEvent,
     selectedDate?: Date | undefined,
   ) => {
     const currentDate = selectedDate ?? createdAt;

@@ -67,7 +67,7 @@ const IndividualDebtsScreen = () => {
     <>
       <PrimaryView colors={colors}>
         <View style={mainStyles.headerContainer}>
-          <AppHeader onPress={goBack} colors={colors} text={debtorName} />
+          <AppHeader onPress={goBack} colors={colors} text={debtorName ?? ''} />
         </View>
         <View
           style={{
