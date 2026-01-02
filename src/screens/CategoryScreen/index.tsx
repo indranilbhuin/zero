@@ -32,10 +32,9 @@ const CategoryScreen = () => {
               {backgroundColor: colors.iconContainer},
             ]}>
             <Icon
-              name={category.icon ?? 'shape'}
+              name={category.icon ?? 'shapes'}
               size={20}
               color={category.color ?? colors.primaryText}
-              type={'MaterialCommunityIcons'}
             />
           </View>
           <View>
@@ -54,20 +53,18 @@ const CategoryScreen = () => {
               )
             }>
             <Icon
-              name={'edit'}
+              name="pencil"
               size={20}
               color={colors.accentGreen}
-              type={'MaterialIcons'}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => handleDelete(category.id)}>
             <Icon
-              name={'delete-empty'}
+              name="trash-2"
               size={20}
               color={colors.accentOrange}
-              type={'MaterialCommunityIcons'}
             />
           </TouchableOpacity>
         </View>
@@ -115,10 +112,9 @@ const CategoryScreen = () => {
           ]}
           onPress={() => navigate('AddCategoryScreen')}>
           <Icon
-            name={'shape-plus'}
+            name="plus"
             size={30}
             color={colors.primaryText}
-            type={'MaterialCommunityIcons'}
           />
         </TouchableOpacity>
       </View>

@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './style';
 import Icon from '../../components/atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
@@ -48,19 +42,11 @@ const HomeScreen = () => {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }>
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <View style={styles.listExpenseContainer}>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
               <View style={styles.cardContainer}>
-                <TransactionCard
-                  currencySymbol={currencySymbol}
-                  day={'Today'}
-                  totalSpent={Number(formatTodaySpent)}
-                />
+                <TransactionCard currencySymbol={currencySymbol} day={'Today'} totalSpent={Number(formatTodaySpent)} />
                 <TransactionCard
                   currencySymbol={currencySymbol}
                   day={'Yesterday'}
@@ -74,18 +60,13 @@ const HomeScreen = () => {
               </View>
             </ScrollView>
             <View style={styles.transactionListContainer}>
-              <PrimaryText style={{color: colors.accentGreen}}>
-                All Transactions
-              </PrimaryText>
+              <PrimaryText style={{color: colors.accentGreen}}>All Transactions</PrimaryText>
 
               <View>
                 {allTransactions?.length === 0 ? (
                   <EmptyState colors={colors} type={'Transactions'} />
                 ) : (
-                  <TransactionList
-                    currencySymbol={currencySymbol}
-                    allExpenses={sortedTransactions}
-                  />
+                  <TransactionList currencySymbol={currencySymbol} allExpenses={sortedTransactions} />
                 )}
               </View>
             </View>
@@ -94,17 +75,9 @@ const HomeScreen = () => {
       </PrimaryView>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
-          style={[
-            styles.addButton,
-            {backgroundColor: colors.secondaryBackground},
-          ]}
+          style={[styles.addButton, {backgroundColor: colors.secondaryBackground}]}
           onPress={() => navigate('AddTransactionsScreen')}>
-          <Icon
-            name={'wallet-plus'}
-            size={30}
-            color={colors.primaryText}
-            type={'MaterialCommunityIcons'}
-          />
+          <Icon name="plus-circle" size={30} color={colors.primaryText} />
         </TouchableOpacity>
       </View>
     </>

@@ -23,7 +23,7 @@ import {
   generateUniqueKey,
   requestStoragePermission,
 } from '../../utils/dataUtils';
-import moment from 'moment';
+import {getTimestamp} from '../../utils/dateUtils';
 import ChangeNameModal from '../../components/molecules/ChangeNameModal';
 
 const SettingsScreen = () => {
@@ -85,7 +85,7 @@ const SettingsScreen = () => {
         return;
       }
 
-      const currentDateAndTime = moment().format('YYYYMMDDHHmmss');
+      const currentDateAndTime = getTimestamp();
       const jsonData = JSON.stringify(
         {key: generateUniqueKey(), data: allData},
         null,
@@ -141,10 +141,9 @@ const SettingsScreen = () => {
           <View style={styles.iconButtonContainer}>
             <TouchableOpacity onPress={() => goBack()}>
               <Icon
-                name="caret-back-circle"
+                name="arrow-left"
                 size={25}
                 color={colors.primaryText}
-                type={'IonIcons'}
               />
             </TouchableOpacity>
           </View>
@@ -425,7 +424,6 @@ const SettingsScreen = () => {
                   name="search"
                   size={20}
                   color={colors.primaryText}
-                  type="Feather"
                 />
                 <TextInput
                   style={[

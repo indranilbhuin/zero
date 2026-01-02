@@ -48,10 +48,9 @@ const CategoryContainer: React.FC<CategoryContainerProps> = ({
             {category.icon !== undefined ? (
               <View style={styles.iconContainer}>
                 <Icon
-                  name={category.icon ?? 'shape'}
+                  name={category.icon ?? 'shapes'}
                   size={20}
                   color={category.color ?? colors.primaryText}
-                  type="MaterialCommunityIcons"
                 />
               </View>
             ) : null}

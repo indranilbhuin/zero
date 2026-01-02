@@ -3,7 +3,7 @@ import React, {useCallback, useMemo} from 'react';
 import {DebtData as Debt} from '../../watermelondb/services';
 import PrimaryText from '../atoms/PrimaryText';
 import Icon from '../atoms/Icons';
-import moment from 'moment';
+import {formatDate, formatCalendar} from '../../utils/dateUtils';
 import {Colors} from '../../hooks/useThemeColors';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
@@ -71,10 +71,9 @@ const DebtItem: React.FC<DebtItemProps> = ({
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleDeleteDebt(String(debt.id))}>
             <Icon
-              name={'delete-empty'}
+              name="trash-2"
               size={20}
               color={colors.accentOrange}
-              type={'MaterialCommunityIcons'}
             />
           </TouchableOpacity>
         </View>
@@ -110,7 +109,7 @@ const DebtList: React.FC<DebtListProps> = ({
     const groupedExpenses = new Map<string, Array<Debt>>();
 
     individualDebts?.forEach(debt => {
-      const date = moment(debt.date).format('YYYY-MM-DD');
+      const date = formatDate(debt.date, 'YYYY-MM-DD');
       const currentGroup = groupedExpenses.get(date) ?? [];
       currentGroup.push(debt);
       groupedExpenses.set(date, currentGroup);
@@ -119,14 +118,7 @@ const DebtList: React.FC<DebtListProps> = ({
     return Array.from(groupedExpenses.keys()).map(date => ({
       date,
       debts: groupedExpenses.get(date) ?? [],
-      label: moment(date).calendar(null, {
-        sameDay: '[Today]',
-        nextDay: '[Tomorrow]',
-        nextWeek: 'dddd',
-        lastDay: '[Yesterday]',
-        lastWeek: '[Last] dddd',
-        sameElse: 'DD MMM YYYY',
-      }),
+      label: formatCalendar(date),
     }));
   }, [individualDebts]);
 

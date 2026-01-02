@@ -2,7 +2,7 @@ import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import useThemeColors, {Colors} from '../../hooks/useThemeColors';
 import Icon from '../atoms/Icons';
-import moment from 'moment';
+import {formatDate, formatCalendar} from '../../utils/dateUtils';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
 import {navigate} from '../../utils/navigationUtils';
 import {deleteExpenseById} from '../../watermelondb/services';
@@ -151,10 +151,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               },
             ]}>
             <Icon
-              name={'edit'}
+              name="pencil"
               size={20}
               color={colors.accentGreen}
-              type={'MaterialIcons'}
             />
           </View>
           <View
@@ -191,10 +190,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               },
             ]}>
             <Icon
-              name={'delete-empty'}
+              name="trash-2"
               size={20}
               color={colors.accentOrange}
-              type={'MaterialCommunityIcons'}
             />
           </View>
         </TouchableOpacity>
@@ -224,10 +222,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                   {backgroundColor: colors.iconContainer},
                 ]}>
                 <Icon
-                  name={expense.category?.icon ?? 'selection-ellipse'}
+                  name={expense.category?.icon ?? 'circle-dot'}
                   size={20}
                   color={expense.category?.color ?? colors.buttonText}
-                  type={'MaterialCommunityIcons'}
                 />
               </View>
               <View>
@@ -259,7 +256,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                       fontSize: 10,
                       marginRight: 5,
                     }}>
-                    {moment(expense.date).format('Do MMM')}
+                    {formatDate(expense.date, 'Do MMM')}
                   </PrimaryText>
                 </View>
               </View>
@@ -309,7 +306,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     const groupedExpenses = new Map<string, Array<Expense>>();
 
     allExpenses?.forEach(expense => {
-      const date = moment(expense.date).format('YYYY-MM-DD');
+      const date = formatDate(expense.date, 'YYYY-MM-DD');
       const currentGroup = groupedExpenses.get(date) ?? [];
       currentGroup.push(expense);
       groupedExpenses.set(date, currentGroup);
@@ -318,14 +315,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     return Array.from(groupedExpenses.keys()).map(date => ({
       date,
       expenses: groupedExpenses.get(date) ?? [],
-      label: moment(date).calendar(null, {
-        sameDay: '[Today]',
-        nextDay: '[Tomorrow]',
-        nextWeek: 'dddd',
-        lastDay: '[Yesterday]',
-        lastWeek: '[Last] dddd',
-        sameElse: 'DD MMM YYYY',
-      }),
+      label: formatCalendar(date),
     }));
   }, [allExpenses]);
 

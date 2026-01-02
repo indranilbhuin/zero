@@ -68,10 +68,9 @@ const ExistingUserScreen = () => {
                 onPress={importData}
                 disabled={isValidKey(fileKey)}>
                 <Icon
-                  name={'file-upload'}
+                  name="upload"
                   size={25}
                   color={colors.accentGreen}
-                  type={'MaterialCommunityIcons'}
                 />
               </TouchableOpacity>
             </View>
@@ -112,14 +111,13 @@ const ExistingUserScreen = () => {
                       },
                     ]}>
                     <Icon
-                      name={'database-sync'}
+                      name="database"
                       size={25}
                       color={
                         allCategoriesCopy?.length > 0
                           ? colors.buttonText
                           : colors.primaryText
                       }
-                      type={'MaterialCommunityIcons'}
                     />
                     {allCategoriesCopy?.length > 0 ? (
                       <PrimaryText
@@ -163,14 +161,13 @@ const ExistingUserScreen = () => {
                       },
                     ]}>
                     <Icon
-                      name={'credit-card-sync-outline'}
+                      name="credit-card"
                       size={25}
                       color={
                         debtorsCopy?.length > 0
                           ? colors.buttonText
                           : colors.primaryText
                       }
-                      type={'MaterialCommunityIcons'}
                     />
                     {debtorsCopy?.length > 0 ? (
                       <PrimaryText

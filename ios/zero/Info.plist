@@ -42,12 +42,6 @@
 		<string>FiraCode-Medium.ttf</string>
 		<string>FiraCode-Regular.ttf</string>
 		<string>FiraCode-SemiBold.ttf</string>
-		<string>AntDesign.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>Ionicons.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

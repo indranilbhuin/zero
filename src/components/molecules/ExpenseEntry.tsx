@@ -19,7 +19,7 @@ import {createExpense, updateExpenseById} from '../../watermelondb/services';
 import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
-import moment from 'moment';
+import {getISODateTime} from '../../utils/dateUtils';
 import {
   expenseAmountSchema,
   expenseDescriptionSchema,
@@ -48,7 +48,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
 
   const [createdAt, setCreatedAt] = useState(
     isAddButton
-      ? moment().format('YYYY-MM-DDTHH:mm:ss')
+      ? getISODateTime()
       : expenseData.expenseDate,
   );
   const [showDatePicker, setShowDatePicker] = useState(false);

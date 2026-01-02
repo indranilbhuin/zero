@@ -3,7 +3,7 @@ import React from 'react';
 import {useRoute} from '@react-navigation/native';
 import AppHeader from '../../components/atoms/AppHeader';
 import {goBack} from '../../utils/navigationUtils';
-import moment from 'moment';
+import {formatDate as formatDateUtil} from '../../utils/dateUtils';
 import TransactionList from '../../components/molecules/TransactionList';
 import useEverydayTransaction, {
   EverydayTransactionRouteProp,
@@ -53,7 +53,7 @@ const EverydayTransactionScreen = () => {
             )}
             <PrimaryText
               style={{color: colors.primaryText, fontSize: 13, marginTop: 5}}>
-              No Transactions on {moment(expenseDate).format('Do MMM YY')}
+              No Transactions on {formatDateUtil(expenseDate, 'Do MMM YY')}
             </PrimaryText>
           </View>
         ) : (

@@ -48,7 +48,6 @@ const ChooseCurrencyScreen = () => {
           name="search"
           size={20}
           color={colors.primaryText}
-          type="Feather"
         />
         <TextInput
           style={[
@@ -72,13 +71,11 @@ const ChooseCurrencyScreen = () => {
         />
       </ScrollView>
 
-      <View style={{marginBottom: 20}}>
-        <PrimaryButton
-          onPress={handleCurrencySubmit}
-          colors={colors}
-          buttonTitle={'Continue'}
-        />
-      </View>
+      <PrimaryButton
+        onPress={handleCurrencySubmit}
+        colors={colors}
+        buttonTitle={'Continue'}
+      />
     </PrimaryView>
   );
 };

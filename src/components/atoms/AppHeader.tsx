@@ -16,10 +16,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({onPress, colors, text}) => {
       <View style={styles.iconButtonContainer}>
         <TouchableOpacity onPress={onPress}>
           <Icon
-            name="caret-back-circle"
+            name="arrow-left"
             size={30}
             color={colors.primaryText}
-            type={'IonIcons'}
           />
         </TouchableOpacity>
       </View>

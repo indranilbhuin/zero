@@ -14,7 +14,7 @@ import {getDebtRequest} from '../../redux/slice/debtDataSlice';
 import mainStyles from '../../styles/main';
 import DatePicker from '../atoms/DatePicker';
 import {DebtsScreenProp} from '../../screens/AddDebtsScreen';
-import moment from 'moment';
+import {getISODateTime} from '../../utils/dateUtils';
 import {expenseAmountSchema, expenseSchema} from '../../utils/validationSchema';
 import textInputStyles from '../../styles/textInput';
 import PrimaryText from '../atoms/PrimaryText';
@@ -47,7 +47,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
     isAddButton ? '' : String(amount),
   );
   const [createdAt, setCreatedAt] = useState(
-    isAddButton ? moment().format('YYYY-MM-DDTHH:mm:ss') : debtDate,
+    isAddButton ? getISODateTime() : debtDate,
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [debtsType, setDebtsType] = useState(isAddButton ? 'Borrow' : debtType);

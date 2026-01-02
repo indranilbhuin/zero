@@ -248,10 +248,9 @@ const DebtsScreen = () => {
           ]}
           onPress={() => navigate('AddDebtorScreen')}>
           <Icon
-            name={'credit-card-plus'}
+            name="plus-circle"
             size={30}
             color={colors.primaryText}
-            type={'MaterialCommunityIcons'}
           />
         </TouchableOpacity>
       </View>

@@ -3,7 +3,7 @@ import React from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../atoms/PrimaryText';
 import Icon from '../atoms/Icons';
-import moment from 'moment';
+import {getCurrentMonthName} from '../../utils/dateUtils';
 import {formatCurrency} from '../../utils/numberUtils';
 
 interface TransactionCardProps {
@@ -22,14 +22,14 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
   const getIconName = (day: string) => {
     console.log(day);
     if (day === 'Today') {
-      return 'today';
-    } else if (day === 'Yesterday') {
-      return 'calendar-clear';
-    } else if (day === 'This Month') {
       return 'calendar';
+    } else if (day === 'Yesterday') {
+      return 'calendar';
+    } else if (day === 'This Month') {
+      return 'calendar-days';
     }
 
-    return 'today-outline';
+    return 'calendar';
   };
 
   return (
@@ -40,11 +40,10 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
             name={getIconName(day)}
             size={20}
             color={colors.primaryText}
-            type={'IonIcons'}
           />
         </View>
         <PrimaryText style={{marginTop: 10}}>
-          {day === 'This Month' ? `${moment().format('MMMM')}'s` : `${day}'s`}
+          {day === 'This Month' ? `${getCurrentMonthName()}'s` : `${day}'s`}
         </PrimaryText>
         <PrimaryText>Transactions</PrimaryText>
       </View>

@@ -17,7 +17,7 @@ import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
 import {RouteProp} from '@react-navigation/native';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
-import moment from 'moment';
+import {DateInput, sortByDateDesc} from '../../utils/dateUtils';
 import {DebtData as DebtDocType} from '../../watermelondb/services';
 import useAmountColor from '../../hooks/useAmountColor';
 import {
@@ -41,11 +41,8 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
   const individualDebts = useSelector(selectDebtData);
-  const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts));
-  const sortedDebts = individualDebtsCopy.sort(
-    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
-      moment(b.date).diff(moment(a.date)),
-  );
+  const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts)) as Array<{date: DateInput} & DebtDocType>;
+  const sortedDebts = sortByDateDesc(individualDebtsCopy);
   console.log('all debtsss', individualDebtsCopy);
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
@@ -67,15 +64,9 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   console.log('first', borrowings);
   console.log('second', lendings);
 
-  const sortedBorrowings = borrowings.sort(
-    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
-      moment(b.date).diff(moment(a.date)),
-  );
+  const sortedBorrowings = sortByDateDesc(borrowings);
 
-  const sortedLendings = lendings.sort(
-    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
-      moment(b.date).diff(moment(a.date)),
-  );
+  const sortedLendings = sortByDateDesc(lendings);
 
   const totalBorrowings = borrowings.reduce(
     (total: number, debt: {amount: number}) => total + debt.amount,

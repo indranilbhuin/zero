@@ -1,7 +1,15 @@
 import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import moment from 'moment';
+import {
+  getCurrentYear,
+  getCurrentMonthName,
+  getWeekdayShortNames,
+  getYear,
+  getMonthName,
+  getDaysInMonth,
+  DateInput,
+} from '../../utils/dateUtils';
 import {
   getExpenseRequest,
   selectExpenseData,
@@ -21,14 +29,14 @@ interface TransactionWithCategory extends ExpenseDocType {
 const useReports = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const [selectedYear, setSelectedYear] = useState(Number(moment().format('YYYY')));
-  const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
+  const [selectedYear, setSelectedYear] = useState(getCurrentYear());
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthName());
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [filteredTransactions, setFilteredTransactions] = useState<TransactionWithCategory[]>([]);
   const allTransactions = useSelector(selectExpenseData);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const dayNames = moment.weekdaysShort();
+  const dayNames = getWeekdayShortNames();
 
   // Memoize to prevent infinite re-renders
   const allTransactionsCopy = useMemo(
@@ -39,9 +47,9 @@ const useReports = () => {
   const filterTransactions = useCallback(
     (year: number, month: string) => {
       const filtered = allTransactionsCopy?.filter(
-        (item: {date: moment.MomentInput}) => {
-          const transactionYear = moment(item.date).year();
-          const transactionMonth = moment(item.date).format('MMMM');
+        (item: {date: DateInput}) => {
+          const transactionYear = getYear(item.date);
+          const transactionMonth = getMonthName(item.date);
           return (
             transactionYear === year && (!month || transactionMonth === month)
           );
@@ -84,10 +92,7 @@ const useReports = () => {
     0,
   );
 
-  const daysInMonth = moment(
-    `${selectedYear}-${moment().month(selectedMonth).format('MM')}`,
-    'YYYY-MM',
-  ).daysInMonth();
+  const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
 
   return {
     colors,

@@ -19,7 +19,7 @@ const WelcomeScreen = () => {
 
       <Carousel />
 
-      <View style={{marginBottom: '10%'}}>
+      <View>
         <PrimaryButton
           onPress={handleAllreadyUser}
           colors={colors}

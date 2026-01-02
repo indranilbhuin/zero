@@ -1,4 +1,4 @@
-import moment from 'moment';
+import {formatDate} from '../../utils/dateUtils';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
@@ -28,8 +28,8 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   );
   const expenseDate = route.params.isDate;
   console.log('no ', expenseDate);
-  const formattedDate = moment(expenseDate).format('MMM Do YY');
-  const formatDate = moment(expenseDate).format('MMM Do YY');
+  const formattedDate = formatDate(expenseDate, 'MMM Do YY');
+  const formattedDateDisplay = formatDate(expenseDate, 'MMM Do YY');
   const colors = useThemeColors();
   const currencySymbol = useSelector(selectCurrencySymbol);
 
@@ -43,7 +43,7 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   );
 
   return {
-    formatDate,
+    formatDate: formattedDateDisplay,
     formattedDate,
     colors,
     currencySymbol,

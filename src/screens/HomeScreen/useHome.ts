@@ -15,7 +15,7 @@ import {
   FETCH_ALL_USER_DATA,
   FETCH_CURRENCY_DATA,
 } from '../../redux/actionTypes';
-import moment from 'moment';
+import {now, isSameDate, getYesterday, DateInput, sortByDateDesc} from '../../utils/dateUtils';
 import {ExpenseData as Expense} from '../../watermelondb/services';
 
 const useHome = () => {
@@ -23,11 +23,8 @@ const useHome = () => {
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
   const allTransactions = useSelector(selectExpenseData);
-  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions));
-  const sortedTransactions = allTransactionsCopy.sort(
-    (a: {date: moment.MomentInput}, b: {date: moment.MomentInput}) =>
-      moment(b.date).diff(moment(a.date)),
-  );
+  const allTransactionsCopy = JSON.parse(JSON.stringify(allTransactions)) as Array<{date: DateInput} & Expense>;
+  const sortedTransactions = sortByDateDesc(allTransactionsCopy);
 
   const expenseLoading = useSelector(selectExpenseLoading);
   const expenseError = useSelector(selectExpenseError);
@@ -58,11 +55,11 @@ const useHome = () => {
 
   console.log('in home screen', allTransactions);
 
-  const currentDate = moment();
+  const currentDate = now();
 
   const todaySpent = allTransactions
     .filter((transaction: Expense) =>
-      moment(transaction.date).isSame(currentDate, 'day'),
+      isSameDate(transaction.date, currentDate, 'day'),
     )
     .reduce(
       (total, transaction: {amount: number}) => total + transaction.amount,
@@ -73,11 +70,11 @@ const useHome = () => {
     ? todaySpent
     : todaySpent.toFixed(2);
 
-  const yesterdayDate = moment().subtract(1, 'days');
+  const yesterdayDate = getYesterday();
 
   const yesterdaySpent = allTransactions
     .filter((transaction: Expense) =>
-      moment(transaction.date).isSame(yesterdayDate, 'day'),
+      isSameDate(transaction.date, yesterdayDate, 'day'),
     )
     .reduce(
       (total, transaction: {amount: number}) => total + transaction.amount,
@@ -90,7 +87,7 @@ const useHome = () => {
 
   const thisMonthSpent = allTransactions
     .filter((transaction: Expense) =>
-      moment(transaction.date).isSame(currentDate, 'month'),
+      isSameDate(transaction.date, currentDate, 'month'),
     )
     .reduce(
       (total, transaction: {amount: number}) => total + transaction.amount,

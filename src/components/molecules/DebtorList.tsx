@@ -101,10 +101,9 @@ const DebtorList: React.FC<DebtorListProps> = ({
             ]}>
             <View>
               <Icon
-                name={debtor.icon ?? 'account'}
+                name={debtor.icon ?? 'user'}
                 size={30}
                 color={debtor.color ?? colors.primaryText}
-                type="MaterialCommunityIcons"
               />
             </View>
           </View>

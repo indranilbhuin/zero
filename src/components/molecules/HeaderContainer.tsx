@@ -70,10 +70,9 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
         <View>
           <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
             <Icon
-              name={'setting'}
+              name="settings"
               size={23}
               color={colors.primaryText}
-              type={'AntDesign'}
             />
           </TouchableOpacity>
         </View>

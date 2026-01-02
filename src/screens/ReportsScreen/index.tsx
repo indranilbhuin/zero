@@ -2,7 +2,14 @@ import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
 import React, {useCallback} from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
-import moment from 'moment';
+import {
+  getDayOfMonth,
+  getFirstDayOfMonth,
+  parseDate,
+  formatDate,
+  isSameDate,
+  getMonthIndex,
+} from '../../utils/dateUtils';
 import {navigate} from '../../utils/navigationUtils';
 import styles from './style';
 import useReports from './useReports';
@@ -34,7 +41,7 @@ const ReportsScreen = () => {
 
   const daysWithTransactions = filteredTransactions.reduce<number[]>(
     (days, transaction) => {
-      const transactionDay = moment(transaction.date).date();
+      const transactionDay = getDayOfMonth(transaction.date);
       if (!days.includes(transactionDay)) {
         days.push(transactionDay);
       }
@@ -249,9 +256,7 @@ const ReportsScreen = () => {
   };
 
   const renderCalendar = () => {
-    const firstDayOfMonth = moment(
-      `${selectedYear}-${moment().month(selectedMonth).format('MM')}-01`,
-    ).day();
+    const firstDayOfMonth = getFirstDayOfMonth(selectedYear, selectedMonth);
 
     const blanks = Array(firstDayOfMonth).fill(0);
     const days = Array.from({length: daysInMonth}, (_, i) => i + 1);
@@ -259,12 +264,11 @@ const ReportsScreen = () => {
     const calendar = [...blanks, ...days];
 
     return calendar.map((day, index) => {
-      const date = moment(
+      const date = parseDate(
         `${selectedYear}-${selectedMonth}-${day}`,
-        'YYYY-MMM-D',
       );
       const dayTransactions = filteredTransactions.filter((item: Expense) =>
-        moment(item.date).isSame(date, 'day'),
+        isSameDate(item.date, date, 'day'),
       );
 
       const totalAmountForDay = dayTransactions.reduce(
@@ -297,10 +301,10 @@ const ReportsScreen = () => {
         backgroundColor = `${colors.accentGreen}20`;
       }
 
-      const monthIndex = months.indexOf(selectedMonth);
+      const monthIndex = getMonthIndex(selectedMonth);
       const selectedDate = new Date(selectedYear, monthIndex, day);
 
-      const isDate = moment(selectedDate).format('YYYY-MM-DD');
+      const isDate = formatDate(selectedDate, 'YYYY-MM-DD');
 
       return day !== 0 ? (
         <TouchableOpacity

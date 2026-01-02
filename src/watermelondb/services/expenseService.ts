@@ -1,5 +1,5 @@
 import {Q} from '@nozbe/watermelondb';
-import moment from 'moment';
+import {formatDate} from '../../utils/dateUtils';
 import {database} from '../database';
 import Expense from '../models/Expense';
 import Category from '../models/Category';
@@ -171,7 +171,7 @@ export const getAllExpensesByDate = async (
 
   // Filter by date in memory since date format may vary
   const expensesByDate = expenses.filter(expense => {
-    const formattedExpenseDate = moment(expense.date).format('YYYY-MM-DD');
+    const formattedExpenseDate = formatDate(expense.date, 'YYYY-MM-DD');
     return formattedExpenseDate === targetDate;
   });
 

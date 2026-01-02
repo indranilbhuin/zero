@@ -117,10 +117,9 @@ const IndividualDebtsScreen = () => {
               ]}
               onPress={handleMarkAsPaid}>
               <Icon
-                name={'check-circle'}
+                name="check-circle"
                 size={20}
                 color={colors.accentBlue}
-                type={'MaterialIcons'}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -134,10 +133,9 @@ const IndividualDebtsScreen = () => {
               ]}
               onPress={handleUpdateDebtor}>
               <Icon
-                name={'edit'}
+                name="pencil"
                 size={20}
                 color={colors.accentGreen}
-                type={'MaterialIcons'}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -151,10 +149,9 @@ const IndividualDebtsScreen = () => {
               ]}
               onPress={handleDeleteDebtor}>
               <Icon
-                name={'delete-empty'}
+                name="trash-2"
                 size={20}
                 color={colors.accentOrange}
-                type={'MaterialCommunityIcons'}
               />
             </TouchableOpacity>
           </View>
@@ -268,10 +265,9 @@ const IndividualDebtsScreen = () => {
             ]}
             onPress={() => navigate('AddDebtsScreen', {debtorId, debtorName})}>
             <Icon
-              name={'assignment-add'}
+              name="plus"
               size={30}
               color={colors.primaryText}
-              type={'MaterialIcons'}
             />
           </TouchableOpacity>
         </View>

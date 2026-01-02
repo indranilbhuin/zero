@@ -2,7 +2,7 @@
   {
     "_id": "5f75cddc0ef99a4704df8e6c",
     "name": "Food",
-    "icon": "food-fork-drink",
+    "icon": "utensils-crossed",
     "color": "#B0E57C"
   },
   {
@@ -14,31 +14,31 @@
   {
     "_id": "5f75cddc0ef99a4704df8e6e",
     "name": "Entertainment",
-    "icon": "gamepad-variant",
+    "icon": "gamepad-2",
     "color": "#87CEFA"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e6f",
     "name": "Healthcare",
-    "icon": "bandage",
+    "icon": "bandaid",
     "color": "#FFA07A"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e70",
     "name": "Shopping",
-    "icon": "shopping",
+    "icon": "shopping-bag",
     "color": "#800080"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e71",
     "name": "Travel",
-    "icon": "airplane",
+    "icon": "plane",
     "color": "#FF6347"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e72",
     "name": "Utilities",
-    "icon": "wifi-strength-2",
+    "icon": "wifi",
     "color": "#CD853F"
   },
   {
@@ -50,13 +50,13 @@
   {
     "_id": "5f75cddc0ef99a4704df8e74",
     "name": "Gifts",
-    "icon": "gift-open",
+    "icon": "gift",
     "color": "#A9A973"
   },
   {
     "_id": "5f75cddc0ef99a4704df8e75",
     "name": "Other",
-    "icon": "selection-ellipse",
+    "icon": "circle-dot",
     "color": "#808080"
   }
 ]

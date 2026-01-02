@@ -1,42 +1,34 @@
-import React, { memo } from 'react';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import IonIcon from 'react-native-vector-icons/Ionicons';
+import React, {memo} from 'react';
+import {ICON_REGISTRY, isValidIconName} from './IconRegistry';
 
 interface IconProps {
   name: string;
-  size: number;
-  color: string;
-  type: string;
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
 }
 
-const Icon: React.FC<IconProps> = ({name, size, color, type}) => {
-  const iconProps = {
-    name,
-    size,
-    color,
-  };
-  console.log('Icon props:', { name, size, color, type });
-
-  switch (type) {
-    case 'AntDesign':
-      return <AntDesignIcon {...iconProps} />;
-    case 'FontAwesome':
-      return <FontAwesomeIcon {...iconProps} />;
-    case 'MaterialIcons':
-      return <MaterialIconsIcon {...iconProps} />;
-    case 'Feather':
-      return <FeatherIcon {...iconProps} />;
-    case 'MaterialCommunityIcons':
-      return <MaterialCommunityIcon {...iconProps} />;
-    case 'IonIcons':
-      return <IonIcon {...iconProps} />;
-    default:
-      return <AntDesignIcon {...iconProps} />;
+const Icon: React.FC<IconProps> = ({
+  name,
+  size = 24,
+  color = '#000000',
+  strokeWidth = 2,
+}) => {
+  if (!isValidIconName(name)) {
+    console.warn(`Icon "${name}" not found in registry`);
+    return null;
   }
+
+  const IconComponent = ICON_REGISTRY[name];
+
+  return (
+    <IconComponent
+      size={size}
+      color={color}
+      strokeWidth={strokeWidth}
+    />
+  );
 };
 
 export default memo(Icon);
+export {type IconName} from './IconRegistry';

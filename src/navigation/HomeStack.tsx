@@ -30,7 +30,7 @@ const ICON_SIZE = 24;
 const HomeIcon = ({color}: {color: string}) => (
   <View style={styles.iconContainer}>
     <View style={styles.iconWrapper}>
-      <Icon name={'home'} size={ICON_SIZE} type={'MaterialIcons'} color={color} />
+      <Icon name="home" size={ICON_SIZE} color={color} />
     </View>
     <Text style={[styles.labelText, {color}]}>Home</Text>
   </View>
@@ -39,7 +39,7 @@ const HomeIcon = ({color}: {color: string}) => (
 const ReportsIcon = ({color}: {color: string}) => (
   <View style={styles.iconContainer}>
     <View style={styles.iconWrapper}>
-      <Icon name={'analytics'} size={ICON_SIZE} type={'MaterialIcons'} color={color} />
+      <Icon name="bar-chart-3" size={ICON_SIZE} color={color} />
     </View>
     <Text style={[styles.labelText, {color}]}>Reports</Text>
   </View>
@@ -48,7 +48,7 @@ const ReportsIcon = ({color}: {color: string}) => (
 const DebtIcon = ({color}: {color: string}) => (
   <View style={styles.iconContainer}>
     <View style={styles.iconWrapper}>
-      <Icon name={'credit-card'} size={ICON_SIZE} type={'MaterialIcons'} color={color} />
+      <Icon name="credit-card" size={ICON_SIZE} color={color} />
     </View>
     <Text style={[styles.labelText, {color}]}>Debts</Text>
   </View>
@@ -57,7 +57,7 @@ const DebtIcon = ({color}: {color: string}) => (
 const CategoriesIcon = ({color}: {color: string}) => (
   <View style={styles.iconContainer}>
     <View style={styles.iconWrapper}>
-      <Icon name={'shape'} size={ICON_SIZE} type={'MaterialCommunityIcons'} color={color} />
+      <Icon name="shapes" size={ICON_SIZE} color={color} />
     </View>
     <Text style={[styles.labelText, {color}]}>Categories</Text>
   </View>

@@ -7,6 +7,8 @@ import MainStack from './src/navigation/MainStack';
 import {LogBox} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ThemeProvider} from './src/context/ThemeContext';
+import {SheetProvider} from 'react-native-actions-sheet';
+import './src/sheets/sheets';
 
 const App = () => {
   LogBox.ignoreAllLogs();
@@ -15,9 +17,11 @@ const App = () => {
     <SafeAreaProvider>
       <Provider store={store}>
         <ThemeProvider>
-          <NavigationContainer ref={setNavigationRef}>
-            <MainStack />
-          </NavigationContainer>
+          <SheetProvider>
+            <NavigationContainer ref={setNavigationRef}>
+              <MainStack />
+            </NavigationContainer>
+          </SheetProvider>
         </ThemeProvider>
       </Provider>
     </SafeAreaProvider>

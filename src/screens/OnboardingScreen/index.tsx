@@ -61,7 +61,6 @@ const OnboardingScreen = () => {
                       name={category.icon}
                       size={20}
                       color={category.color}
-                      type="MaterialCommunityIcons"
                     />
                   </View>
                 ) : null}
@@ -80,13 +79,11 @@ const OnboardingScreen = () => {
           ))}
         </View>
       </View>
-      <View style={{marginBottom: '10%'}}>
-        <PrimaryButton
-          onPress={handleSubmit}
-          colors={colors}
-          buttonTitle={'Continue'}
-        />
-      </View>
+      <PrimaryButton
+        onPress={handleSubmit}
+        colors={colors}
+        buttonTitle={'Continue'}
+      />
     </PrimaryView>
   );
 };

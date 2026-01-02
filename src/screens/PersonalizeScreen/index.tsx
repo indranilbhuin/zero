@@ -13,7 +13,10 @@ const PersonalizeScreen = () => {
   const isValid = nameSchema.safeParse(name).success;
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
+    <PrimaryView
+      colors={colors}
+      style={{justifyContent: 'space-between'}}
+      dismissKeyboardOnTouch>
       <View>
         <TouchableOpacity
           style={styles.skipButtonContainer}
@@ -54,14 +57,12 @@ const PersonalizeScreen = () => {
           />
         </View>
       </View>
-      <View style={{marginBottom: '10%'}}>
-        <PrimaryButton
-          onPress={handleSubmit}
-          colors={colors}
-          buttonTitle={'Continue'}
-          disabled={!isValid}
-        />
-      </View>
+      <PrimaryButton
+        onPress={handleSubmit}
+        colors={colors}
+        buttonTitle={'Continue'}
+        disabled={!isValid}
+      />
     </PrimaryView>
   );
 };
