@@ -133,7 +133,7 @@ Contributions are welcome! Please read our [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## License
 
-This project is open source under the MIT License.
+This project is licensed under the [BSD 2-Clause License](LICENSE).
 
 ---
 
