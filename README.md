@@ -4,9 +4,9 @@
     <h1 align="center">zero - Minimal Expense Manager</h1>
 </div>
 
-Zero is a lightweight, open-source Android application designed to empower users to effortlessly manage their expenses while prioritizing privacy. With a minimalistic user interface, dark and light themes, and a commitment to keeping user data entirely on their devices, Zero ensures a seamless and secure expense tracking experience.
+Zero is a lightweight, open-source expense tracking app for Android & iOS. Built with privacy-first approach — all your financial data stays on your device. No servers, no tracking, no data collection.
 
-## Screen Shots
+## Screenshots
 
 <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center;">
    <img src="assets/screenshots/zero_home_screen_dark.png" width="200"/>
@@ -21,102 +21,123 @@ Zero is a lightweight, open-source Android application designed to empower users
    <img src="assets/screenshots/zero_categories_screen_light.png" width="200"/>
 </div>
 
+## What's New in v2.0
+
+- **WatermelonDB + SQLite** — Migrated from Realm to WatermelonDB for better performance and long-term support
+- **Faster load times** — Lazy loading and optimized queries
+- **Improved UI** — Bottom sheets, better animations, refined design
+- **Better data export** — Export/import your data seamlessly across devices
+
 ## Features
 
-### 1. Account Creation
+### Expense Tracking
+Add, edit, and delete transactions with customizable categories.
 
-- **New User:** Easily create a local account by choosing a username, default categories, and currency symbol.
+### Category Management
+Create your own categories with custom icons and colors.
 
-- **Existing User:** Upload the `zero***.json` file to sync user data and continue using the application seamlessly.
+### Insights & Reports
+- Monthly spending breakdown with pie charts
+- Heatmap calendar showing daily expenses
+- Average per day calculations
 
-### 2. Expense Tracking
+### Debt Tracking
+Track money you owe or are owed. Manage debtors and individual debts.
 
-- **Add, Edit, Delete:** Effortlessly manage expenses by adding, editing, or deleting transactions along with customizable categories.
+### Customization
+- Light & Dark themes (+ system default)
+- Multiple currency symbols
+- Personalized username
 
-### 3. Category Modification
+### Data Control
+- Export all data as JSON
+- Import on new device
+- Delete all data option
 
-- **Add, Delete, Edit:** Tailor the application to your needs by modifying expense categories.
+### Privacy First
+- 100% offline — no internet required
+- All data stored locally on device
+- Zero data collection
 
-### 4. View Insights
+## Tech Stack
 
-- **Analytics:** Gain valuable insights into spending habits with features like average per day, total spending by each day, and monthly overviews.
+| Layer | Technology |
+|-------|------------|
+| Framework | React Native |
+| Database | WatermelonDB (SQLite) |
+| State | Redux + Redux Saga |
+| UI | Custom components + Lucide icons |
+| Navigation | React Navigation |
+| Lists | FlashList (performant lists) |
 
-- **Heatmap:** Visualize spending patterns with a heatmap, providing a comprehensive overview of monthly expenditures.
+### Why WatermelonDB?
 
-### 5. Borrowings or Lendings
+We migrated from Realm to WatermelonDB because:
+- **Realm is deprecated** — MongoDB announced end of support
+- **SQLite is battle-tested** — Powers millions of apps
+- **Lazy loading** — Only loads data when needed
+- **Better React Native integration** — Built specifically for RN
+- **Smaller bundle size** — Less bloat
 
-- **Debtor Management:** Track borrowings or lendings by creating debtors and managing debts with a user-friendly interface.
+## Project Structure
 
-### 6. Settings
+```
+src/
+├── components/        # Reusable UI components
+│   ├── atoms/         # Basic components (Button, Input, Text)
+│   └── molecules/     # Composite components
+├── screens/           # App screens
+│   └── ScreenName/
+│       ├── index.tsx      # UI component
+│       ├── useScreenName.ts  # Business logic hook
+│       └── style.ts       # Styles
+├── watermelondb/      # Database layer
+│   ├── models/        # Data models
+│   ├── services/      # CRUD operations
+│   ├── schema.ts      # Database schema
+│   └── database.ts    # DB initialization
+├── redux/             # State management
+├── navigation/        # Navigation config
+├── hooks/             # Global hooks
+├── utils/             # Helper functions
+└── sheets/            # Bottom sheet components
+```
 
-- **Customization:** Personalize the application by changing currency symbols, themes, and usernames.
+## Getting Started
 
-- **Export/Import Data:** Easily export or import all application data in JSON format for backup or migration purposes.
+### Prerequisites
+- Node.js 18+
+- Yarn or npm
+- Android Studio / Xcode
 
-- **Delete Data:** Maintain control over your data with the option to delete all application data.
+### Installation
 
-### 7. Privacy
+```bash
+# Clone the repo
+git clone https://github.com/indranilbhuin/zero.git
+cd zero
 
-- **Local Database:** User data is stored securely on the device, ensuring privacy is prioritized.
+# Install dependencies
+yarn install
 
-- **No Data Collection:** Zero collects no user data, not even usernames, fostering a commitment to user privacy.
+# iOS only
+cd ios && pod install && cd ..
 
-## Folder Structure
+# Run the app
+yarn android  # or yarn ios
+```
 
-The project's folder structure is organized as follows:
+## Contributing
 
-- `src/` - Contains the source code for the zero app.
-  - `components/` - React Native components used throughout the app.
-  - `screens/` - React Native screens.
-    - index.tsx - Main React component file for the screen, responsible for rendering the UI.
-    - useScreenName.ts - Custom hook for storing business logic specific to the screen named "ScreenName".
-    - style.ts - Styles specific to the "ScreenName" screen, maintaining separation of concerns.
-  - `hooks/` - React Global hooks defined here.
-  - `redux/` - Redux store configuration and slices.
-  - `schemas/` - Realm database schemas defined here.
-  - `services/` - Static assets such as images and fonts.
-  - `navigation/` - Navigation configurations.
-  - `utils/` - Utility functions and helpers.
-  - `styles` - Global stylesheet defined here.
-  - `android/` - Android-specific project files and configurations.
-  - `ios/` - iOS-specific project files and configurations.
-- `assets` - All assets for the project is stored here
-  - `fonts` - Store font files such as .ttf or .otf here.
-  - `images` - Store image assets such as PNGs, JPGs, etc., here.
-  - `jsons` - Store JSON data files here, which may be used for configuration or other structured data.
+Contributions are welcome! Please read our [Code of Conduct](CODE_OF_CONDUCT.md) first.
 
-## Getting Started with the code
+## License
 
-To use zero, simply download the app from the playstore and use it.
+This project is open source under the MIT License.
 
-OR
+---
 
-Follow these steps to run the FoodTechApp project locally:
-
-1. Download and install Node.js from the official website: [Node.js Download](https://nodejs.org/en/download/)
-
-2. Open a terminal window on your machine.
-
-3. Navigate to the directory where you want to store the project.
-
-4. Run the command:
-
-   ```shell
-   git clone https://github.com/indranilbhuin/zero.git
-   ```
-
-5. Wait for Git to clone the repository to your machine.
-
-6. Once the cloning process is complete, navigate to the project's root directory:
-
-   ```shell
-   cd zero
-   ```
-
-7. Run the command to install all required dependencies:
-
-   ```shell
-   yarn install
-   ```
-
-8. Make sure you have a simulator or a device set up for running the app. You can use Android Studio or Xcode to set up an emulator or connect a physical device.
+<div align="center">
+  <p>Built with ❤️ in India</p>
+  <p><i>Embrace the simplicity of zero</i></p>
+</div>
