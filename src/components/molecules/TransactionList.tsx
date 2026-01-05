@@ -311,7 +311,11 @@ const TransactionList: React.FC<TransactionListProps> = ({
       groupedExpenses.set(date, currentGroup);
     });
 
-    return Array.from(groupedExpenses.keys()).map(date => ({
+    const sortedDates = Array.from(groupedExpenses.keys()).sort((a, b) => {
+      return new Date(b).getTime() - new Date(a).getTime();
+    });
+
+    return sortedDates.map(date => ({
       date,
       expenses: groupedExpenses.get(date) ?? [],
       label: formatCalendar(date),
