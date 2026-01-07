@@ -131,6 +131,11 @@ yarn android  # or yarn ios
 
 Contributions are welcome! Please read our [Code of Conduct](CODE_OF_CONDUCT.md) first.
 
+## Legal
+
+- [Privacy Policy](PRIVACY_POLICY.md) — We collect zero data
+- [Terms of Service](TERMS_OF_SERVICE.md) — Usage terms
+
 ## License
 
 This project is licensed under the [BSD 2-Clause License](LICENSE).

@@ -18,9 +18,9 @@ const App = () => {
       <Provider store={store}>
         <ThemeProvider>
           <SheetProvider>
-            <NavigationContainer ref={setNavigationRef}>
-              <MainStack />
-            </NavigationContainer>
+          <NavigationContainer ref={setNavigationRef}>
+            <MainStack />
+          </NavigationContainer>
           </SheetProvider>
         </ThemeProvider>
       </Provider>

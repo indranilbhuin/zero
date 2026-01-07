@@ -194,13 +194,13 @@ export const getAllExpensesByDate = async (
   return expensesByDate.map(e => {
     const category = categoryMap.get(e.categoryId);
     return {
-      id: e.id,
-      title: e.title,
-      amount: e.amount,
-      description: e.description,
-      categoryId: e.categoryId,
-      userId: e.userId,
-      date: e.date,
+    id: e.id,
+    title: e.title,
+    amount: e.amount,
+    description: e.description,
+    categoryId: e.categoryId,
+    userId: e.userId,
+    date: e.date,
       category,
     };
   });

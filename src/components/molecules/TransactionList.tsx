@@ -1,5 +1,5 @@
 import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import useThemeColors, {Colors} from '../../hooks/useThemeColors';
 import Icon from '../atoms/Icons';
 import {formatDate, formatCalendar} from '../../utils/dateUtils';
@@ -69,6 +69,11 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   const [deletionTimeoutId, setDeletionTimeoutId] = useState<number | null>(
     null,
   );
+
+  // Sync internal state when props change (e.g., navigating to different date)
+  useEffect(() => {
+    setExpenses(initialExpense || []);
+  }, [initialExpense]);
 
   const handleEdit = (
     expenseId: string,

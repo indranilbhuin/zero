@@ -3,7 +3,6 @@ import React, {useCallback} from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
 import {
-  getDayOfMonth,
   getFirstDayOfMonth,
   parseDate,
   formatDate,
@@ -39,14 +38,6 @@ const ReportsScreen = () => {
     totalAmountForMonth,
     daysInMonth,
   } = useReports();
-
-  const daysWithTransactions = filteredTransactions.reduce<number[]>((days, transaction) => {
-    const transactionDay = getDayOfMonth(transaction.date);
-    if (!days.includes(transactionDay)) {
-      days.push(transactionDay);
-    }
-    return days;
-  }, []);
 
   const months = [
     'January',
@@ -357,9 +348,7 @@ const ReportsScreen = () => {
           <PrimaryText style={styles.statsLabel}>Avg/Day</PrimaryText>
           <PrimaryText style={styles.statsValue}>
             {currencySymbol}
-            {daysWithTransactions.length === 0
-              ? '0'
-              : formatCurrency(totalAmountForMonth / daysWithTransactions.length)}
+            {formatCurrency(totalAmountForMonth / daysInMonth)}
           </PrimaryText>
         </View>
       </View>

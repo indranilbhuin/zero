@@ -37,67 +37,67 @@ const EverydayTransactionScreen = () => {
           text={formattedDate === undefined ? formattedDate : formatDate}
         />
       </View>
-      {allEverdayTransaction?.length === 0 ? (
-        <View style={styles.noTransactionContainer}>
-          {colors.primaryText === '#000000' ? (
-            <Image
-              source={require('../../../assets/images/lightNoTransaction.png')}
-              style={styles.noImage}
-            />
-          ) : (
-            <Image
-              source={require('../../../assets/images/darkNoTransaction.png')}
-              style={styles.noImage}
-            />
-          )}
-          <PrimaryText
-            style={{color: colors.primaryText, fontSize: 13, marginTop: 5}}>
-            No Transactions on {formatDateUtil(expenseDate, 'Do MMM YY')}
-          </PrimaryText>
-        </View>
-      ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View
-            style={[
-              reportsStyles.categoryContainer,
-              {
-                backgroundColor: colors.secondaryAccent,
-                borderWidth: undefined,
-                width: '100%',
-                height: 50,
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                paddingLeft: 10,
-                paddingRight: 10,
-              },
-            ]}>
+        {allEverdayTransaction?.length === 0 ? (
+          <View style={styles.noTransactionContainer}>
+            {colors.primaryText === '#000000' ? (
+              <Image
+                source={require('../../../assets/images/lightNoTransaction.png')}
+                style={styles.noImage}
+              />
+            ) : (
+              <Image
+                source={require('../../../assets/images/darkNoTransaction.png')}
+                style={styles.noImage}
+              />
+            )}
             <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-                textAlign: 'center',
-              }}>
-              Total Spent
-            </PrimaryText>
-            <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-                textAlign: 'center',
-              }}>
-              {currencySymbol}
-              {formatCurrency(totalAmountForTheDay)}
+              style={{color: colors.primaryText, fontSize: 13, marginTop: 5}}>
+              No Transactions on {formatDateUtil(expenseDate, 'Do MMM YY')}
             </PrimaryText>
           </View>
-          <TransactionList
-            currencySymbol={currencySymbol}
-            allExpenses={allEverdayTransactionCopy}
+        ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <View
+              style={[
+                reportsStyles.categoryContainer,
+                {
+                  backgroundColor: colors.secondaryAccent,
+                  borderWidth: undefined,
+                  width: '100%',
+                  height: 50,
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  paddingLeft: 10,
+                paddingRight: 10,
+                },
+              ]}>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                  textAlign: 'center',
+                }}>
+                Total Spent
+              </PrimaryText>
+              <PrimaryText
+                style={{
+                  color: colors.primaryText,
+                  fontSize: 13,
+                  fontFamily: 'FiraCode-SemiBold',
+                  textAlign: 'center',
+                }}>
+                {currencySymbol}
+                {formatCurrency(totalAmountForTheDay)}
+              </PrimaryText>
+            </View>
+            <TransactionList
+              currencySymbol={currencySymbol}
+              allExpenses={allEverdayTransactionCopy}
             targetDate={expenseDate}
-          />
+            />
         </ScrollView>
-      )}
+        )}
     </PrimaryView>
   );
 };
