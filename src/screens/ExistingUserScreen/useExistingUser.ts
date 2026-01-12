@@ -14,16 +14,15 @@ import {
   createExpense,
   createDebt,
 } from '../../watermelondb/services';
-import {
-  FETCH_ALL_CATEGORY_DATA,
-  FETCH_ALL_DEBTOR_DATA,
-  FETCH_ALL_USER_DATA,
-  FETCH_CURRENCY_DATA,
-} from '../../redux/actionTypes';
-import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
-import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
-import AsyncStorageService from '../../utils/asyncStorageService';
+import {fetchCategories} from '../../redux/slice/categoryDataSlice';
+import {fetchDebtors} from '../../redux/slice/debtorDataSlice';
+import {fetchUserData} from '../../redux/slice/userIdSlice';
+import {fetchCurrency} from '../../redux/slice/currencyDataSlice';
+import {fetchExpenses} from '../../redux/slice/expenseDataSlice';
+import {fetchAllDebts} from '../../redux/slice/allDebtDataSlice';
+import StorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
+import {AppDispatch} from '../../redux/store';
 
 interface ImportedData {
   users: Array<{username: string; email: string}>;
@@ -57,7 +56,7 @@ interface SyncStatus {
 
 const useExistingUser = () => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadMessage, setUploadMessage] = useState('Upload your file');
@@ -94,7 +93,9 @@ const useExistingUser = () => {
       }
       return path;
     } catch (e) {
-      console.error({msg: 'Failed to normalize path', data: e});
+      if (__DEV__) {
+        console.error({msg: 'Failed to normalize path', data: e});
+      }
       return '';
     }
   };
@@ -126,9 +127,11 @@ const useExistingUser = () => {
       }
       setSyncStats(prev => ({...prev, categories: data.categories.length}));
       setSyncStatus(prev => ({...prev, categories: 'done'}));
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch(fetchCategories());
     } catch (error) {
-      console.error('Error syncing categories:', error);
+      if (__DEV__) {
+        console.error('Error syncing categories:', error);
+      }
       setSyncStatus(prev => ({...prev, categories: 'error'}));
       throw error;
     }
@@ -144,9 +147,11 @@ const useExistingUser = () => {
       }
       setSyncStats(prev => ({...prev, debtors: data.debtors.length}));
       setSyncStatus(prev => ({...prev, debtors: 'done'}));
-      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      dispatch(fetchDebtors());
     } catch (error) {
-      console.error('Error syncing debtors:', error);
+      if (__DEV__) {
+        console.error('Error syncing debtors:', error);
+      }
       setSyncStatus(prev => ({...prev, debtors: 'error'}));
       throw error;
     }
@@ -158,9 +163,11 @@ const useExistingUser = () => {
         await createCurrency(code, symbol, name, userId);
       }
       setSyncStatus(prev => ({...prev, currencies: 'done'}));
-      dispatch({type: FETCH_CURRENCY_DATA});
+      dispatch(fetchCurrency());
     } catch (error) {
-      console.error('Error syncing currencies:', error);
+      if (__DEV__) {
+        console.error('Error syncing currencies:', error);
+      }
       setSyncStatus(prev => ({...prev, currencies: 'error'}));
       throw error;
     }
@@ -178,9 +185,11 @@ const useExistingUser = () => {
       }
       setSyncStats(prev => ({...prev, expenses: expenseCount}));
       setSyncStatus(prev => ({...prev, expenses: 'done'}));
-      dispatch(getExpenseRequest());
+      dispatch(fetchExpenses());
     } catch (error) {
-      console.error('Error syncing expenses:', error);
+      if (__DEV__) {
+        console.error('Error syncing expenses:', error);
+      }
       setSyncStatus(prev => ({...prev, expenses: 'error'}));
       throw error;
     }
@@ -198,9 +207,11 @@ const useExistingUser = () => {
       }
       setSyncStats(prev => ({...prev, debts: debtCount}));
       setSyncStatus(prev => ({...prev, debts: 'done'}));
-      dispatch(getAllDebtRequest());
+      dispatch(fetchAllDebts());
     } catch (error) {
-      console.error('Error syncing debts:', error);
+      if (__DEV__) {
+        console.error('Error syncing debts:', error);
+      }
       setSyncStatus(prev => ({...prev, debts: 'error'}));
       throw error;
     }
@@ -262,7 +273,7 @@ const useExistingUser = () => {
       }
 
       setSyncStatus(prev => ({...prev, user: 'done'}));
-      dispatch({type: FETCH_ALL_USER_DATA});
+      dispatch(fetchUserData());
 
       await syncAllData(data as ImportedData, newUserId);
 
@@ -270,7 +281,9 @@ const useExistingUser = () => {
       setIsSyncComplete(true);
       setUploadMessage('All data synced successfully!');
     } catch (error) {
-      console.error('Error importing data:', error);
+      if (__DEV__) {
+        console.error('Error importing data:', error);
+      }
       setIsSyncing(false);
       setSyncError('Failed to sync data. Please try again.');
       setUploadMessage('Error syncing data. Try again.');
@@ -279,9 +292,9 @@ const useExistingUser = () => {
 
   const reUpload = async () => {
     await deleteAllData();
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-    dispatch({type: FETCH_ALL_USER_DATA});
+    dispatch(fetchCategories());
+    dispatch(fetchDebtors());
+    dispatch(fetchUserData());
     setFileName(null);
     setIsSyncComplete(false);
     setSyncError(null);
@@ -290,7 +303,7 @@ const useExistingUser = () => {
   };
 
   const handleContinue = async () => {
-    await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
+    StorageService.setItemSync('isOnboarded', JSON.stringify(true));
     dispatch(setIsOnboarded(true));
   };
 

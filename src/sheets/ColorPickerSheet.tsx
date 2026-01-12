@@ -1,15 +1,17 @@
-import {Dimensions, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View, useWindowDimensions} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 import {SheetManager, SheetProps} from 'react-native-actions-sheet';
+import {FlashList} from '@shopify/flash-list';
 import {CustomBottomSheet} from '../components/atoms/CustomBottomSheet';
 import useThemeColors from '../hooks/useThemeColors';
 import allColors from '../../assets/jsons/categoryColors.json';
+import {gs} from '../styles/globalStyles';
 
-const ColorPickerSheet: React.FC<SheetProps<'color-picker-sheet'>> = props => {
+const ColorPickerSheet: React.FC<SheetProps<'color-picker-sheet'>> = React.memo(props => {
   const colors = useThemeColors();
   const selectedColor = props.payload?.selectedColor ?? 'null';
 
-  const screenWidth = Dimensions.get('window').width;
+  const {width: screenWidth} = useWindowDimensions();
   const colorsPerRow = 6;
   const colorSize = (screenWidth * 0.85) / colorsPerRow;
 
@@ -20,6 +22,26 @@ const ColorPickerSheet: React.FC<SheetProps<'color-picker-sheet'>> = props => {
       props.payload?.onSelect?.(color);
     },
     [props.payload],
+  );
+
+  const renderColorItem = useCallback(
+    ({item: color}: {item: string}) => (
+      <TouchableOpacity
+        style={[
+          gs.m8,
+          gs.center,
+          gs.rounded8,
+          {
+            width: colorSize,
+            height: colorSize,
+            backgroundColor: selectedColor === color ? colors.primaryText : undefined,
+          },
+        ]}
+        onPress={() => handleSelectColor(color)}>
+        <View style={[gs.size36, gs.rounded18, {backgroundColor: color}]} />
+      </TouchableOpacity>
+    ),
+    [colorSize, selectedColor, colors.primaryText, handleSelectColor],
   );
 
   return (
@@ -33,53 +55,16 @@ const ColorPickerSheet: React.FC<SheetProps<'color-picker-sheet'>> = props => {
         },
       }}
       gestureEnabled>
-      <ScrollView
-        style={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.colorGrid}>
-          {colorsList.map(color => (
-            <TouchableOpacity
-              key={color}
-              style={[
-                styles.colorItem,
-                {
-                  width: colorSize,
-                  height: colorSize,
-                  backgroundColor:
-                    selectedColor === color ? colors.primaryText : undefined,
-                },
-              ]}
-              onPress={() => handleSelectColor(color)}>
-              <View style={[styles.colorCircle, {backgroundColor: color}]} />
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+      <View style={[gs.h350, gs.px10]}>
+        <FlashList
+          data={colorsList}
+          renderItem={renderColorItem}
+          numColumns={6}
+          keyExtractor={(color: string) => color}
+        />
+      </View>
     </CustomBottomSheet>
   );
-};
+});
 
 export default ColorPickerSheet;
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    maxHeight: 400,
-    paddingHorizontal: 10,
-  },
-  colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-  },
-  colorItem: {
-    margin: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-  },
-  colorCircle: {
-    height: 36,
-    width: 36,
-    borderRadius: 18,
-  },
-});

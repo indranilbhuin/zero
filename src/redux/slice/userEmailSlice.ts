@@ -1,5 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
+import {fetchUserData} from './userIdSlice';
 
 const initialState = {
   userEmail: '',
@@ -12,6 +13,11 @@ const userEmailSlice = createSlice({
     setUserEmail: (state, action) => {
       state.userEmail = action.payload;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(fetchUserData.fulfilled, (state, action) => {
+      state.userEmail = action.payload.userEmail;
+    });
   },
 });
 

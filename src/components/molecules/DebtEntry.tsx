@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, memo, useCallback} from 'react';
 import {View, TextInput, TouchableOpacity} from 'react-native';
 import AppHeader from '../../components/atoms/AppHeader';
 import CustomInput from '../../components/atoms/CustomInput';
@@ -9,17 +9,16 @@ import useThemeColors from '../../hooks/useThemeColors';
 import {createDebt, updateDebtById} from '../../watermelondb/services';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
-import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
-import {getDebtRequest} from '../../redux/slice/debtDataSlice';
-import mainStyles from '../../styles/main';
+import {fetchAllDebts} from '../../redux/slice/allDebtDataSlice';
+import {fetchDebtsByDebtor} from '../../redux/slice/debtDataSlice';
 import DatePicker from '../atoms/DatePicker';
 import {DebtsScreenProp} from '../../screens/AddDebtsScreen';
 import {getISODateTime} from '../../utils/dateUtils';
 import {expenseAmountSchema, expenseSchema} from '../../utils/validationSchema';
-import textInputStyles from '../../styles/textInput';
 import PrimaryText from '../atoms/PrimaryText';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
-import debtsStyles from '../../screens/DebtsScreen/style';
+import {AppDispatch} from '../../redux/store';
+import {gs} from '../../styles/globalStyles';
 
 interface DebtEntryProps {
   buttonText: string;
@@ -28,172 +27,120 @@ interface DebtEntryProps {
 
 const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const {
-    debtId,
-    debtDescription,
-    amount,
-    debtorName,
-    debtDate,
-    debtorId,
-    debtType,
-  } = route.params;
+  const {debtId, debtDescription, amount, debtorName, debtDate, debtorId, debtType} = route.params;
   const isAddButton = buttonText === 'Add';
-  console.log(isAddButton, route.params);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [debtName, setDebtName] = useState(isAddButton ? '' : debtDescription);
-  const [debtAmount, setDebtAmount] = useState(
-    isAddButton ? '' : String(amount),
-  );
-  const [createdAt, setCreatedAt] = useState(
-    isAddButton ? getISODateTime() : debtDate,
-  );
+  const [debtAmount, setDebtAmount] = useState(isAddButton ? '' : String(amount));
+  const [createdAt, setCreatedAt] = useState(isAddButton ? getISODateTime() : debtDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [debtsType, setDebtsType] = useState(isAddButton ? 'Borrow' : debtType);
   const userId = useSelector(selectUserId);
 
-  const debtAmountError = hasInteracted
-    ? expenseAmountSchema?.safeParse(Number(debtAmount)).error?.issues || []
-    : [];
+  const debtAmountError = hasInteracted ? expenseAmountSchema?.safeParse(Number(debtAmount)).error?.issues || [] : [];
 
   const isValid =
-    expenseSchema.safeParse(debtName).success &&
-    expenseAmountSchema.safeParse(Number(debtAmount)).success;
-  console.log('debts', debtsType);
+    expenseSchema.safeParse(debtName).success && expenseAmountSchema.safeParse(Number(debtAmount)).success;
 
-  const handleAddDebt = async () => {
+  const handleAddDebt = useCallback(async () => {
     if (!isValid) {
       return;
     }
     try {
-      await createDebt(
-        userId,
-        Number(debtAmount),
-        debtName,
-        debtorId,
-        createdAt,
-        debtsType,
-      );
-      dispatch(getAllDebtRequest());
-      dispatch(getDebtRequest(debtorId));
+      await createDebt(userId, Number(debtAmount), debtName, debtorId, createdAt, debtsType);
+      dispatch(fetchAllDebts());
+      dispatch(fetchDebtsByDebtor(debtorId));
       goBack();
     } catch (error) {
-      console.error('Error creating debt:', error);
+      if (__DEV__) {
+        console.error('Error creating debt:', error);
+      }
     }
-  };
+  }, [isValid, userId, debtAmount, debtName, debtorId, createdAt, debtsType, dispatch]);
 
-  const handleUpdateDebt = async () => {
+  const handleUpdateDebt = useCallback(async () => {
     if (!isValid) {
       return;
     }
     try {
-      await updateDebtById(
-        debtId,
-        debtorId,
-        Number(debtAmount),
-        debtDescription,
-        createdAt,
-        debtsType,
-      );
+      await updateDebtById(debtId, debtorId, Number(debtAmount), debtDescription, createdAt, debtsType);
 
-      dispatch(getAllDebtRequest());
-      dispatch(getDebtRequest(debtorId));
+      dispatch(fetchAllDebts());
+      dispatch(fetchDebtsByDebtor(debtorId));
       goBack();
     } catch (error) {
-      console.error('Error updating debt:', error);
+      if (__DEV__) {
+        console.error('Error updating debt:', error);
+      }
     }
-  };
+  }, [isValid, debtId, debtorId, debtAmount, debtDescription, createdAt, debtsType, dispatch]);
 
-  const handleTextInputFocus = () => {
+  const handleTextInputFocus = useCallback(() => {
     setHasInteracted(true);
-  };
+  }, []);
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
+    <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
-        <View style={mainStyles.headerContainer}>
-          <AppHeader
-            onPress={goBack}
-            colors={colors}
-            text={`${buttonText} Debt ◦ ${debtorName}`}
-          />
+        <View style={[gs.mb20, gs.mt20]}>
+          <AppHeader onPress={goBack} colors={colors} text={`${buttonText} Debt ◦ ${debtorName}`} />
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 15,
-          }}>
+        <View style={[gs.row, gs.wFull, gs.center, gs.mb15]}>
           <TouchableOpacity
             onPress={() => setDebtsType('Borrow')}
             style={[
-              debtsStyles.categoryContainer,
+              gs.h40,
+              gs.p3,
+              gs.rounded5,
+              gs.border2,
+              gs.center,
               {
-                backgroundColor:
-                  debtsType === 'Borrow'
-                    ? colors.accentOrange
-                    : colors.secondaryAccent,
+                backgroundColor: debtsType === 'Borrow' ? colors.accentOrange : colors.secondaryAccent,
                 borderColor: colors.secondaryContainerColor,
                 width: '48.5%',
                 height: 50,
               },
             ]}>
             <PrimaryText
-              style={{
-                color:
-                  debtsType === 'Borrow'
-                    ? colors.buttonText
-                    : colors.primaryText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              }}>
+              size={13}
+              weight="semibold"
+              color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText}>
               Borrowing from
             </PrimaryText>
             <PrimaryText
-              style={{
-                color:
-                  debtsType === 'Borrow'
-                    ? colors.buttonText
-                    : colors.primaryText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              }}>
+              size={13}
+              weight="semibold"
+              color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText}>
               {debtorName}
             </PrimaryText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setDebtsType('Lend')}
             style={[
-              debtsStyles.categoryContainer,
+              gs.h40,
+              gs.p3,
+              gs.rounded5,
+              gs.border2,
+              gs.center,
               {
-                backgroundColor:
-                  debtsType === 'Lend'
-                    ? colors.accentGreen
-                    : colors.secondaryAccent,
+                backgroundColor: debtsType === 'Lend' ? colors.accentGreen : colors.secondaryAccent,
                 borderColor: colors.secondaryContainerColor,
                 width: '48.5%',
                 height: 50,
               },
             ]}>
             <PrimaryText
-              style={{
-                color:
-                  debtsType === 'Lend' ? colors.buttonText : colors.primaryText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              }}>
+              size={13}
+              weight="semibold"
+              color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText}>
               Lending to
             </PrimaryText>
             <PrimaryText
-              style={{
-                color:
-                  debtsType === 'Lend' ? colors.buttonText : colors.primaryText,
-                fontSize: 13,
-                fontFamily: 'FiraCode-SemiBold',
-              }}>
+              size={13}
+              weight="semibold"
+              color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText}>
               {debtorName}
             </PrimaryText>
           </TouchableOpacity>
@@ -207,25 +154,27 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
           label={`${debtsType} Title`}
           schema={expenseSchema}
         />
-        <PrimaryText style={{marginBottom: 5}}>{debtsType} Amount</PrimaryText>
+        <PrimaryText style={gs.mb5}>{debtsType} Amount</PrimaryText>
 
         <View
           style={[
-            textInputStyles.textInputContainer,
+            gs.h48,
+            gs.itemsCenter,
+            gs.border2,
+            gs.mt5,
+            gs.rounded10,
+            gs.pl10,
+            gs.justifyStart,
+            gs.row,
             {
               borderColor: colors.secondaryContainerColor,
               backgroundColor: colors.secondaryAccent,
               marginBottom: debtAmountError.length > 0 ? 5 : 15,
             },
           ]}>
-          <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>
+          <PrimaryText size={15}>{currencySymbol}</PrimaryText>
           <TextInput
-            style={[
-              textInputStyles.textInputWithIcon,
-              {
-                color: colors.primaryText,
-              },
-            ]}
+            style={[gs.px15, gs.h48, gs.wFull, gs.fontMedium, gs.noFontPadding, {color: colors.primaryText}]}
             value={debtAmount}
             onChangeText={setDebtAmount}
             placeholder={'eg. 200'}
@@ -235,10 +184,10 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
           />
         </View>
         {debtAmountError.length > 0 && (
-          <View style={{marginBottom: 10}}>
+          <View style={gs.mb10}>
             {debtAmountError.map((error: {message: string}) => (
               <View key={error.message}>
-                <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
+                <PrimaryText size={12} color={colors.accentRed}>
                   {error.message}
                 </PrimaryText>
               </View>
@@ -253,7 +202,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         />
       </View>
 
-      <View style={{marginBottom: '10%'}}>
+      <View style={gs.mb10p}>
         <PrimaryButton
           onPress={isAddButton ? handleAddDebt : handleUpdateDebt}
           colors={colors}
@@ -265,4 +214,4 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   );
 };
 
-export default DebtEntry;
+export default memo(DebtEntry);

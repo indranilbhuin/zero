@@ -1,5 +1,5 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useMemo, memo} from 'react';
 import Icon from '../atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
 import {DebtorData as Debtor, DebtData as DebtDocType} from '../../watermelondb/services';
@@ -7,9 +7,10 @@ import PrimaryText from '../atoms/PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
+import {gs} from '../../styles/globalStyles';
 
 interface Debt extends DebtDocType {
-  debtor?: {_id?: {toString(): string}};
+  debtor?: {type?: string};
 }
 
 interface DebtorListProps {
@@ -17,162 +18,106 @@ interface DebtorListProps {
   colors: Colors;
   debtors: Array<Debtor>;
   allDebts: Array<Debt>;
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
 }
 
-const DebtorList: React.FC<DebtorListProps> = ({
-  colors,
-  debtors,
-  allDebts,
-  currencySymbol,
-}) => {
-  const handleDebtor = (
-    debtorId: string,
-    debtorName: string,
-    debtorType: string,
-  ) => {
+const DebtorList: React.FC<DebtorListProps> = ({colors, debtors, allDebts, currencySymbol, ListHeaderComponent}) => {
+  const handleDebtor = useCallback((debtorId: string, debtorName: string, debtorType: string) => {
     navigate('IndividualDebtsScreen', {debtorId, debtorName, debtorType});
-  };
+  }, []);
 
-  const handleLongPress = (debtorId: string) => {
-    console.log(debtorId);
-  };
+  const debtTotalsByDebtor = useMemo(() => {
+    const totalsMap = new Map<string, number>();
 
-  const calculateTotalDebt = useCallback(
-    (debtorId: string) => {
-      const debtorDebts = allDebts.filter(
-        debt => (debt.debtorId ?? debt.debtor?._id?.toString()) === debtorId,
-      );
+    allDebts.forEach((debt: Debt) => {
+      const debtorId = debt.debtorId;
+      if (!debtorId) return;
 
-      const debtorBorrowings = debtorDebts.filter(
-        (debt: Debt) => debt.type === 'Borrow',
-      );
-      const debtorLendings = debtorDebts.filter(
-        (debt: Debt) => debt.type === 'Lend',
-      );
+      const current = totalsMap.get(debtorId) ?? 0;
+      const delta = debt.type === 'Borrow' ? debt.amount : -debt.amount;
+      totalsMap.set(debtorId, current + delta);
+    });
 
-      const totalBorrowings = debtorBorrowings.reduce(
-        (total: number, debt: {amount: number}) => total + debt.amount,
-        0,
-      );
-      const totalLendings = debtorLendings.reduce(
-        (total: number, debt: {amount: number}) => total + debt.amount,
-        0,
-      );
+    return totalsMap;
+  }, [allDebts]);
 
-      const totalDebt = totalBorrowings - totalLendings;
-      return totalDebt;
+  const getDebtTotal = useCallback(
+    (debtorId: string): number => {
+      return debtTotalsByDebtor.get(debtorId) ?? 0;
     },
-    [allDebts],
+    [debtTotalsByDebtor],
   );
 
-  const amountColor = useCallback(
-    (debtorId: string) => {
-      let textColor = colors.primaryText;
-      const totalDebt = calculateTotalDebt(String(debtorId));
-
+  const getAmountColor = useCallback(
+    (debtorId: string): string => {
+      const totalDebt = getDebtTotal(debtorId);
       if (totalDebt < 0) {
-        textColor = colors.accentGreen;
+        return colors.accentGreen;
       } else if (totalDebt > 0) {
-        textColor = colors.accentOrange;
+        return colors.accentOrange;
       }
-      return textColor;
+      return colors.primaryText;
     },
-    [colors, calculateTotalDebt],
+    [colors, getDebtTotal],
   );
 
   const renderDebtorItem = useCallback(
-    ({item: debtor}: {item: Debtor}) => (
-      <View style={styles.debtorItemContainer}>
-        <TouchableOpacity
-          onPress={() =>
-            handleDebtor(String(debtor.id), debtor.title, debtor.type)
-          }
-          onLongPress={() => handleLongPress(String(debtor.id))}
-          delayLongPress={500}
-          style={{justifyContent: 'center', alignItems: 'center'}}>
-          <View
-            style={[
-              styles.debtorContainer,
-              {
-                backgroundColor: colors.sameWhite,
-                borderColor: debtor.color ?? colors.primaryText,
-              },
-            ]}>
-            <View>
-              <Icon
-                name={debtor.icon ?? 'user'}
-                size={30}
-                color={debtor.color ?? colors.primaryText}
-              />
+    ({item: debtor}: {item: Debtor}) => {
+      const debtorId = String(debtor.id);
+      const totalDebt = getDebtTotal(debtorId);
+      const amountColor = getAmountColor(debtorId);
+
+      return (
+        <View style={[gs.itemsCenter, gs.flex1, {marginRight: '4%', marginBottom: '4%'}]}>
+          <TouchableOpacity
+            onPress={() => handleDebtor(debtorId, debtor.title, debtor.type)}
+            delayLongPress={500}
+            style={gs.center}>
+            <View
+              style={[
+                gs.size50,
+                gs.rounded50,
+                gs.p5,
+                gs.center,
+                gs.mb5,
+                gs.border2,
+                {
+                  backgroundColor: colors.sameWhite,
+                  borderColor: debtor.color ?? colors.primaryText,
+                },
+              ]}>
+              <View>
+                <Icon name={debtor.icon ?? 'user'} size={30} color={debtor.color ?? colors.primaryText} />
+              </View>
             </View>
+            <PrimaryText size={12} color={colors.primaryText} style={[gs.textCenter, gs.selfCenter]}>
+              {debtor.title}
+            </PrimaryText>
+          </TouchableOpacity>
+          <View style={[gs.wFull, gs.itemsCenter, gs.rounded5, gs.mt5, {backgroundColor: colors.iconContainer}]}>
+            <PrimaryText size={11} weight="semibold" color={amountColor} style={gs.textCenter}>
+              {currencySymbol}
+              {formatCurrency(Math.abs(totalDebt))}
+            </PrimaryText>
           </View>
-          <PrimaryText
-            style={{
-              color: colors.primaryText,
-              alignSelf: 'center',
-              fontSize: 12,
-              textAlign: 'center',
-            }}>
-            {debtor.title}
-          </PrimaryText>
-        </TouchableOpacity>
-        <View
-          style={{
-            backgroundColor: colors.iconContainer,
-            width: '100%',
-            alignItems: 'center',
-            borderRadius: 5,
-            marginTop: 5,
-          }}>
-          <PrimaryText
-            style={{
-              color: amountColor(String(debtor.id)),
-              fontSize: 11,
-              textAlign: 'center',
-              fontFamily: 'FiraCode-SemiBold',
-            }}>
-            {currencySymbol}
-            {formatCurrency(Math.abs(calculateTotalDebt(String(debtor.id))))}
-          </PrimaryText>
         </View>
-      </View>
-    ),
-    [colors, currencySymbol, amountColor, calculateTotalDebt],
+      );
+    },
+    [colors, currencySymbol, getDebtTotal, getAmountColor, handleDebtor],
   );
 
   return (
-    <View style={styles.container}>
+    <View style={gs.flex1}>
       <FlashList
         data={debtors}
         renderItem={renderDebtorItem}
         numColumns={4}
         keyExtractor={item => String(item.id)}
-        scrollEnabled={false}
+        ListHeaderComponent={ListHeaderComponent}
+        contentContainerStyle={gs.pb80}
       />
     </View>
   );
 };
 
-export default DebtorList;
-
-const styles = StyleSheet.create({
-  container: {
-    minHeight: 2,
-  },
-  debtorItemContainer: {
-    alignItems: 'center',
-    marginRight: '4%',
-    marginBottom: '4%',
-    flex: 1,
-  },
-  debtorContainer: {
-    height: 50,
-    width: 50,
-    borderRadius: 50,
-    padding: 5,
-    alignItems: 'center',
-    marginBottom: 5,
-    justifyContent: 'center',
-    borderWidth: 2,
-  },
-});
+export default memo(DebtorList);

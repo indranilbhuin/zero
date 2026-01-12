@@ -91,9 +91,8 @@ export const deleteAllDebtsByDebtorId = async (
       .query(Q.where('debtor_id', debtorId))
       .fetch();
 
-    for (const debt of debts) {
-      await debt.destroyPermanently();
-    }
+    // Use batch operation for better performance
+    await database.batch(...debts.map(debt => debt.prepareDestroyPermanently()));
   });
 };
 

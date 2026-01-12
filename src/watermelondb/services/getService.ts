@@ -7,7 +7,7 @@ import Debtor from '../models/Debtor';
 import Debt from '../models/Debt';
 
 // Export format interface - compatible with import in ExistingUserScreen
-interface ExportData {
+export interface ExportData {
   users: Array<{
     username: string;
     email: string;
@@ -77,13 +77,13 @@ export const getAllData = async (): Promise<ExportData | null> => {
       })),
       categories: categories.map(c => ({
         name: c.name,
-        icon: c.icon,
-        color: c.color,
+        icon: c.icon ?? '',
+        color: c.color ?? '#808080',
       })),
       expenses: expenses.map(e => ({
         title: e.title,
         amount: e.amount,
-        description: e.description,
+        description: e.description ?? '',
         category: {name: categoryMap.get(e.categoryId) ?? 'Unknown'},
         date: e.date,
       })),
@@ -94,9 +94,9 @@ export const getAllData = async (): Promise<ExportData | null> => {
       })),
       debtors: debtors.map(d => ({
         title: d.title,
-        icon: d.icon,
-        type: d.type,
-        color: d.color,
+        icon: d.icon ?? '',
+        type: d.type ?? 'Person',
+        color: d.color ?? '#808080',
       })),
       debts: debts.map(d => ({
         amount: d.amount,
@@ -107,15 +107,22 @@ export const getAllData = async (): Promise<ExportData | null> => {
       })),
     };
   } catch (error) {
-    console.error('Error getting all data:', error);
+    if (__DEV__) {
+      console.error('Error getting all data:', error);
+    }
     return null;
   }
 };
 
 /**
  * Debug function to log all data from the database
+ * Only runs in development mode
  */
 export const debugLogAllData = async (): Promise<void> => {
+  if (!__DEV__) {
+    return;
+  }
+
   console.log('========== DEBUG: Database Contents ==========');
 
   try {

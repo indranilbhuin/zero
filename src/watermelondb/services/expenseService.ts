@@ -1,5 +1,4 @@
 import {Q} from '@nozbe/watermelondb';
-import {formatDate} from '../../utils/dateUtils';
 import {database} from '../database';
 import Expense from '../models/Expense';
 import Category from '../models/Category';
@@ -108,7 +107,7 @@ export const getAllExpensesByUserId = async (
     id: e.id,
     title: e.title,
     amount: e.amount,
-    description: e.description,
+    description: e.description ?? '',
     categoryId: e.categoryId,
     userId: e.userId,
     date: e.date,
@@ -137,7 +136,7 @@ export const getAllExpensesByUserIdWithCategory = async (
   const categoryMap = new Map(
     categories.map(cat => [
       cat.id,
-      {id: cat.id, name: cat.name, icon: cat.icon, color: cat.color},
+      {id: cat.id, name: cat.name, icon: cat.icon ?? '', color: cat.color ?? '#808080'},
     ]),
   );
 
@@ -148,7 +147,7 @@ export const getAllExpensesByUserIdWithCategory = async (
       id: e.id,
       title: e.title,
       amount: e.amount,
-      description: e.description,
+      description: e.description ?? '',
       categoryId: e.categoryId,
       userId: e.userId,
       date: e.date,
@@ -164,10 +163,14 @@ export const getAllExpensesByDate = async (
   userId: string,
   targetDate: string,
 ): Promise<ExpenseWithCategory[]> => {
-  // Get all expenses for the user
+  // Filter by date at database level using indexed column
+  // Use Q.like to match dates that start with the target date (YYYY-MM-DD format)
   const expenses = await database
     .get<Expense>('expenses')
-    .query(Q.where('user_id', userId))
+    .query(
+      Q.where('user_id', userId),
+      Q.where('date', Q.like(`${Q.sanitizeLikeString(targetDate)}%`)),
+    )
     .fetch();
 
   // Get all categories for the user
@@ -180,27 +183,21 @@ export const getAllExpensesByDate = async (
   const categoryMap = new Map(
     categories.map(cat => [
       cat.id,
-      {id: cat.id, name: cat.name, icon: cat.icon, color: cat.color},
+      {id: cat.id, name: cat.name, icon: cat.icon ?? '', color: cat.color ?? '#808080'},
     ]),
   );
 
-  // Filter by date in memory since date format may vary
-  const expensesByDate = expenses.filter(expense => {
-    const formattedExpenseDate = formatDate(expense.date, 'YYYY-MM-DD');
-    return formattedExpenseDate === targetDate;
-  });
-
   // Return expenses with category data
-  return expensesByDate.map(e => {
+  return expenses.map(e => {
     const category = categoryMap.get(e.categoryId);
     return {
-    id: e.id,
-    title: e.title,
-    amount: e.amount,
-    description: e.description,
-    categoryId: e.categoryId,
-    userId: e.userId,
-    date: e.date,
+      id: e.id,
+      title: e.title,
+      amount: e.amount,
+      description: e.description ?? '',
+      categoryId: e.categoryId,
+      userId: e.userId,
+      date: e.date,
       category,
     };
   });
@@ -218,7 +215,7 @@ export const getExpenseById = async (
       id: expense.id,
       title: expense.title,
       amount: expense.amount,
-      description: expense.description,
+      description: expense.description ?? '',
       categoryId: expense.categoryId,
       userId: expense.userId,
       date: expense.date,

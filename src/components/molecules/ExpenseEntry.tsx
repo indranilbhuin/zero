@@ -1,10 +1,9 @@
-import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {ScrollView, TextInput, View} from 'react-native';
+import React, {useCallback, useEffect, useState, memo} from 'react';
 import PrimaryView from '../atoms/PrimaryView';
 import AppHeader from '../atoms/AppHeader';
 import CustomInput from '../atoms/CustomInput';
 import PrimaryText from '../atoms/PrimaryText';
-import textInputStyles from '../../styles/textInput';
 import CategoryContainer from './CategoryContainer';
 import SecondaryButton from './SecondaryButton';
 import PrimaryButton from '../atoms/PrimaryButton';
@@ -13,19 +12,15 @@ import {goBack, navigate} from '../../utils/navigationUtils';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
-import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
+import {fetchCategories, selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {createExpense, updateExpenseById} from '../../watermelondb/services';
-import {getExpenseRequest} from '../../redux/slice/expenseDataSlice';
-import mainStyles from '../../styles/main';
+import {fetchExpenses} from '../../redux/slice/expenseDataSlice';
 import DatePicker from '../atoms/DatePicker';
 import {getISODateTime} from '../../utils/dateUtils';
-import {
-  expenseAmountSchema,
-  expenseDescriptionSchema,
-  expenseSchema,
-} from '../../utils/validationSchema';
+import {expenseAmountSchema, expenseDescriptionSchema, expenseSchema} from '../../utils/validationSchema';
 import {CategoryData as CategoryDocType} from '../../watermelondb/services';
+import {AppDispatch} from '../../redux/store';
+import {gs} from '../../styles/globalStyles';
 
 interface ExpenseEntryProps {
   type: string;
@@ -40,27 +35,14 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   const [selectedCategories, setSelectedCategories] = useState<CategoryDocType[]>(
     isAddButton
       ? []
-      : categories?.filter(
-          (category: CategoryDocType) =>
-            category?.name === expenseData?.category?.name,
-        ) ?? [],
+      : categories?.filter((category: CategoryDocType) => category?.name === expenseData?.category?.name) ?? [],
   );
 
-  const [createdAt, setCreatedAt] = useState(
-    isAddButton
-      ? getISODateTime()
-      : expenseData.expenseDate,
-  );
+  const [createdAt, setCreatedAt] = useState(isAddButton ? getISODateTime() : expenseData.expenseDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [expenseTitle, setExpenseTitle] = useState(
-    isAddButton ? '' : expenseData.expenseTitle,
-  );
-  const [expenseDescription, setExpenseDescription] = useState(
-    isAddButton ? '' : expenseData.expenseDescription,
-  );
-  const [expenseAmount, setExpenseAmount] = useState(
-    isAddButton ? '' : String(expenseData.expenseAmount),
-  );
+  const [expenseTitle, setExpenseTitle] = useState(isAddButton ? '' : expenseData.expenseTitle);
+  const [expenseDescription, setExpenseDescription] = useState(isAddButton ? '' : expenseData.expenseDescription);
+  const [expenseAmount, setExpenseAmount] = useState(isAddButton ? '' : String(expenseData.expenseAmount));
 
   const expenseAmountError = hasInteracted
     ? expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.issues || []
@@ -73,52 +55,47 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
 
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const colors = useThemeColors();
 
   useEffect(() => {
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
+    dispatch(fetchCategories());
   }, [dispatch]);
 
-  const handleAddCategory = () => {
+  const handleAddCategory = useCallback(() => {
     navigate('AddCategoryScreen');
-  };
+  }, []);
 
-  const handleTextInputFocus = () => {
+  const handleTextInputFocus = useCallback(() => {
     setHasInteracted(true);
-  };
+  }, []);
 
-  const handleAddExpense = async () => {
+  const handleAddExpense = useCallback(async () => {
     if (!isValid || selectedCategories.length === 0) {
       return;
     }
     const categoryId = selectedCategories[0].id;
     try {
-      await createExpense(
-        userId,
-        expenseTitle,
-        Number(expenseAmount),
-        expenseDescription,
-        categoryId,
-        createdAt,
-      );
+      await createExpense(userId, expenseTitle, Number(expenseAmount), expenseDescription, categoryId, createdAt);
 
-      dispatch(getExpenseRequest());
+      dispatch(fetchExpenses());
       goBack();
     } catch (error) {
-      console.error('Error creating expense:', error);
+      if (__DEV__) {
+        console.error('Error creating expense:', error);
+      }
     }
-  };
+  }, [isValid, selectedCategories, userId, expenseTitle, expenseAmount, expenseDescription, createdAt, dispatch]);
 
-  const handleUpdateExpense = async () => {
+  const handleUpdateExpense = useCallback(async () => {
     if (!isValid || selectedCategories.length === 0) {
       return;
     }
     const categoryId = selectedCategories[0].id;
     try {
       await updateExpenseById(
-        expenseData.expenseId,
+        expenseData?.expenseId,
         categoryId,
         expenseTitle,
         Number(expenseAmount),
@@ -126,29 +103,39 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         createdAt,
       );
 
-      dispatch(getExpenseRequest());
+      dispatch(fetchExpenses());
       goBack();
     } catch (error) {
-      console.error('Error updating expense:', error);
+      if (__DEV__) {
+        console.error('Error updating expense:', error);
+      }
     }
-  };
+  }, [
+    isValid,
+    selectedCategories,
+    expenseData?.expenseId,
+    expenseTitle,
+    expenseAmount,
+    expenseDescription,
+    createdAt,
+    dispatch,
+  ]);
 
-  const toggleCategorySelection = (category: CategoryDocType) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories([]);
-    } else {
-      setSelectedCategories([category]);
-    }
-  };
+  const toggleCategorySelection = useCallback(
+    (category: CategoryDocType) => {
+      if (selectedCategories.includes(category)) {
+        setSelectedCategories([]);
+      } else {
+        setSelectedCategories([category]);
+      }
+    },
+    [selectedCategories],
+  );
 
   return (
     <PrimaryView colors={colors} dismissKeyboardOnTouch>
-      <View style={mainStyles.headerContainer}>
-        <AppHeader
-          onPress={() => goBack(() => dispatch(getExpenseRequest()))}
-          colors={colors}
-          text="Transaction Screen"
-        />
+      <View style={[gs.mb20, gs.mt20]}>
+        <AppHeader onPress={() => goBack(() => dispatch(fetchExpenses()))} colors={colors} text="Transaction Screen" />
       </View>
 
       <CustomInput
@@ -167,24 +154,26 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         label="Expense Description"
         schema={expenseDescriptionSchema}
       />
-      <PrimaryText style={{marginBottom: 5}}>Expense Amount</PrimaryText>
+      <PrimaryText style={gs.mb5}>Expense Amount</PrimaryText>
       <View
         style={[
-          textInputStyles.textInputContainer,
+          gs.h48,
+          gs.itemsCenter,
+          gs.border2,
+          gs.mt5,
+          gs.rounded10,
+          gs.pl10,
+          gs.justifyStart,
+          gs.row,
           {
             borderColor: colors.secondaryContainerColor,
             backgroundColor: colors.secondaryAccent,
             marginBottom: expenseAmountError.length > 0 ? 5 : 15,
           },
         ]}>
-        <PrimaryText style={{fontSize: 15}}>{currencySymbol}</PrimaryText>
+        <PrimaryText size={15}>{currencySymbol}</PrimaryText>
         <TextInput
-          style={[
-            textInputStyles.textInputWithIcon,
-            {
-              color: colors.primaryText,
-            },
-          ]}
+          style={[gs.px15, gs.h48, gs.wFull, gs.fontMedium, gs.noFontPadding, {color: colors.primaryText}]}
           value={expenseAmount}
           onChangeText={setExpenseAmount}
           placeholder={'eg. 320'}
@@ -194,10 +183,10 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         />
       </View>
       {expenseAmountError.length > 0 && (
-        <View style={{marginBottom: 10}}>
+        <View style={gs.mb10}>
           {expenseAmountError.map((error: {message: string}) => (
             <View key={error.message}>
-              <PrimaryText style={{color: colors.accentRed, fontSize: 12}}>
+              <PrimaryText size={12} color={colors.accentRed}>
                 {error.message}
               </PrimaryText>
             </View>
@@ -210,7 +199,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         showDatePicker={showDatePicker}
         setCreatedAt={setCreatedAt}
       />
-      <PrimaryText style={{marginBottom: 5}}>Select any category</PrimaryText>
+      <PrimaryText style={gs.mb5}>Select any category</PrimaryText>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CategoryContainer
           categories={categories}
@@ -218,16 +207,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           toggleCategorySelection={toggleCategorySelection}
           selectedCategories={selectedCategories}
         />
-        <View style={styles.addButtonContainer}>
-          <SecondaryButton
-            onPress={handleAddCategory}
-            buttonText="Add More"
-            colors={colors}
-            width={100}
-          />
+        <View style={gs.mb10}>
+          <SecondaryButton onPress={handleAddCategory} buttonText="Add More" colors={colors} width={100} />
         </View>
       </ScrollView>
-      <View style={styles.submitButtonContainer}>
+      <View style={gs.mt5}>
         <PrimaryButton
           onPress={isAddButton ? handleAddExpense : handleUpdateExpense}
           colors={colors}
@@ -239,13 +223,4 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   );
 };
 
-export default ExpenseEntry;
-
-const styles = StyleSheet.create({
-  addButtonContainer: {
-    marginBottom: 10,
-  },
-  submitButtonContainer: {
-    marginTop: 5,
-  },
-});
+export default memo(ExpenseEntry);

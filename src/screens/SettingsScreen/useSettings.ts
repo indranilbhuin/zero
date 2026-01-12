@@ -10,11 +10,12 @@ import {
 import {useCallback, useEffect, useState} from 'react';
 import {getAppVersion} from '../../utils/getVersion';
 import {useTheme, ThemeMode} from '../../context/ThemeContext';
-import AsyncStorageService from '../../utils/asyncStorageService';
+import StorageService from '../../utils/asyncStorageService';
 import {updateUserById, updateCurrencyById, deleteAllData} from '../../watermelondb/services';
 import {Linking} from 'react-native';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
-import {getAllDataRequest, selectAllData} from '../../redux/slice/allDataSlice';
+import {fetchAllData, selectAllData} from '../../redux/slice/allDataSlice';
+import {AppDispatch} from '../../redux/store';
 
 const useSettings = () => {
   const userName = useSelector(selectUserName);
@@ -37,30 +38,32 @@ const useSettings = () => {
   const [name, setName] = useState(userName);
   const appVersion = getAppVersion();
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(getAllDataRequest());
+    dispatch(fetchAllData());
   }, [dispatch]);
 
-  const handleThemeModalClose = () => {
+  const handleThemeModalClose = useCallback(() => {
     setIsThemeModalVisible(false);
-  };
+  }, []);
 
-  const handleNameModalClose = () => {
+  const handleNameModalClose = useCallback(() => {
     setIsNameModalVisible(false);
-  };
+  }, []);
 
-  const handleThemeSelection = async (theme: string) => {
+  const handleThemeSelection = useCallback(async (theme: string) => {
     try {
       await setThemeMode(theme as ThemeMode);
       setIsThemeModalVisible(false);
     } catch (error) {
-      console.error('Error saving theme preference:', error);
+      if (__DEV__) {
+        console.error('Error saving theme preference:', error);
+      }
     }
-  };
+  }, [setThemeMode]);
 
-  const handleNameUpdate = async () => {
+  const handleNameUpdate = useCallback(async () => {
     try {
       await updateUserById(userId, {
         username: name,
@@ -68,9 +71,11 @@ const useSettings = () => {
       dispatch(setUserName(name));
       setIsNameModalVisible(false);
     } catch (error) {
-      console.error('Error updating the name:', error);
+      if (__DEV__) {
+        console.error('Error updating the name:', error);
+      }
     }
-  };
+  }, [userId, name, dispatch]);
 
   const handleCurrencyUpdate = useCallback(
     async (currency: {code: string; name: string; symbol: string}) => {
@@ -88,55 +93,65 @@ const useSettings = () => {
         };
         dispatch(setCurrencyData(updatedCurrencyData));
       } catch (error) {
-        console.error('Error updating the currency:', error);
+        if (__DEV__) {
+          console.error('Error updating the currency:', error);
+        }
       }
     },
     [currencyId, dispatch],
   );
 
-  const handleRateNow = () => {
-    console.log('rate on playstore');
-  };
+  const handleRateNow = useCallback(() => {
+    // TODO: Implement rate on playstore functionality
+  }, []);
 
-  const handleGithub = () => {
+  const handleGithub = useCallback(() => {
     const githubRepoURL = 'https://github.com/indranilbhuin/zero';
-    Linking.openURL(githubRepoURL).catch(err => console.error('Error opening GitHub:', err));
-  };
+    Linking.openURL(githubRepoURL).catch(err => {
+      if (__DEV__) {
+        console.error('Error opening GitHub:', err);
+      }
+    });
+  }, []);
 
-  const handlePrivacyPolicy = () => {
+  const handlePrivacyPolicy = useCallback(() => {
     const privacyPolicyURL = 'https://github.com/indranilbhuin/zero/blob/master/PRIVACYPOLICY.md';
-    Linking.openURL(privacyPolicyURL).catch(err => console.error('Error opening GitHub:', err));
-  };
+    Linking.openURL(privacyPolicyURL).catch(err => {
+      if (__DEV__) {
+        console.error('Error opening Privacy Policy:', err);
+      }
+    });
+  }, []);
 
-  const handleDeleteAllDataOk = async () => {
+  const handleDeleteAllDataOk = useCallback(async () => {
     await deleteAllData();
-    await AsyncStorageService.setItem('isOnboarded', JSON.stringify(false));
+    StorageService.setItemSync('isOnboarded', JSON.stringify(false));
     dispatch(setIsOnboarded(false));
-  };
+  }, [dispatch]);
 
-  const handleDeleteAllDataCancel = () => {
+  const handleDeleteAllDataCancel = useCallback(() => {
     setIsDeleteModalVisible(false);
-  };
+  }, []);
 
-  const handleAccessStorageOk = async () => {
+  const handleAccessStorageOk = useCallback(async () => {
     Linking.openSettings();
-  };
+  }, []);
 
-  const handleAccessStorageCancel = () => {
+  const handleAccessStorageCancel = useCallback(() => {
     setIsStorageModalVisible(false);
-  };
+  }, []);
 
-  const handleDeleteAllData = () => {
+  const handleDeleteAllData = useCallback(() => {
     setIsDeleteModalVisible(true);
-  };
+  }, []);
 
-  const handleDownloadSuccessful = () => {
+  const handleDownloadSuccessful = useCallback(() => {
     setIsDownloadSuccessful(false);
-  };
+  }, []);
 
-  const handleDownloadError = () => {
+  const handleDownloadError = useCallback(() => {
     setIsDownloadError(false);
-  };
+  }, []);
 
   return {
     isThemeModalVisible,

@@ -1,60 +1,48 @@
-import {Image, StyleSheet, View, ViewStyle} from 'react-native';
-import React from 'react';
+import {Image, View, ViewStyle} from 'react-native';
+import React, {ReactNode} from 'react';
 import PrimaryText from './PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
+import {useTheme} from '../../context/ThemeContext';
+import {gs} from '../../styles/globalStyles';
+
+type EmptyStateType = 'Transactions' | 'Insights' | 'Debts' | 'Categories';
 
 interface EmptyStateProps {
   colors: Colors;
-  type: string;
+  type: EmptyStateType;
   style?: ViewStyle;
+  message?: string;
+  actionButton?: ReactNode;
 }
 
-const lightImages = {
+const lightImages: Record<EmptyStateType, any> = {
   Transactions: require('../../../assets/images/lightNoTransaction.png'),
   Insights: require('../../../assets/images/lightNoReport.png'),
   Debts: require('../../../assets/images/lightNoDebt.png'),
   Categories: require('../../../assets/images/lightNoCategory.png'),
-} as Record<string, any>;
+};
 
-const darkImages = {
+const darkImages: Record<EmptyStateType, any> = {
   Transactions: require('../../../assets/images/darkNoTransaction.png'),
   Insights: require('../../../assets/images/darkNoReport.png'),
   Debts: require('../../../assets/images/darkNoDebt.png'),
   Categories: require('../../../assets/images/darkNoCategory.png'),
-} as Record<string, any>;
-
-const EmptyState: React.FC<EmptyStateProps> = ({colors, type, style}) => {
-  const selectedLightImage = lightImages[type];
-  const selectedDarkImage = darkImages[type];
-  return (
-    <View style={[styles.noTransactionContainer, style]}>
-      {colors.primaryText === '#000000' ? (
-        <Image source={selectedLightImage} style={styles.noImage} />
-      ) : (
-        <Image source={selectedDarkImage} style={styles.noImage} />
-      )}
-      <PrimaryText
-        style={{
-          color: colors.primaryText,
-          fontSize: 13,
-          marginTop: 5,
-        }}>
-        zero {type}
-      </PrimaryText>
-    </View>
-  );
 };
 
-export default EmptyState;
+const EmptyState: React.FC<EmptyStateProps> = React.memo(({colors, type, style, message, actionButton}) => {
+  const {isDark} = useTheme();
+  const imageSource = isDark ? darkImages[type] : lightImages[type];
+  const displayMessage = message ?? `zero ${type}`;
 
-const styles = StyleSheet.create({
-  noTransactionContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 350,
-  },
-  noImage: {
-    height: 100,
-    width: 100,
-  },
+  return (
+    <View style={[gs.center, gs.h350, style]}>
+      <Image source={imageSource} style={gs.size100} />
+      <PrimaryText size={13} color={colors.primaryText} style={gs.mt5}>
+        {displayMessage}
+      </PrimaryText>
+      {actionButton && <View style={gs.mt15}>{actionButton}</View>}
+    </View>
+  );
 });
+
+export default EmptyState;

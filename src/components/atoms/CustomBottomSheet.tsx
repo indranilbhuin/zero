@@ -1,16 +1,11 @@
 import React, {useCallback, useMemo, ReactNode} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-  StyleProp,
-} from 'react-native';
+import {View, TouchableOpacity, ViewStyle, StyleProp} from 'react-native';
 import ActionSheet, {SheetManager} from 'react-native-actions-sheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from './PrimaryText';
 import Icon from './Icons';
+import {gs} from '../../styles/globalStyles';
 
 export interface CustomBottomSheetHeader {
   title?: string;
@@ -56,7 +51,8 @@ function CustomBottomSheetComponent({
 
   const containerStyles = useMemo(() => {
     return [
-      styles.container,
+      gs.roundedTop24,
+      gs.pt8,
       {
         backgroundColor: colors.containerColor,
         paddingBottom: useBottomSafeAreaPadding ? 16 : 0,
@@ -66,11 +62,7 @@ function CustomBottomSheetComponent({
   }, [colors.containerColor, useBottomSafeAreaPadding, containerStyle]);
 
   const indicatorStyles = useMemo(() => {
-    return [
-      styles.indicator,
-      {backgroundColor: colors.secondaryText},
-      indicatorStyle,
-    ];
+    return [gs.w40, gs.h4, gs.rounded2, {backgroundColor: colors.secondaryText}, indicatorStyle];
   }, [colors.secondaryText, indicatorStyle]);
 
   const handleOpen = useCallback(() => {
@@ -98,7 +90,7 @@ function CustomBottomSheetComponent({
       return (
         <>
           {showIndicator && (
-            <View style={styles.indicatorContainer}>
+            <View style={[gs.itemsCenter, gs.py8]}>
               <View style={indicatorStyles} />
             </View>
           )}
@@ -111,29 +103,27 @@ function CustomBottomSheetComponent({
       return (
         <>
           {showIndicator && (
-            <View style={styles.indicatorContainer}>
+            <View style={[gs.itemsCenter, gs.py8]}>
               <View style={indicatorStyles} />
             </View>
           )}
           <View
             style={[
-              styles.headerContainer,
-              {borderBottomColor: colors.secondaryContainerColor},
+              gs.px16,
+              gs.py12,
+              {borderBottomWidth: 1, borderBottomColor: colors.secondaryContainerColor},
               header.style,
             ]}>
-            <View style={styles.headerRow}>
+            <View style={gs.rowBetweenCenter}>
               {header.title && (
-                <PrimaryText style={styles.headerTitle}>
+                <PrimaryText size={18} weight="semibold" style={gs.flex1}>
                   {header.title}
                 </PrimaryText>
               )}
               {header.showCloseButton && (
                 <TouchableOpacity
                   onPress={handleClosePress}
-                  style={[
-                    styles.closeButton,
-                    {backgroundColor: colors.secondaryAccent},
-                  ]}
+                  style={[gs.size35, gs.center, gs.rounded16, gs.ml12, {backgroundColor: colors.secondaryAccent}]}
                   accessibilityRole="button"
                   accessibilityLabel="Close"
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
@@ -168,9 +158,7 @@ function CustomBottomSheetComponent({
       useBottomSafeAreaPadding={useBottomSafeAreaPadding}
       animated={animated}
       containerStyle={containerStyles}
-      indicatorStyle={
-        !header && showIndicator ? indicatorStyles : {width: 0, height: 0}
-      }
+      indicatorStyle={!header && showIndicator ? indicatorStyles : {width: 0, height: 0}}
       headerAlwaysVisible={!!header}
       CustomHeaderComponent={renderHeader}
       onOpen={handleOpen}
@@ -185,46 +173,6 @@ function CustomBottomSheetComponent({
   );
 }
 
-export const CustomBottomSheet = CustomBottomSheetComponent;
-
-const styles = StyleSheet.create({
-  container: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 8,
-  },
-  indicatorContainer: {
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  indicator: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-  },
-  headerContainer: {
-    borderBottomWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: 'FiraCode-SemiBold',
-    flex: 1,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12,
-  },
-});
+export const CustomBottomSheet = React.memo(CustomBottomSheetComponent);
 
 export default CustomBottomSheet;

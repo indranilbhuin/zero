@@ -10,7 +10,6 @@ const isOnboardedSlice = createSlice({
   initialState,
   reducers: {
     setIsOnboarded: (state, action) => {
-      console.log(action.payload);
       state.isOnboarded = action.payload;
     },
   },

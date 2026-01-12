@@ -1,9 +1,9 @@
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {createCurrency} from '../../watermelondb/services';
-import AsyncStorageService from '../../utils/asyncStorageService';
+import StorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import currencies from '../../../assets/jsons/currencies.json';
 
@@ -17,27 +17,20 @@ const useChooseCurrency = () => {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(currencies);
-  const [selectedCurrency, setSelectedCurrency] =
-    useState<CurrencySelection | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencySelection | null>(null);
   const userId = useSelector(selectUserId);
   const dispatch = useDispatch();
 
-  const handleCurrencySubmit = async () => {
+  const handleCurrencySubmit = useCallback(async () => {
     if (selectedCurrency) {
-      console.log('Creating currency...');
-      await createCurrency(
-        selectedCurrency.code,
-        selectedCurrency.symbol,
-        selectedCurrency.name,
-        userId,
-      );
+      await createCurrency(selectedCurrency.code, selectedCurrency.symbol, selectedCurrency.name, userId);
 
-      await AsyncStorageService.setItem('isOnboarded', JSON.stringify(true));
+      StorageService.setItemSync('isOnboarded', JSON.stringify(true));
       dispatch(setIsOnboarded(true));
     }
-  };
+  }, [selectedCurrency, userId, dispatch]);
 
-  const handleSearch = (text: string) => {
+  const handleSearch = useCallback((text: string) => {
     setSearch(text);
     const filtered = currencies.filter(currency => {
       const {code, name, symbol} = currency;
@@ -50,11 +43,11 @@ const useChooseCurrency = () => {
       );
     });
     setFilteredCurrencies(filtered);
-  };
+  }, []);
 
-  const handleCurrencySelect = (currency: CurrencySelection) => {
+  const handleCurrencySelect = useCallback((currency: CurrencySelection) => {
     setSelectedCurrency(currency);
-  };
+  }, []);
 
   return {
     colors,

@@ -1,86 +1,70 @@
 import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
-import {selectDebtorData} from '../../redux/slice/debtorDataSlice';
-import {
-  getAllDebtRequest,
-  selectAllDebtData,
-} from '../../redux/slice/allDebtDataSlice';
-import {useEffect, useState} from 'react';
+import {fetchDebtors, selectDebtorData} from '../../redux/slice/debtorDataSlice';
+import {fetchAllDebts, selectAllDebtData} from '../../redux/slice/allDebtDataSlice';
+import {useEffect, useMemo, useState} from 'react';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
-import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
 import {DebtorData as Debtor, DebtData as Debt} from '../../watermelondb/services';
+import {AppDispatch} from '../../redux/store';
+
+interface DebtWithDebtor extends Debt {
+  debtor?: {type: string};
+}
 
 const useDebts = () => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
-  const debtors = useSelector(selectDebtorData);
-  const debtorsCopy = JSON.parse(JSON.stringify(debtors));
-  console.log('this is debtors', debtorsCopy);
-  const allDebts = useSelector(selectAllDebtData);
-  const allDebtsCopy = JSON.parse(JSON.stringify(allDebts));
+  const dispatch = useDispatch<AppDispatch>();
+  const debtors = useSelector(selectDebtorData) as Debtor[];
+  const allDebts = useSelector(selectAllDebtData) as DebtWithDebtor[];
   const [debtorType, setDebtorType] = useState('Person');
-  console.log('this is all debts copy', allDebtsCopy);
-  console.log(debtorsCopy);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const personDebtors = debtorsCopy.filter(
-    (debtor: Debtor) => debtor.type === 'Person',
-  );
-  const otherAccountsDebtors = debtorsCopy.filter(
-    (debtor: Debtor) => debtor.type !== 'Person',
-  );
-
-  const allBorrowings = allDebtsCopy.filter(
-    (debt: Debt) => debt.type === 'Borrow',
-  );
-  const allLendings = allDebtsCopy.filter((debt: Debt) => debt.type === 'Lend');
-
-  const allBorrowingsTotal = allBorrowings.reduce(
-    (total: number, debt: {amount: number}) => total + debt.amount,
-    0,
+  const {personDebtors, otherAccountsDebtors} = useMemo(
+    () => ({
+      personDebtors: debtors.filter((debtor: Debtor) => debtor.type === 'Person'),
+      otherAccountsDebtors: debtors.filter((debtor: Debtor) => debtor.type !== 'Person'),
+    }),
+    [debtors],
   );
 
-  const allLendingsTotal = allLendings.reduce(
-    (total: number, debt: {amount: number}) => total + debt.amount,
-    0,
-  );
+  const {totalDebts, personTotalDebts, otherTotalDebts} = useMemo(() => {
+    let personBorrowings = 0;
+    let personLendings = 0;
+    let otherBorrowings = 0;
+    let otherLendings = 0;
 
-  const totalDebts = allBorrowingsTotal - allLendingsTotal;
+    allDebts.forEach((debt: DebtWithDebtor) => {
+      const isPerson = debt?.debtor?.type === 'Person';
+      if (debt.type === 'Borrow') {
+        if (isPerson) {
+          personBorrowings += debt.amount;
+        } else {
+          otherBorrowings += debt.amount;
+        }
+      } else {
+        if (isPerson) {
+          personLendings += debt.amount;
+        } else {
+          otherLendings += debt.amount;
+        }
+      }
+    });
 
-  let personTotalBorrowings = 0;
-  let otherTotalBorrowings = 0;
-
-  let personTotalLendings = 0;
-  let otherTotalLendings = 0;
-
-  allBorrowings.forEach((debt: {debtor: {type: string}; amount: number}) => {
-    if (debt?.debtor?.type === 'Person') {
-      personTotalBorrowings += debt.amount;
-    } else {
-      otherTotalBorrowings += debt.amount;
-    }
-  });
-
-  allLendings.forEach((debt: {debtor: {type: string}; amount: number}) => {
-    if (debt?.debtor?.type === 'Person') {
-      personTotalLendings += debt.amount;
-    } else {
-      otherTotalLendings += debt.amount;
-    }
-  });
-
-  let personTotalDebts = personTotalBorrowings - personTotalLendings;
-  let otherTotalDebts = otherTotalBorrowings - otherTotalLendings;
+    return {
+      totalDebts: personBorrowings + otherBorrowings - (personLendings + otherLendings),
+      personTotalDebts: personBorrowings - personLendings,
+      otherTotalDebts: otherBorrowings - otherLendings,
+    };
+  }, [allDebts]);
 
   useEffect(() => {
-    dispatch({type: FETCH_ALL_DEBTOR_DATA});
-    dispatch(getAllDebtRequest());
+    dispatch(fetchDebtors());
+    dispatch(fetchAllDebts());
   }, [dispatch]);
 
   return {
     colors,
     allDebts,
-    allDebtsCopy,
     debtorType,
     setDebtorType,
     currencySymbol,
@@ -89,7 +73,7 @@ const useDebts = () => {
     totalDebts,
     personTotalDebts,
     otherTotalDebts,
-    debtorsCopy,
+    debtors,
   };
 };
 

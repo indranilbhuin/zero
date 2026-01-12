@@ -1,5 +1,5 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useMemo, useState, memo} from 'react';
 import PrimaryView from '../atoms/PrimaryView';
 import AppHeader from '../atoms/AppHeader';
 import CustomInput from '../atoms/CustomInput';
@@ -11,14 +11,13 @@ import {goBack} from '../../utils/navigationUtils';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {createCategory, updateCategoryById} from '../../watermelondb/services';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
-import mainStyles from '../../styles/main';
+import {fetchCategories, selectCategoryData} from '../../redux/slice/categoryDataSlice';
 import {categorySchema} from '../../utils/validationSchema';
-import onboardingStyles from '../../screens/OnboardingScreen/style';
 import defaultCategories from '../../../assets/jsons/defaultCategories.json';
-import {selectCategoryData} from '../../redux/slice/categoryDataSlice';
 import {FlashList} from '@shopify/flash-list';
 import {SheetManager} from 'react-native-actions-sheet';
+import {AppDispatch} from '../../redux/store';
+import {gs} from '../../styles/globalStyles';
 
 interface CategorySelection {
   name: string;
@@ -33,7 +32,7 @@ interface CategoryEntryProps {
 
 const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const categoryData = route?.params;
   const isAddButton = type === 'Add';
 
@@ -42,44 +41,56 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const [selectedColor, setSelectedColor] = useState(isAddButton ? 'null' : categoryData.categoryColor);
   const [selectedCategories, setSelectedCategories] = useState<Array<CategorySelection>>([]);
 
+  const selectedCategoryNames = useMemo(() => new Set(selectedCategories.map(c => c.name)), [selectedCategories]);
+
   const allCategories = useSelector(selectCategoryData);
-  const existingCategoryNames = allCategories.map(category => category.name);
-  const filteredCategories = defaultCategories.filter(category => !existingCategoryNames.includes(category.name));
+  const existingCategoryNamesSet = useMemo(
+    () => new Set(allCategories.map((category: CategorySelection) => category.name)),
+    [allCategories],
+  );
+  const filteredCategories = useMemo(
+    () => defaultCategories.filter(category => !existingCategoryNamesSet.has(category.name)),
+    [existingCategoryNamesSet],
+  );
 
   const userId = useSelector(selectUserId);
   const isValid = categorySchema.safeParse(categoryName).success;
 
-  const handleAddCategory = async () => {
+  const handleAddCategory = useCallback(async () => {
     try {
       await createCategory(categoryName, userId, selectedIcon, selectedColor);
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch(fetchCategories());
       goBack();
     } catch (error) {
-      console.error('Error creating category:', error);
+      if (__DEV__) {
+        console.error('Error creating category:', error);
+      }
     }
-  };
+  }, [categoryName, userId, selectedIcon, selectedColor, dispatch]);
 
-  const handleAddFromDefaultCategory = async () => {
+  const handleAddFromDefaultCategory = useCallback(async () => {
     for (const category of selectedCategories) {
       await createCategory(category.name, userId, category.icon ?? null, category.color ?? null);
     }
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
+    dispatch(fetchCategories());
     goBack();
-  };
+  }, [selectedCategories, userId, dispatch]);
 
-  const handleUpdateCategory = async () => {
+  const handleUpdateCategory = useCallback(async () => {
     try {
       await updateCategoryById(categoryData.categoryId, categoryName, selectedIcon, selectedColor);
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch(fetchCategories());
       goBack();
     } catch (error) {
-      console.error('Error updating category:', error);
+      if (__DEV__) {
+        console.error('Error updating category:', error);
+      }
     }
-  };
+  }, [categoryData?.categoryId, categoryName, selectedIcon, selectedColor, dispatch]);
 
-  const handleAddFromDefaultOrAddCategory = () => {
+  const handleAddFromDefaultOrAddCategory = useCallback(() => {
     if (isAddButton) {
-      if (selectedCategories.length !== 0) {
+      if (selectedCategories.length > 0) {
         handleAddFromDefaultCategory();
       } else {
         handleAddCategory();
@@ -87,7 +98,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     } else {
       handleUpdateCategory();
     }
-  };
+  }, [isAddButton, selectedCategories.length, handleAddFromDefaultCategory, handleAddCategory, handleUpdateCategory]);
 
   const handleOpenIconPicker = useCallback(() => {
     SheetManager.show('icon-picker-sheet', {
@@ -115,51 +126,56 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const toggleCategorySelection = useCallback(
     (category: CategorySelection) => {
-      if (selectedCategories.some(c => c.name === category.name)) {
-        setSelectedCategories(selectedCategories.filter(item => item.name !== category.name));
+      if (selectedCategoryNames.has(category.name)) {
+        setSelectedCategories(prev => prev.filter(item => item.name !== category.name));
       } else {
-        setSelectedCategories([...selectedCategories, category]);
+        setSelectedCategories(prev => [...prev, category]);
       }
     },
-    [selectedCategories],
+    [selectedCategoryNames],
   );
 
   const renderDefaultCategoryItem = useCallback(
-    ({item: category}: {item: any}) => (
-      <TouchableOpacity onPress={() => toggleCategorySelection(category)}>
-        <View
-          style={[
-            onboardingStyles.categoryContainer,
-            {
-              backgroundColor: selectedCategories?.includes(category)
-                ? `${colors.accentGreen}75`
-                : colors.secondaryAccent,
-              borderColor: colors.secondaryContainerColor,
-            },
-          ]}>
-          {category.icon !== undefined ? (
-            <View style={onboardingStyles.iconContainer}>
-              <Icon name={category.icon} size={20} color={category.color} />
-            </View>
-          ) : null}
+    ({item: category}: {item: CategorySelection}) => {
+      const isSelected = selectedCategoryNames.has(category.name);
 
-          <PrimaryText
-            style={{
-              color: selectedCategories?.includes(category) ? colors.buttonText : colors.primaryText,
-              fontSize: 13,
-            }}>
-            {category.name}
-          </PrimaryText>
-        </View>
-      </TouchableOpacity>
-    ),
-    [colors, selectedCategories, toggleCategorySelection],
+      return (
+        <TouchableOpacity onPress={() => toggleCategorySelection(category)}>
+          <View
+            style={[
+              gs.h45,
+              gs.p10,
+              gs.mr5,
+              gs.mt5,
+              gs.rounded5,
+              gs.border2,
+              gs.center,
+              gs.row,
+              {
+                backgroundColor: isSelected ? `${colors.accentGreen}75` : colors.secondaryAccent,
+                borderColor: colors.secondaryContainerColor,
+              },
+            ]}>
+            {category.icon ? (
+              <View style={gs.mr5}>
+                <Icon name={category.icon} size={20} color={category.color} />
+              </View>
+            ) : null}
+
+            <PrimaryText size={13} color={isSelected ? colors.buttonText : colors.primaryText}>
+              {category.name}
+            </PrimaryText>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [colors, selectedCategoryNames, toggleCategorySelection],
   );
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}} dismissKeyboardOnTouch>
+    <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
-        <View style={mainStyles.headerContainer}>
+        <View style={[gs.mb20, gs.mt20]}>
           <AppHeader onPress={goBack} colors={colors} text="Add Category" />
         </View>
 
@@ -172,15 +188,16 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           schema={categorySchema}
         />
 
-        <PrimaryText style={{marginBottom: 10}}>Pick your own icon and color</PrimaryText>
-        <View style={styles.dateContainer}>
+        <PrimaryText style={gs.mb10}>Pick your own icon and color</PrimaryText>
+        <View style={[gs.rowCenter, gs.mb10]}>
           <TouchableOpacity
             style={[
-              styles.dateButtonContainer,
-              {
-                backgroundColor: colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-              },
+              gs.size40,
+              gs.center,
+              gs.rounded5,
+              gs.border2,
+              gs.mr10,
+              {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor},
             ]}
             onPress={handleOpenIconPicker}>
             {selectedIcon === 'null' ? (
@@ -194,21 +211,24 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.dateContainer}>
+        <View style={[gs.rowCenter, gs.mb10]}>
           <TouchableOpacity
             style={[
-              styles.dateButtonContainer,
-              {
-                backgroundColor: colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-              },
+              gs.size40,
+              gs.center,
+              gs.rounded5,
+              gs.border2,
+              gs.mr10,
+              {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor},
             ]}
             onPress={handleOpenColorPicker}>
-            {selectedColor === 'null' ? (
-              <View style={[styles.colorCircle, {backgroundColor: colors.accentGreen}]} />
-            ) : (
-              <View style={[styles.colorCircle, {backgroundColor: selectedColor}]} />
-            )}
+            <View
+              style={[
+                gs.size30,
+                gs.rounded50,
+                {backgroundColor: selectedColor === 'null' ? colors.accentGreen : selectedColor},
+              ]}
+            />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleOpenColorPicker}>
             <PrimaryText>Tap to select Color</PrimaryText>
@@ -216,16 +236,11 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
         </View>
         {filteredCategories.length !== 0 && isAddButton ? (
           <>
-            <PrimaryText
-              style={{
-                marginBottom: '5%',
-                color: colors.accentGreen,
-                marginTop: '3%',
-              }}>
+            <PrimaryText color={colors.accentGreen} style={[gs.mb5p, gs.mt3p]}>
               or
             </PrimaryText>
             <PrimaryText>Add from default categories</PrimaryText>
-            <View style={styles.defaultCategoriesContainer}>
+            <View style={[gs.minH55, gs.mt5]}>
               <FlashList
                 data={filteredCategories}
                 renderItem={renderDefaultCategoryItem}
@@ -248,30 +263,4 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   );
 };
 
-export default CategoryEntry;
-
-const styles = StyleSheet.create({
-  colorCircle: {
-    height: 30,
-    width: 30,
-    borderRadius: 50,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  dateButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    width: 40,
-    borderRadius: 5,
-    borderWidth: 2,
-    marginRight: 10,
-  },
-  defaultCategoriesContainer: {
-    minHeight: 55,
-    marginTop: 5,
-  },
-});
+export default memo(CategoryEntry);

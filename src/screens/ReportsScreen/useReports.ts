@@ -8,11 +8,13 @@ import {
   getYear,
   getMonthName,
   getDaysInMonth,
-  DateInput,
 } from '../../utils/dateUtils';
-import {getExpenseRequest, selectExpenseData} from '../../redux/slice/expenseDataSlice';
+
+const DAY_NAMES = getWeekdayShortNames();
+import {fetchExpenses, selectExpenseData} from '../../redux/slice/expenseDataSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {ExpenseData as ExpenseDocType} from '../../watermelondb/services';
+import {AppDispatch} from '../../redux/store';
 
 interface TransactionWithCategory extends ExpenseDocType {
   category?: {
@@ -24,63 +26,51 @@ interface TransactionWithCategory extends ExpenseDocType {
 
 const useReports = () => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [selectedYear, setSelectedYear] = useState(getCurrentYear());
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthName());
   const [showYearPicker, setShowYearPicker] = useState(false);
-  const [filteredTransactions, setFilteredTransactions] = useState<TransactionWithCategory[]>([]);
-  const allTransactions = useSelector(selectExpenseData);
+  const allTransactions = useSelector(selectExpenseData) as TransactionWithCategory[];
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const dayNames = getWeekdayShortNames();
-
-  const allTransactionsCopy = useMemo(() => JSON.parse(JSON.stringify(allTransactions)), [allTransactions]);
-
-  const filterTransactions = useCallback(
-    (year: number, month: string) => {
-      const filtered = allTransactionsCopy?.filter((item: {date: DateInput}) => {
-        const transactionYear = getYear(item.date);
-        const transactionMonth = getMonthName(item.date);
-        return transactionYear === year && (!month || transactionMonth === month);
-      });
-
-      setFilteredTransactions(filtered?.length > 0 ? filtered : []);
-    },
-    [allTransactionsCopy],
-  );
+  const filteredTransactions = useMemo(() => {
+    const filtered = allTransactions?.filter((item: TransactionWithCategory) => {
+      const transactionYear = getYear(item.date);
+      const transactionMonth = getMonthName(item.date);
+      return transactionYear === selectedYear && (!selectedMonth || transactionMonth === selectedMonth);
+    });
+    return filtered?.length > 0 ? filtered : [];
+  }, [allTransactions, selectedYear, selectedMonth]);
 
   useEffect(() => {
-    dispatch(getExpenseRequest());
+    dispatch(fetchExpenses());
   }, [dispatch]);
 
-  useEffect(() => {
-    filterTransactions(selectedYear, selectedMonth);
-  }, [filterTransactions, selectedYear, selectedMonth]);
-
-  const handleYearPicker = () => {
+  const handleYearPicker = useCallback(() => {
     setShowYearPicker(true);
-  };
+  }, []);
 
-  const handleYearPickerClose = () => {
+  const handleYearPickerClose = useCallback(() => {
     setShowYearPicker(false);
-  };
+  }, []);
 
-  const years = Array.from({length: 101}, (_, index) => 2000 + index);
-  const handleYearSelect = (year: number) => {
+  const years = useMemo(() => Array.from({length: 101}, (_, index) => 2000 + index), []);
+
+  const handleYearSelect = useCallback((year: number) => {
     setSelectedYear(year);
     setShowYearPicker(false);
-  };
+  }, []);
 
-  const handleMonthSelect = (month: string) => {
+  const handleMonthSelect = useCallback((month: string) => {
     setSelectedMonth(month);
-  };
+  }, []);
 
-  const totalAmountForMonth = filteredTransactions.reduce(
-    (sum, transaction: {amount: number}) => sum + transaction.amount,
-    0,
+  const totalAmountForMonth = useMemo(
+    () => filteredTransactions.reduce((sum, transaction: TransactionWithCategory) => sum + transaction.amount, 0),
+    [filteredTransactions],
   );
 
-  const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
+  const daysInMonth = useMemo(() => getDaysInMonth(selectedYear, selectedMonth), [selectedYear, selectedMonth]);
 
   return {
     colors,
@@ -90,12 +80,10 @@ const useReports = () => {
     setSelectedMonth,
     showYearPicker,
     setShowYearPicker,
-    filterTransactions,
     filteredTransactions,
-    setFilteredTransactions,
-    allTransactionsCopy,
+    allTransactions,
     currencySymbol,
-    dayNames,
+    dayNames: DAY_NAMES,
     handleYearPicker,
     handleYearPickerClose,
     years,

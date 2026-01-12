@@ -3,13 +3,13 @@ import {nanoid} from 'nanoid';
 import {database} from '../database';
 import Category from '../models/Category';
 
-// Type for category data
+// Type for category data - all properties initialized for Hidden Class optimization
 export interface CategoryData {
   id: string;
   name: string;
   categoryStatus: boolean;
   userId: string;
-  icon?: string;
+  icon: string;
   color: string;
 }
 
@@ -29,8 +29,9 @@ export const createCategory = async (
       cat.name = name;
       cat.categoryStatus = true;
       cat.userId = userId;
-      cat.icon = icon || undefined;
-      cat.color = color || '#808080';
+      // Always assign string values for consistent Hidden Class shape
+      cat.icon = icon ?? '';
+      cat.color = color ?? '#808080';
     });
   });
   return id;
@@ -85,8 +86,8 @@ export const getAllCategories = async (): Promise<CategoryData[]> => {
     name: c.name,
     categoryStatus: c.categoryStatus,
     userId: c.userId,
-    icon: c.icon,
-    color: c.color,
+    icon: c.icon ?? '',
+    color: c.color ?? '#808080',
   }));
 };
 
@@ -105,8 +106,8 @@ export const getAllCategoriesByUserId = async (
     name: c.name,
     categoryStatus: c.categoryStatus,
     userId: c.userId,
-    icon: c.icon,
-    color: c.color,
+    icon: c.icon ?? '',
+    color: c.color ?? '#808080',
   }));
 };
 
@@ -125,8 +126,8 @@ export const getActiveCategoriesByUserId = async (
     name: c.name,
     categoryStatus: c.categoryStatus,
     userId: c.userId,
-    icon: c.icon,
-    color: c.color,
+    icon: c.icon ?? '',
+    color: c.color ?? '#808080',
   }));
 };
 
@@ -145,8 +146,8 @@ export const getCategoryById = async (
       name: category.name,
       categoryStatus: category.categoryStatus,
       userId: category.userId,
-      icon: category.icon,
-      color: category.color,
+      icon: category.icon ?? '',
+      color: category.color ?? '#808080',
     };
   } catch {
     return null;

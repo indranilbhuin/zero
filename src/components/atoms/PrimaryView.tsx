@@ -1,15 +1,8 @@
-import {
-  Keyboard,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-  ViewStyle,
-} from 'react-native';
-import React, {ReactNode} from 'react';
+import {Keyboard, Platform, StatusBar, TouchableWithoutFeedback, View, ViewStyle} from 'react-native';
+import React, {ReactNode, memo} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme, ThemeColors} from '../../context/ThemeContext';
+import {gs} from '../../styles/globalStyles';
 
 interface PrimaryViewProps {
   colors?: ThemeColors;
@@ -31,27 +24,22 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
 
   const colors = propColors || contextColors;
 
-  const bottomPadding = useBottomPadding
-    ? Platform.OS === 'ios'
-      ? insets.bottom
-      : insets.bottom + 10
-    : 0;
+  const bottomPadding = useBottomPadding ? (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 10) : 0;
 
   const content = (
     <View
       style={[
-        styles.mainContainer,
+        gs.hFull,
         {
           backgroundColor: colors.primaryBackground,
           paddingTop: insets.top,
           paddingBottom: bottomPadding,
+          paddingLeft: '4%',
+          paddingRight: '4%',
         },
         style,
       ]}>
-      <StatusBar
-        backgroundColor={colors.primaryBackground}
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-      />
+      <StatusBar backgroundColor={colors.primaryBackground} barStyle={isDark ? 'light-content' : 'dark-content'} />
       {children}
     </View>
   );
@@ -67,12 +55,4 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
   return content;
 };
 
-export default PrimaryView;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    paddingLeft: '4%',
-    paddingRight: '4%',
-  },
-});
+export default memo(PrimaryView);

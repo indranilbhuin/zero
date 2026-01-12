@@ -1,43 +1,64 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createEntityAdapter, createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
+import {ExpenseWithCategory, getAllExpensesByDate} from '../../watermelondb/services';
+import {selectUserId} from './userIdSlice';
 
-const initialState = {
-  expenseData: [],
+const everydayExpensesAdapter = createEntityAdapter<ExpenseWithCategory>();
+
+const initialState = everydayExpensesAdapter.getInitialState({
   isLoading: false,
-  error: null,
-};
+  error: null as string | null,
+});
+
+export const fetchEverydayExpenses = createAsyncThunk(
+  'everydayExpense/fetchByDate',
+  async (date: string, {getState, rejectWithValue}) => {
+    try {
+      const userId = selectUserId(getState() as RootState);
+      const expenses = await getAllExpensesByDate(userId, date);
+      return expenses;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch everyday expenses');
+    }
+  },
+);
 
 const everydayExpenseDataSlice = createSlice({
   name: 'everydayExpense',
   initialState,
   reducers: {
-    getEverydayExpenseRequest: (state, _id) => {
-      state.isLoading = true;
-      state.error = null;
-    },
-    getEverydayExpenseSuccess: (state, action) => {
-      state.isLoading = false;
-      state.error = null;
-      state.expenseData = action.payload;
-    },
-    getEverydayExpenseFaliure: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
+    everydayExpenseAdded: everydayExpensesAdapter.addOne,
+    everydayExpenseUpdated: everydayExpensesAdapter.updateOne,
+    everydayExpenseRemoved: everydayExpensesAdapter.removeOne,
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchEverydayExpenses.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchEverydayExpenses.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        everydayExpensesAdapter.setAll(state, action.payload);
+      })
+      .addCase(fetchEverydayExpenses.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const selectEverydayExpenseData = (state: RootState) =>
-  state.everydayExpense.expenseData;
-export const selectEverydayExpenseLoading = (state: RootState) =>
-  state.everydayExpense.isLoading;
-export const selectEverydayExpenseError = (state: RootState) =>
-  state.everydayExpense.error;
+const everydayExpenseSelectors = everydayExpensesAdapter.getSelectors<RootState>(state => state.everydayExpense);
 
-export const {
-  getEverydayExpenseRequest,
-  getEverydayExpenseSuccess,
-  getEverydayExpenseFaliure,
-} = everydayExpenseDataSlice.actions;
+export const selectEverydayExpenseData = everydayExpenseSelectors.selectAll;
+export const selectEverydayExpenseDataById = everydayExpenseSelectors.selectById;
+export const selectEverydayExpenseIds = everydayExpenseSelectors.selectIds;
+export const selectEverydayExpenseEntities = everydayExpenseSelectors.selectEntities;
+
+export const selectEverydayExpenseLoading = (state: RootState) => state.everydayExpense.isLoading;
+export const selectEverydayExpenseError = (state: RootState) => state.everydayExpense.error;
+
+export const {everydayExpenseAdded, everydayExpenseUpdated, everydayExpenseRemoved} = everydayExpenseDataSlice.actions;
 
 export default everydayExpenseDataSlice.reducer;

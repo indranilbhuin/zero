@@ -3,14 +3,14 @@ import {nanoid} from 'nanoid';
 import {database} from '../database';
 import Debtor from '../models/Debtor';
 
-// Type for debtor data
+// Type for debtor data - all properties initialized for Hidden Class optimization
 export interface DebtorData {
   id: string;
   title: string;
   type: string;
   debtorStatus: boolean;
   userId: string;
-  icon?: string;
+  icon: string;
   color: string;
 }
 
@@ -32,8 +32,9 @@ export const createDebtor = async (
       debtor.type = type;
       debtor.debtorStatus = true;
       debtor.userId = userId;
-      debtor.icon = icon || undefined;
-      debtor.color = color || '#808080';
+      // Always assign string values for consistent Hidden Class shape
+      debtor.icon = icon ?? '';
+      debtor.color = color ?? '#808080';
     });
   });
   return id;
@@ -101,8 +102,8 @@ export const getAllDebtors = async (): Promise<DebtorData[]> => {
     type: d.type,
     debtorStatus: d.debtorStatus,
     userId: d.userId,
-    icon: d.icon,
-    color: d.color,
+    icon: d.icon ?? '',
+    color: d.color ?? '#808080',
   }));
 };
 
@@ -122,8 +123,8 @@ export const getAllDebtorsByUserId = async (
     type: d.type,
     debtorStatus: d.debtorStatus,
     userId: d.userId,
-    icon: d.icon,
-    color: d.color,
+    icon: d.icon ?? '',
+    color: d.color ?? '#808080',
   }));
 };
 
@@ -143,8 +144,8 @@ export const getActiveDebtorsByUserId = async (
     type: d.type,
     debtorStatus: d.debtorStatus,
     userId: d.userId,
-    icon: d.icon,
-    color: d.color,
+    icon: d.icon ?? '',
+    color: d.color ?? '#808080',
   }));
 };
 
@@ -162,8 +163,8 @@ export const getDebtorByDebtorId = async (
       type: debtor.type,
       debtorStatus: debtor.debtorStatus,
       userId: debtor.userId,
-      icon: debtor.icon,
-      color: debtor.color,
+      icon: debtor.icon ?? '',
+      color: debtor.color ?? '#808080',
     };
   } catch {
     return null;

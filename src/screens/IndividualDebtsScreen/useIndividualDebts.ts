@@ -1,29 +1,18 @@
 import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
-import {useEffect, useState} from 'react';
-import {
-  getDebtRequest,
-  selectDebtData,
-  selectDebtError,
-  selectDebtLoading,
-} from '../../redux/slice/debtDataSlice';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {fetchDebtsByDebtor, selectDebtData, selectDebtError, selectDebtLoading} from '../../redux/slice/debtDataSlice';
 import {goBack, navigate} from '../../utils/navigationUtils';
-import {
-  deleteAllDebtsByDebtorId,
-  deleteDebtById,
-  deleteDebtorById,
-} from '../../watermelondb/services';
-import {getAllDebtRequest} from '../../redux/slice/allDebtDataSlice';
+import {deleteAllDebtsByDebtorId, deleteDebtById, deleteDebtorById} from '../../watermelondb/services';
+import {fetchAllDebts} from '../../redux/slice/allDebtDataSlice';
 import {RouteProp} from '@react-navigation/native';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
-import {FETCH_ALL_DEBTOR_DATA} from '../../redux/actionTypes';
-import {DateInput, sortByDateDesc} from '../../utils/dateUtils';
+import {fetchDebtors} from '../../redux/slice/debtorDataSlice';
+import {sortByDateDesc} from '../../utils/dateUtils';
 import {DebtData as DebtDocType} from '../../watermelondb/services';
 import useAmountColor from '../../hooks/useAmountColor';
-import {
-  getIndividualDebtorRequest,
-  selectIndividualDebtorData,
-} from '../../redux/slice/IndividualDebtorSlice';
+import {fetchIndividualDebtor, selectIndividualDebtorData} from '../../redux/slice/IndividualDebtorSlice';
+import {AppDispatch} from '../../redux/store';
 
 export type IndividualDebtsScreenRouteProp = RouteProp<
   {
@@ -38,12 +27,9 @@ export type IndividualDebtsScreenRouteProp = RouteProp<
 
 const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [refreshing, setRefreshing] = useState(false);
-  const individualDebts = useSelector(selectDebtData);
-  const individualDebtsCopy = JSON.parse(JSON.stringify(individualDebts)) as Array<{date: DateInput} & DebtDocType>;
-  const sortedDebts = sortByDateDesc(individualDebtsCopy);
-  console.log('all debtsss', individualDebtsCopy);
+  const individualDebts = useSelector(selectDebtData) as DebtDocType[];
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
   const currencySymbol = useSelector(selectCurrencySymbol);
@@ -51,112 +37,104 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
   const {debtorId, debtorType} = route.params;
   const individualDebtor = useSelector(selectIndividualDebtorData);
-  console.log('individuallll', individualDebtor);
   const debtorName = individualDebtor?.title;
 
-  const borrowings = individualDebtsCopy.filter(
-    (debt: DebtDocType) => debt.type === 'Borrow',
-  );
-  const lendings = individualDebtsCopy.filter(
-    (debt: DebtDocType) => debt.type === 'Lend',
-  );
+  const {sortedDebts, sortedBorrowings, sortedLendings, totalBorrowings, totalLendings, debtorTotal} = useMemo(() => {
+    const sorted = sortByDateDesc(individualDebts);
+    const borrowings = sorted.filter((debt: DebtDocType) => debt.type === 'Borrow');
+    const lendings = sorted.filter((debt: DebtDocType) => debt.type === 'Lend');
 
-  console.log('first', borrowings);
-  console.log('second', lendings);
+    const borrowingsTotal = borrowings.reduce((total: number, debt: DebtDocType) => total + debt.amount, 0);
+    const lendingsTotal = lendings.reduce((total: number, debt: DebtDocType) => total + debt.amount, 0);
 
-  const sortedBorrowings = sortByDateDesc(borrowings);
+    return {
+      sortedDebts: sorted,
+      sortedBorrowings: borrowings,
+      sortedLendings: lendings,
+      totalBorrowings: borrowingsTotal,
+      totalLendings: lendingsTotal,
+      debtorTotal: borrowingsTotal - lendingsTotal,
+    };
+  }, [individualDebts]);
 
-  const sortedLendings = sortByDateDesc(lendings);
-
-  const totalBorrowings = borrowings.reduce(
-    (total: number, debt: {amount: number}) => total + debt.amount,
-    0,
-  );
-
-  const totalLendings = lendings.reduce(
-    (total: number, debt: {amount: number}) => total + debt.amount,
-    0,
-  );
-  console.log('firstttttt', totalBorrowings, totalLendings);
-  const debtorTotal = totalBorrowings - totalLendings;
-
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
-  };
+  }, []);
 
   const debtorTotalColor = useAmountColor(debtorTotal);
 
-  const handleEditDebt = (
-    debtId: string,
-    debtDescription: string,
-    amount: number,
-    debtDate: string,
-    debtType: string,
-  ) => {
-    navigate('UpdateDebtScreen', {
-      debtId,
-      debtDescription,
-      amount,
-      debtorName,
-      debtDate,
-      debtorId,
-      debtType,
-    });
-  };
+  const handleEditDebt = useCallback(
+    (debtId: string, debtDescription: string, amount: number, debtDate: string, debtType: string) => {
+      navigate('UpdateDebtScreen', {
+        debtId,
+        debtDescription,
+        amount,
+        debtorName,
+        debtDate,
+        debtorId,
+        debtType,
+      });
+    },
+    [debtorId, debtorName],
+  );
 
-  const handleDeleteDebt = async (debtId: string) => {
-    await deleteDebtById(debtId);
-    dispatch(getDebtRequest(debtorId));
-    dispatch(getAllDebtRequest());
-    setRefreshing(true);
-  };
+  const handleDeleteDebt = useCallback(
+    async (debtId: string) => {
+      await deleteDebtById(debtId);
+      dispatch(fetchDebtsByDebtor(debtorId));
+      dispatch(fetchAllDebts());
+      setRefreshing(true);
+    },
+    [debtorId, dispatch],
+  );
 
-  const handleDeleteDebtor = async () => {
-    if (individualDebtsCopy.length === 0) {
+  const handleDeleteDebtor = useCallback(async () => {
+    if (individualDebts.length === 0) {
       await deleteDebtorById(debtorId);
-      dispatch({type: FETCH_ALL_DEBTOR_DATA});
+      dispatch(fetchDebtors());
       goBack();
     } else {
       setDeleteDebtorVisible(true);
     }
-  };
+  }, [debtorId, dispatch, individualDebts.length]);
 
-  const handleMarkAsPaid = () => {
+  const handleMarkAsPaid = useCallback(() => {
     setPaidToastVisible(true);
-  };
+  }, []);
 
-  const handleOk = async () => {
+  const handleOk = useCallback(async () => {
     await deleteAllDebtsByDebtorId(debtorId);
-    dispatch(getDebtRequest(debtorId));
-    dispatch(getAllDebtRequest());
+    dispatch(fetchDebtsByDebtor(debtorId));
+    dispatch(fetchAllDebts());
     setPaidToastVisible(false);
-  };
+  }, [debtorId, dispatch]);
 
-  const handleDeleteOk = () => {
+  const handleDeleteOk = useCallback(() => {
     setPaidToastVisible(true);
     setDeleteDebtorVisible(false);
-  };
+  }, []);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setPaidToastVisible(false);
-  };
+  }, []);
 
-  const handleDeleteCancel = () => {
+  const handleDeleteCancel = useCallback(() => {
     setDeleteDebtorVisible(false);
-  };
-  const handleUpdateDebtor = () => {
+  }, []);
+
+  const handleUpdateDebtor = useCallback(() => {
     navigate('UpdateDebtorScreen', {debtorId, debtorName, debtorType});
-  };
+  }, [debtorId, debtorName, debtorType]);
 
   useEffect(() => {
-    dispatch(getDebtRequest(debtorId));
-    dispatch(getIndividualDebtorRequest(debtorId));
+    dispatch(fetchDebtsByDebtor(debtorId));
+    dispatch(fetchIndividualDebtor(debtorId));
   }, [debtorId, dispatch]);
 
   useEffect(() => {
     if (refreshing) {
-      dispatch(getDebtRequest(debtorId));
-      dispatch(getIndividualDebtorRequest(debtorId));
+      dispatch(fetchDebtsByDebtor(debtorId));
+      dispatch(fetchIndividualDebtor(debtorId));
       setRefreshing(false);
     }
   }, [dispatch, debtorId, refreshing]);

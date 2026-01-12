@@ -4,11 +4,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {RouteProp} from '@react-navigation/native';
 import {ExpenseData as Expense} from '../../watermelondb/services';
-import {useEffect} from 'react';
-import {
-  getEverydayExpenseRequest,
-  selectEverydayExpenseData,
-} from '../../redux/slice/everydayExpenseDataSlice';
+import {useEffect, useMemo} from 'react';
+import {fetchEverydayExpenses, selectEverydayExpenseData} from '../../redux/slice/everydayExpenseDataSlice';
+import {AppDispatch} from '../../redux/store';
 
 export type EverydayTransactionRouteProp = RouteProp<
   {
@@ -21,9 +19,8 @@ export type EverydayTransactionRouteProp = RouteProp<
 >;
 
 const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
-  const dispatch = useDispatch();
-  const allEverdayTransaction = useSelector(selectEverydayExpenseData);
-  const allEverdayTransactionCopy = JSON.parse(JSON.stringify(allEverdayTransaction));
+  const dispatch = useDispatch<AppDispatch>();
+  const allEverydayTransactions = useSelector(selectEverydayExpenseData) as Expense[];
   const expenseDate = route.params.isDate;
   const formattedDate = formatDate(expenseDate, 'MMM Do YY');
   const formattedDateDisplay = formatDate(expenseDate, 'MMM Do YY');
@@ -31,12 +28,12 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   const currencySymbol = useSelector(selectCurrencySymbol);
 
   useEffect(() => {
-    dispatch(getEverydayExpenseRequest(expenseDate));
+    dispatch(fetchEverydayExpenses(expenseDate));
   }, [dispatch, expenseDate]);
 
-  const totalAmountForTheDay = allEverdayTransactionCopy.reduce(
-    (sum: number, transaction: {amount: number}) => sum + transaction.amount,
-    0,
+  const totalAmountForTheDay = useMemo(
+    () => allEverydayTransactions.reduce((sum: number, transaction: Expense) => sum + transaction.amount, 0),
+    [allEverydayTransactions],
   );
 
   return {
@@ -45,9 +42,8 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
     colors,
     currencySymbol,
     expenseDate,
-    allEverdayTransaction,
-    allEverdayTransactionCopy,
-    totalAmountForTheDay
+    allEverydayTransactions,
+    totalAmountForTheDay,
   };
 };
 

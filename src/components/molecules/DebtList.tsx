@@ -1,5 +1,5 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useMemo} from 'react';
+import {RefreshControlProps, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useMemo, memo} from 'react';
 import {DebtData as Debt} from '../../watermelondb/services';
 import PrimaryText from '../atoms/PrimaryText';
 import Icon from '../atoms/Icons';
@@ -7,6 +7,7 @@ import {formatDate, formatCalendar} from '../../utils/dateUtils';
 import {Colors} from '../../hooks/useThemeColors';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList} from '@shopify/flash-list';
+import {gs} from '../../styles/globalStyles';
 
 interface DebtListProps {
   colors: Colors;
@@ -14,6 +15,8 @@ interface DebtListProps {
   handleDeleteDebt: any;
   individualDebts: Array<Debt>;
   currencySymbol: string;
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+  refreshControl?: React.ReactElement<RefreshControlProps>;
 }
 
 interface DebtItemProps {
@@ -31,72 +34,57 @@ interface GroupedDebt {
   label: string;
 }
 
-const DebtItem: React.FC<DebtItemProps> = ({
-  colors,
-  handleEditDebt,
-  handleDeleteDebt,
-  individualDebts,
-  label,
-  currencySymbol,
-}) => {
-  const renderDebtItem = useCallback(
-    ({item: debt}: {item: Debt}) => (
+const DebtItem: React.FC<DebtItemProps> = React.memo(
+  ({colors, handleEditDebt, handleDeleteDebt, individualDebts, label, currencySymbol}) => {
+    const renderDebtItem = useCallback(
+      ({item: debt}: {item: Debt}) => (
+        <View>
+          <View
+            style={[
+              gs.h40,
+              gs.p5,
+              gs.mr5,
+              gs.rounded5,
+              gs.px10,
+              gs.center,
+              gs.mb5,
+              gs.row,
+              {backgroundColor: colors.secondaryAccent},
+            ]}>
+            <TouchableOpacity
+              onPress={() => handleEditDebt(String(debt.id), debt.description, debt.amount, debt.date, debt.type)}>
+              <PrimaryText size={12} color={colors.primaryText} style={gs.mr5}>
+                {debt.description}: {currencySymbol}
+                {formatCurrency(debt.amount)}
+              </PrimaryText>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleDeleteDebt(String(debt.id))}>
+              <Icon name="trash-2" size={20} color={colors.accentOrange} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ),
+      [colors, currencySymbol, handleEditDebt, handleDeleteDebt],
+    );
+
+    return (
       <View>
-        <View
-          style={[
-            styles.categoryContainer,
-            {
-              backgroundColor: colors.secondaryAccent,
-            },
-          ]}>
-          <TouchableOpacity
-            onPress={() =>
-              handleEditDebt(
-                String(debt.id),
-                debt.description,
-                debt.amount,
-                debt.date,
-                debt.type,
-              )
-            }>
-            <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 12,
-                marginRight: 5,
-              }}>
-              {debt.description}: {currencySymbol}
-              {formatCurrency(debt.amount)}
-            </PrimaryText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleDeleteDebt(String(debt.id))}>
-            <Icon
-              name="trash-2"
-              size={20}
-              color={colors.accentOrange}
-            />
-          </TouchableOpacity>
+        <PrimaryText size={12} style={gs.mb5}>
+          {label}
+        </PrimaryText>
+        <View style={[gs.row, gs.wrap, gs.minH45]}>
+          <FlashList
+            data={individualDebts}
+            renderItem={renderDebtItem}
+            keyExtractor={item => String(item.id)}
+            scrollEnabled={false}
+            horizontal
+          />
         </View>
       </View>
-    ),
-    [colors, currencySymbol, handleEditDebt, handleDeleteDebt],
-  );
-
-  return (
-    <View>
-      <PrimaryText style={{fontSize: 12, marginBottom: 5}}>{label}</PrimaryText>
-      <View style={styles.debtItemsContainer}>
-        <FlashList
-          data={individualDebts}
-          renderItem={renderDebtItem}
-          keyExtractor={item => String(item.id)}
-          scrollEnabled={false}
-          horizontal
-        />
-      </View>
-    </View>
-  );
-};
+    );
+  },
+);
 
 const DebtList: React.FC<DebtListProps> = ({
   colors,
@@ -104,6 +92,8 @@ const DebtList: React.FC<DebtListProps> = ({
   handleDeleteDebt,
   individualDebts,
   currencySymbol,
+  ListHeaderComponent,
+  refreshControl,
 }) => {
   const groupedData: GroupedDebt[] = useMemo(() => {
     const groupedExpenses = new Map<string, Array<Debt>>();
@@ -137,39 +127,17 @@ const DebtList: React.FC<DebtListProps> = ({
   );
 
   return (
-    <View style={styles.debtsMainContainer}>
+    <View style={gs.flex1}>
       <FlashList
         data={groupedData}
         renderItem={renderGroupItem}
         keyExtractor={item => item.date}
-        scrollEnabled={false}
+        ListHeaderComponent={ListHeaderComponent}
+        refreshControl={refreshControl}
+        contentContainerStyle={gs.pb80}
       />
     </View>
   );
 };
 
-export default DebtList;
-
-const styles = StyleSheet.create({
-  debtsMainContainer: {
-    flexDirection: 'column',
-    minHeight: 2,
-  },
-  debtItemsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    minHeight: 45,
-  },
-  categoryContainer: {
-    height: 40,
-    padding: 5,
-    marginRight: 5,
-    borderRadius: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 5,
-    flexDirection: 'row',
-  },
-});
+export default memo(DebtList);

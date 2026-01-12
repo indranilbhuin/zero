@@ -1,33 +1,33 @@
 import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
-import {selectActiveCategories} from '../../redux/slice/categoryDataSlice';
-import {useEffect, useState} from 'react';
-import {FETCH_ALL_CATEGORY_DATA} from '../../redux/actionTypes';
+import {fetchCategories, selectActiveCategories} from '../../redux/slice/categoryDataSlice';
+import {useCallback, useEffect, useState} from 'react';
 import {navigate} from '../../utils/navigationUtils';
 import {softDeleteCategoryById} from '../../watermelondb/services';
+import {AppDispatch} from '../../redux/store';
 
 const useCategory = () => {
   const colors = useThemeColors();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector(selectActiveCategories);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    dispatch({type: FETCH_ALL_CATEGORY_DATA});
+    dispatch(fetchCategories());
   }, [dispatch]);
 
   useEffect(() => {
     if (refreshing) {
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch(fetchCategories());
       setRefreshing(false);
     }
   }, [refreshing, dispatch]);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
-  };
+  }, []);
 
-  const handleEdit = (
+  const handleEdit = useCallback((
     categoryId: string,
     categoryName: string,
     categoryIcon: string,
@@ -39,17 +39,19 @@ const useCategory = () => {
       categoryIcon,
       categoryColor,
     });
-  };
+  }, []);
 
-  const handleDelete = async (categoryId: string) => {
+  const handleDelete = useCallback(async (categoryId: string) => {
     try {
       await softDeleteCategoryById(categoryId);
-      dispatch({type: FETCH_ALL_CATEGORY_DATA});
+      dispatch(fetchCategories());
       setRefreshing(true);
     } catch (error) {
-      console.log('Error deleting category:', categoryId, error);
+      if (__DEV__) {
+        console.error('Error deleting category:', categoryId, error);
+      }
     }
-  };
+  }, [dispatch]);
 
   return {
     colors,

@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import {Image, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useState, useEffect, useCallback, memo} from 'react';
+import {Image, Modal, TouchableOpacity, View} from 'react-native';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../atoms/PrimaryText';
+import {gs, hitSlop} from '../../styles/globalStyles';
 
 interface CustomToastProps {
   visible: boolean;
@@ -12,14 +13,7 @@ interface CustomToastProps {
   onCancel?: () => void;
 }
 
-const CustomToast: React.FC<CustomToastProps> = ({
-  visible,
-  type,
-  message,
-  timeout,
-  onOk,
-  onCancel,
-}) => {
+const CustomToast: React.FC<CustomToastProps> = ({visible, type, message, timeout, onOk, onCancel}) => {
   const [toastVisible, setToastVisible] = useState(visible);
   const colors = useThemeColors();
 
@@ -43,19 +37,15 @@ const CustomToast: React.FC<CustomToastProps> = ({
     };
   }, [visible, timeout]);
 
-  const handleOkButton = () => {
+  const handleOkButton = useCallback(() => {
     setToastVisible(false);
-    if (onOk) {
-      onOk();
-    }
-  };
+    onOk?.();
+  }, [onOk]);
 
-  const handleCancelButton = () => {
+  const handleCancelButton = useCallback(() => {
     setToastVisible(false);
-    if (onCancel) {
-      onCancel();
-    }
-  };
+    onCancel?.();
+  }, [onCancel]);
 
   if (!toastVisible) {
     return null;
@@ -83,58 +73,53 @@ const CustomToast: React.FC<CustomToastProps> = ({
 
   return (
     <Modal visible={toastVisible} animationType="fade" transparent>
-      <View style={styles.modalContainer}>
-        <View style={styles.innerContainer}>
-          <View
-            style={[styles.topBarContainer, {backgroundColor: toastColor}]}
-          />
+      <View style={[gs.flex1, gs.center, {backgroundColor: 'rgba(0, 0, 0, 0.3)'}]}>
+        <View style={[gs.wFull, gs.itemsCenter]}>
+          <View style={[gs.roundedTop24, {backgroundColor: toastColor, height: 10, width: '80%'}]} />
           <View
             style={[
-              styles.innerToastContainer,
-              {backgroundColor: colors.secondaryAccent},
+              gs.h170,
+              gs.center,
+              gs.pt5,
+              {
+                backgroundColor: colors.secondaryAccent,
+                width: '80%',
+                borderBottomLeftRadius: 8,
+                borderBottomRightRadius: 8,
+              },
             ]}>
-            {toastImage && (
-              <Image source={toastImage} style={styles.toastImage} />
-            )}
-            <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 13,
-                marginLeft: 20,
-                marginRight: 20,
-                textAlign: 'center',
-              }}>
+            {toastImage && <Image source={toastImage} style={[gs.size35, gs.mb10]} />}
+            <PrimaryText size={13} color={colors.primaryText} style={[gs.mx20, gs.textCenter]}>
               {message}
             </PrimaryText>
             {(onOk || onCancel) && (
               <View
                 style={[
-                  styles.buttonContainer,
-                  {
-                    justifyContent:
-                      onOk && onCancel ? 'space-between' : 'center',
-                  },
+                  gs.itemsCenter,
+                  gs.w50p,
+                  gs.mt10,
+                  gs.row,
+                  gs.mb10,
+                  {justifyContent: onOk && onCancel ? 'space-between' : 'center'},
                 ]}>
                 {onOk && (
-                  <TouchableOpacity onPress={handleOkButton}>
-                    <View
-                      style={[
-                        styles.okButton,
-                        {backgroundColor: colors.accentGreen},
-                      ]}>
-                      <PrimaryText style={{color: colors.buttonText}}>
-                        Ok
-                      </PrimaryText>
+                  <TouchableOpacity
+                    onPress={handleOkButton}
+                    hitSlop={hitSlop}
+                    accessibilityLabel="Confirm"
+                    accessibilityRole="button">
+                    <View style={[gs.w60, gs.h35, gs.rounded5, gs.center, {backgroundColor: colors.accentGreen}]}>
+                      <PrimaryText color={colors.buttonText}>Ok</PrimaryText>
                     </View>
                   </TouchableOpacity>
                 )}
                 {onCancel && (
-                  <TouchableOpacity onPress={handleCancelButton}>
-                    <View
-                      style={[
-                        styles.cancelButton,
-                        {backgroundColor: colors.accentRed},
-                      ]}>
+                  <TouchableOpacity
+                    onPress={handleCancelButton}
+                    hitSlop={hitSlop}
+                    accessibilityLabel="Cancel"
+                    accessibilityRole="button">
+                    <View style={[gs.w60, gs.h35, gs.rounded5, gs.center, {backgroundColor: colors.accentRed}]}>
                       <PrimaryText>Cancel</PrimaryText>
                     </View>
                   </TouchableOpacity>
@@ -148,59 +133,4 @@ const CustomToast: React.FC<CustomToastProps> = ({
   );
 };
 
-export default CustomToast;
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    width: '50%',
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  okButton: {
-    width: 60,
-    height: 35,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cancelButton: {
-    width: 60,
-    height: 35,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  innerContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  innerToastContainer: {
-    height: 170,
-    width: '80%',
-    alignItems: 'center',
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    paddingTop: 5,
-    justifyContent: 'center',
-  },
-  topBarContainer: {
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    height: 10,
-    width: '80%',
-  },
-  toastImage: {
-    width: 35,
-    height: 35,
-    marginBottom: 10,
-  },
-});
+export default memo(CustomToast);

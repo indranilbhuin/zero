@@ -1,8 +1,9 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import React, {useCallback, memo} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../atoms/PrimaryText';
 import {FlashList} from '@shopify/flash-list';
+import {gs} from '../../styles/globalStyles';
 
 interface Currency {
   code: string;
@@ -28,24 +29,29 @@ const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
       <TouchableOpacity onPress={() => handleCurrencySelect(currency)}>
         <View
           style={[
-            styles.currencyContainer,
+            gs.flex1,
+            gs.h80,
+            gs.mr6,
+            gs.mt6,
+            gs.rounded5,
+            gs.border2,
+            gs.p5,
+            gs.justifyEvenly,
             {
               backgroundColor:
-                selectedCurrency?.code === currency.code
-                  ? `${colors.accentGreen}75`
-                  : colors.secondaryAccent,
+                selectedCurrency?.code === currency.code ? `${colors.accentGreen}75` : colors.secondaryAccent,
               borderColor: colors.secondaryContainerColor,
             },
           ]}>
-          <View style={styles.symbolContainer}>
-            <PrimaryText style={{color: colors.primaryText, fontSize: 20}}>
+          <View style={gs.rowBetweenCenter}>
+            <PrimaryText size={20} color={colors.primaryText}>
               {currency.symbol}
             </PrimaryText>
-            <PrimaryText style={{color: colors.primaryText, fontSize: 13}}>
+            <PrimaryText size={13} color={colors.primaryText}>
               {currency.code}
             </PrimaryText>
           </View>
-          <PrimaryText style={{color: colors.primaryText, fontSize: 10}}>
+          <PrimaryText size={10} color={colors.primaryText}>
             {currency.name}
           </PrimaryText>
         </View>
@@ -55,7 +61,7 @@ const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
   );
 
   return (
-    <View style={styles.currencyMainContainer}>
+    <View style={[gs.wFull, gs.mb10, gs.minH2]}>
       <FlashList
         data={filteredCurrencies}
         renderItem={renderCurrencyItem}
@@ -67,27 +73,4 @@ const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
   );
 };
 
-export default CurrencySymbolPicker;
-
-const styles = StyleSheet.create({
-  currencyMainContainer: {
-    width: '100%',
-    marginBottom: 10,
-    minHeight: 2,
-  },
-  currencyContainer: {
-    flex: 1,
-    height: 80,
-    marginRight: 6,
-    marginTop: 6,
-    borderRadius: 5,
-    borderWidth: 2,
-    padding: 5,
-    justifyContent: 'space-evenly',
-  },
-  symbolContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});
+export default memo(CurrencySymbolPicker);

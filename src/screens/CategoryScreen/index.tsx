@@ -2,15 +2,14 @@ import {RefreshControl, TouchableOpacity, View} from 'react-native';
 import React, {useCallback} from 'react';
 import {navigate} from '../../utils/navigationUtils';
 import Icon from '../../components/atoms/Icons';
-import homeStyles from '../HomeScreen/style';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
-import styles from './style';
 import useCategory from './useCategory';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import {CategoryData as Category} from '../../watermelondb/services';
 import EmptyState from '../../components/atoms/EmptyState';
 import {FlashList} from '@shopify/flash-list';
+import {gs, hitSlop} from '../../styles/globalStyles';
 
 const CategoryScreen = () => {
   const {colors, refreshing, onRefresh, categories, handleEdit, handleDelete} = useCategory();
@@ -19,33 +18,30 @@ const CategoryScreen = () => {
     ({item: category}: {item: Category}) => (
       <View
         style={[
-          styles.transactionContainer,
-          {
-            backgroundColor: colors.containerColor,
-          },
+          gs.h60,
+          gs.wFull,
+          gs.rounded10,
+          gs.rowBetweenCenter,
+          gs.mb5,
+          {backgroundColor: colors.containerColor, paddingLeft: 10, paddingRight: 5},
         ]}>
-        <View style={styles.iconNameContainer}>
-          <View style={[styles.iconContainer, {backgroundColor: colors.iconContainer}]}>
+        <View style={gs.rowCenter}>
+          <View style={[gs.size35, gs.center, gs.rounded50, gs.mr10, {backgroundColor: colors.iconContainer}]}>
             <Icon name={category.icon ?? 'shapes'} size={20} color={category.color ?? colors.primaryText} />
           </View>
           <View>
             <PrimaryText>{category.name}</PrimaryText>
           </View>
         </View>
-        <View style={styles.buttonContainer}>
+        <View style={[gs.row, gs.hFull]}>
           <TouchableOpacity
-            style={styles.actionButton}
+            style={[gs.w40, gs.center, gs.hFull]}
             onPress={() =>
-              handleEdit(
-                String(category.id),
-                category.name,
-                category.icon ?? 'shape',
-                category.color ?? colors.primaryText,
-              )
+              handleEdit(String(category.id), category.name, category.icon ?? 'shape', category.color ?? colors.primaryText)
             }>
             <Icon name="pencil" size={20} color={colors.accentGreen} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={() => handleDelete(category.id)}>
+          <TouchableOpacity style={[gs.w40, gs.center, gs.hFull]} onPress={() => handleDelete(category.id)}>
             <Icon name="trash-2" size={20} color={colors.accentOrange} />
           </TouchableOpacity>
         </View>
@@ -55,17 +51,17 @@ const CategoryScreen = () => {
   );
 
   const ListEmptyComponent = useCallback(
-    () => <EmptyState colors={colors} type={'Categories'} style={{marginTop: '30%'}} />,
+    () => <EmptyState colors={colors} type={'Categories'} style={gs.mt30p} />,
     [colors],
   );
 
   return (
     <>
       <PrimaryView colors={colors} useBottomPadding={false}>
-        <View style={{marginBottom: 15}}>
+        <View style={gs.mb15}>
           <HeaderContainer headerText={'Categories'} />
         </View>
-        <View style={{flex: 1}}>
+        <View style={gs.flex1}>
           <FlashList
             data={categories}
             renderItem={renderCategoryItem}
@@ -76,10 +72,13 @@ const CategoryScreen = () => {
           />
         </View>
       </PrimaryView>
-      <View style={homeStyles.addButtonContainer}>
+      <View style={[gs.absolute, gs.bottom15, gs.right15, gs.zIndex1]}>
         <TouchableOpacity
-          style={[homeStyles.addButton, {backgroundColor: colors.secondaryBackground}]}
-          onPress={() => navigate('AddCategoryScreen')}>
+          style={[gs.size50, gs.rounded8, gs.center, {backgroundColor: colors.secondaryBackground}]}
+          onPress={() => navigate('AddCategoryScreen')}
+          hitSlop={hitSlop}
+          accessibilityLabel="Add new category"
+          accessibilityRole="button">
           <Icon name="plus" size={30} color={colors.primaryText} />
         </TouchableOpacity>
       </View>

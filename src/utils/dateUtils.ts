@@ -3,11 +3,20 @@ import calendar from 'dayjs/plugin/calendar';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import localeData from 'dayjs/plugin/localeData';
 
 dayjs.extend(calendar);
 dayjs.extend(advancedFormat);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(localeData);
+
+// Cache locale data - computed once at module load, not on every function call
+const MONTHS = dayjs.months();
+const MONTHS_SHORT = dayjs.monthsShort();
+const WEEKDAYS = dayjs.weekdays();
+const WEEKDAYS_SHORT = dayjs.weekdaysShort();
+const WEEKDAYS_MIN = dayjs.weekdaysMin();
 
 export type DateInput = string | number | Date | Dayjs | null | undefined;
 export type DateUnit =
@@ -46,31 +55,21 @@ export const getDayOfMonth = (date: DateInput): number =>
 
 export const getDayOfWeek = (date: DateInput): number => parseDate(date).day();
 
-export const getWeekdayShortNames = (): string[] => {
-  return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-};
+// Use cached locale data - no array recreation on each call
+export const getMonthNames = (): string[] => MONTHS;
+export const getMonthNamesShort = (): string[] => MONTHS_SHORT;
+export const getWeekdayNames = (): string[] => WEEKDAYS;
+export const getWeekdayShortNames = (): string[] => WEEKDAYS_SHORT;
+export const getWeekdayNamesMin = (): string[] => WEEKDAYS_MIN;
 
 export const getDaysInMonth = (year: number, month: string): number => {
   const monthIndex = dayjs().month(getMonthIndex(month)).month();
   return dayjs().year(year).month(monthIndex).daysInMonth();
 };
 
+// Uses cached MONTHS array for O(N) lookup
 export const getMonthIndex = (monthName: string): number => {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-  return months.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+  return MONTHS.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
 };
 
 export const getMonthNumber = (monthName: string): string => {
@@ -164,7 +163,11 @@ export default {
   getMonthName,
   getDayOfMonth,
   getDayOfWeek,
+  getMonthNames,
+  getMonthNamesShort,
+  getWeekdayNames,
   getWeekdayShortNames,
+  getWeekdayNamesMin,
   getDaysInMonth,
   getMonthIndex,
   getMonthNumber,

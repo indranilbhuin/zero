@@ -3,7 +3,6 @@ import React, {useCallback} from 'react';
 import Icon from '../../components/atoms/Icons';
 import {goBack} from '../../utils/navigationUtils';
 import useSettings from './useSettings';
-import styles from './style';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import CustomToast from '../../components/molecules/CustomToast';
@@ -12,6 +11,7 @@ import {generateUniqueKey, requestStoragePermission} from '../../utils/dataUtils
 import {getTimestamp} from '../../utils/dateUtils';
 import ChangeNameModal from '../../components/molecules/ChangeNameModal';
 import {SheetManager} from 'react-native-actions-sheet';
+import {gs} from '../../styles/globalStyles';
 
 const SettingsScreen = () => {
   const {
@@ -99,7 +99,9 @@ const SettingsScreen = () => {
         setIsDownloadSuccessful(true);
       }
     } catch (error) {
-      console.error('Error saving file:', error);
+      if (__DEV__) {
+        console.error('Error saving file:', error);
+      }
       setIsDownloadError(true);
     }
   };
@@ -108,12 +110,10 @@ const SettingsScreen = () => {
     const themes = ['light', 'dark', 'system'];
     return themes.map(theme => (
       <TouchableOpacity key={theme} onPress={() => onThemeSelect(theme)}>
-        <View style={styles.radioButtonContainer}>
+        <View style={[gs.rowBetweenCenter, gs.mb20]}>
           <PrimaryText>{theme}</PrimaryText>
-          <View style={[styles.radioButton, {borderColor: colors.primaryText}]}>
-            {selectedTheme === theme && (
-              <View style={[styles.radioButtonSelected, {backgroundColor: colors.primaryText}]} />
-            )}
+          <View style={[gs.size20, gs.rounded10, gs.border2, gs.center, {borderColor: colors.primaryText}]}>
+            {selectedTheme === theme && <View style={[gs.size10, gs.rounded5, {backgroundColor: colors.primaryText}]} />}
           </View>
         </View>
       </TouchableOpacity>
@@ -122,128 +122,103 @@ const SettingsScreen = () => {
 
   return (
     <PrimaryView colors={colors} dismissKeyboardOnTouch>
-      <View style={styles.headerContainer}>
-        <View style={styles.greetingsContainer}>
-          <View style={styles.iconButtonContainer}>
+      <View style={[gs.rowBetweenCenter, gs.mt5p]}>
+        <View style={gs.rowCenter}>
+          <View style={gs.mr10}>
             <TouchableOpacity onPress={() => goBack()}>
               <Icon name="arrow-left" size={25} color={colors.primaryText} />
             </TouchableOpacity>
           </View>
-          <PrimaryText style={{fontSize: 25}}>zero</PrimaryText>
+          <PrimaryText size={25}>zero</PrimaryText>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <PrimaryText style={{color: colors.accentGreen, marginTop: 20}}>Appearance & Personalization</PrimaryText>
-        <View style={[styles.settingsContainer, {backgroundColor: colors.containerColor}]}>
+        <PrimaryText color={colors.accentGreen} style={gs.mt20}>Appearance & Personalization</PrimaryText>
+        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
           <TouchableOpacity onPress={() => setIsThemeModalVisible(true)}>
-            <View style={styles.individualSettingsContainer}>
+            <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
               <PrimaryText>Choose Theme</PrimaryText>
-              <PrimaryText style={{color: colors.secondaryText}}>{selectedTheme}</PrimaryText>
+              <PrimaryText color={colors.secondaryText}>{selectedTheme}</PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsNameModalVisible(true)}>
-            <View style={styles.individualSettingsContainer}>
+            <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
               <PrimaryText>Change Name</PrimaryText>
-              <PrimaryText style={{color: colors.secondaryText}}>{userName}</PrimaryText>
+              <PrimaryText color={colors.secondaryText}>{userName}</PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleOpenCurrencySheet}>
-            <View style={styles.individualSettingsContainer}>
-              <PrimaryText style={{width: '50%'}}>Change Currency Symbol</PrimaryText>
-              <View style={{alignItems: 'flex-end'}}>
-                <PrimaryText style={{color: colors.secondaryText}}>{currencySymbol}</PrimaryText>
-                <PrimaryText style={{color: colors.secondaryText, fontSize: 11}}>{currencyName}</PrimaryText>
+            <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
+              <PrimaryText style={gs.w50p}>Change Currency Symbol</PrimaryText>
+              <View style={gs.itemsEnd}>
+                <PrimaryText color={colors.secondaryText}>{currencySymbol}</PrimaryText>
+                <PrimaryText size={11} color={colors.secondaryText}>{currencyName}</PrimaryText>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <PrimaryText style={{color: colors.accentGreen, marginTop: 20}}>Manage your Data</PrimaryText>
-        <View style={[styles.settingsContainer, {backgroundColor: colors.containerColor}]}>
+        <PrimaryText color={colors.accentGreen} style={gs.mt20}>Manage your Data</PrimaryText>
+        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
           <TouchableOpacity onPress={() => exportData(allData)}>
-            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Download your data</PrimaryText>
-              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
+              <PrimaryText size={11} color={colors.secondaryText}>
                 You can import this data in a new device
               </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDeleteAllData}>
-            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Delete all data</PrimaryText>
-              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
+              <PrimaryText size={11} color={colors.secondaryText}>
                 All data associated with zero will be deleted
               </PrimaryText>
             </View>
           </TouchableOpacity>
         </View>
 
-        <PrimaryText style={{color: colors.accentGreen, marginTop: 20}}>Help & Feedback</PrimaryText>
-        <View style={[styles.settingsContainer, {backgroundColor: colors.containerColor}]}>
+        <PrimaryText color={colors.accentGreen} style={gs.mt20}>Help & Feedback</PrimaryText>
+        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
           <TouchableOpacity onPress={handleRateNow}>
-            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Rate the app</PrimaryText>
-              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
+              <PrimaryText size={11} color={colors.secondaryText}>
                 Enjoying zero? Your feedback helps us improve!
               </PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleGithub}>
-            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Github</PrimaryText>
-              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>Explore the Source Code</PrimaryText>
+              <PrimaryText size={11} color={colors.secondaryText}>Explore the Source Code</PrimaryText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handlePrivacyPolicy}>
-            <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
               <PrimaryText>Privacy Policy</PrimaryText>
-              <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>
+              <PrimaryText size={11} color={colors.secondaryText}>
                 Your Data, Your Device: zero Servers, zero Access.
               </PrimaryText>
             </View>
           </TouchableOpacity>
-          <View style={[styles.individualSettingsContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
+          <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
             <PrimaryText>Version</PrimaryText>
-            <PrimaryText style={{fontSize: 11, color: colors.secondaryText}}>v{appVersion}</PrimaryText>
+            <PrimaryText size={11} color={colors.secondaryText}>v{appVersion}</PrimaryText>
           </View>
         </View>
-        <PrimaryText
-          style={{
-            color: colors.primaryText,
-            fontSize: 12,
-            alignSelf: 'center',
-            textAlign: 'center',
-            marginTop: 15,
-          }}>
+        <PrimaryText size={12} style={[gs.selfCenter, gs.textCenter, gs.mt15]}>
           Embrace the simplicity of zero
         </PrimaryText>
-        <PrimaryText
-          style={{
-            color: colors.primaryText,
-            fontSize: 12,
-            alignSelf: 'center',
-            textAlign: 'center',
-            marginBottom: '5%',
-          }}>
+        <PrimaryText size={12} style={[gs.selfCenter, gs.textCenter, gs.mb5p]}>
           Developed with <Text style={{color: colors.accentGreen}}>passion</Text> in India.
         </PrimaryText>
       </ScrollView>
 
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isThemeModalVisible}
-        onRequestClose={handleThemeModalClose}>
-        <View style={[styles.modalContainer]}>
-          <View style={[styles.modal, {backgroundColor: colors.containerColor}]}>
-            <PrimaryText
-              style={{
-                color: colors.primaryText,
-                fontSize: 17,
-                marginTop: 10,
-                marginBottom: 30,
-                fontFamily: 'FiraCode-SemiBold',
-              }}>
+      <Modal animationType="fade" transparent={true} visible={isThemeModalVisible} onRequestClose={handleThemeModalClose}>
+        <View style={[gs.wFull, gs.flex1, gs.justifyEnd, {backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
+          <View style={[gs.roundedTop15, gs.p15, {backgroundColor: colors.containerColor}]}>
+            <PrimaryText size={17} weight="semibold" style={[gs.mt10, gs.mb30]}>
               Select Theme
             </PrimaryText>
             {renderRadioButtons(handleThemeSelection)}

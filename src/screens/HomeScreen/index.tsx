@@ -1,6 +1,5 @@
 import React from 'react';
 import {RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import styles from './style';
 import Icon from '../../components/atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
 import TransactionCard from '../../components/molecules/TransactionCard';
@@ -10,6 +9,7 @@ import useHome from './useHome';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import EmptyState from '../../components/atoms/EmptyState';
+import {gs, hitSlop} from '../../styles/globalStyles';
 
 const HomeScreen = () => {
   const {
@@ -43,9 +43,9 @@ const HomeScreen = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-          <View style={styles.listExpenseContainer}>
+          <View style={[gs.mt5p, gs.mb20p]}>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              <View style={styles.cardContainer}>
+              <View style={[gs.mt10, gs.row]}>
                 <TransactionCard currencySymbol={currencySymbol} day={'Today'} totalSpent={Number(formatTodaySpent)} />
                 <TransactionCard
                   currencySymbol={currencySymbol}
@@ -59,8 +59,8 @@ const HomeScreen = () => {
                 />
               </View>
             </ScrollView>
-            <View style={styles.transactionListContainer}>
-              <PrimaryText style={{color: colors.accentGreen}}>All Transactions</PrimaryText>
+            <View style={gs.mt20}>
+              <PrimaryText color={colors.accentGreen}>All Transactions</PrimaryText>
 
               <View>
                 {allTransactions?.length === 0 ? (
@@ -73,10 +73,13 @@ const HomeScreen = () => {
           </View>
         </ScrollView>
       </PrimaryView>
-      <View style={styles.addButtonContainer}>
+      <View style={[gs.absolute, gs.bottom15, gs.right15, gs.zIndex1]}>
         <TouchableOpacity
-          style={[styles.addButton, {backgroundColor: colors.secondaryBackground}]}
-          onPress={() => navigate('AddTransactionsScreen')}>
+          style={[gs.size50, gs.rounded8, gs.center, {backgroundColor: colors.secondaryBackground}]}
+          onPress={() => navigate('AddTransactionsScreen')}
+          hitSlop={hitSlop}
+          accessibilityLabel="Add new transaction"
+          accessibilityRole="button">
           <Icon name="plus-circle" size={30} color={colors.primaryText} />
         </TouchableOpacity>
       </View>

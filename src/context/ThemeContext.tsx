@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode} from 'react';
 import {useColorScheme, Appearance} from 'react-native';
-import AsyncStorageService from '../utils/asyncStorageService';
+import StorageService from '../utils/asyncStorageService';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type ResolvedTheme = 'light' | 'dark';
@@ -99,37 +99,22 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
   const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
-    const loadTheme = async () => {
-      try {
-        const savedTheme = await AsyncStorageService.getItem('themePreference');
-        if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-          setThemeModeState(savedTheme as ThemeMode);
-        }
-      } catch (error) {
-        console.error('Error loading theme:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadTheme();
+    const savedTheme = StorageService.getItemSync('themePreference');
+    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+      setThemeModeState(savedTheme as ThemeMode);
+    }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    const subscription = Appearance.addChangeListener(({colorScheme}) => {
-      console.log('System theme changed to:', colorScheme);
-    });
+    const subscription = Appearance.addChangeListener(() => {});
 
     return () => subscription.remove();
   }, []);
 
   const setThemeMode = useCallback(async (mode: ThemeMode) => {
-    try {
-      await AsyncStorageService.setItem('themePreference', mode);
-      setThemeModeState(mode);
-    } catch (error) {
-      console.error('Error saving theme:', error);
-    }
+    StorageService.setItemSync('themePreference', mode);
+    setThemeModeState(mode);
   }, []);
 
   const value = useMemo(

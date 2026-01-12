@@ -1,8 +1,15 @@
-import {Model} from '@nozbe/watermelondb';
-import {field, text} from '@nozbe/watermelondb/decorators';
+import {Model, Query, Relation} from '@nozbe/watermelondb';
+import {field, text, children, immutableRelation} from '@nozbe/watermelondb/decorators';
+import type Debt from './Debt';
+import type User from './User';
 
 export default class Debtor extends Model {
   static table = 'debtors';
+
+  static associations = {
+    debts: {type: 'has_many' as const, foreignKey: 'debtor_id'},
+    users: {type: 'belongs_to' as const, key: 'user_id'},
+  };
 
   @text('title') title!: string;
   @text('type') type!: string;
@@ -10,4 +17,7 @@ export default class Debtor extends Model {
   @text('user_id') userId!: string;
   @text('icon') icon?: string;
   @text('color') color!: string;
+
+  @children('debts') debts!: Query<Debt>;
+  @immutableRelation('users', 'user_id') user!: Relation<User>;
 }

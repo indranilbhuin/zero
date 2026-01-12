@@ -9,7 +9,7 @@ export const setNavigationRef = (ref: NavigationContainerRef<any>) => {
 export const navigate = (name: string, params?: object) => {
   if (navigationRef) {
     navigationRef.dispatch(CommonActions.navigate({name, params}));
-  } else {
+  } else if (__DEV__) {
     console.error(
       'Navigation reference is not set. Make sure to call setNavigationRef.',
     );
@@ -19,7 +19,7 @@ export const navigate = (name: string, params?: object) => {
 export const goBack = (action?: () => any) => {
   if (navigationRef) {
     navigationRef.dispatch(CommonActions.goBack());
-  } else {
+  } else if (__DEV__) {
     console.error(
       'Navigation reference is not set. Make sure to call setNavigationRef.',
     );

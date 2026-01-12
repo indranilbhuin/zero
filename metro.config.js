@@ -11,6 +11,8 @@ const {assetExts, sourceExts} = defaultConfig.resolver;
 const config = {
   transformer: {
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
+    // Enable inline requires for faster startup - defers module loading until first use
+    inlineRequires: true,
   },
   resolver: {
     assetExts: assetExts.filter(ext => ext !== 'svg'),

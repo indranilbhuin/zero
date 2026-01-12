@@ -26,6 +26,8 @@ declare module 'react-native-actions-sheet' {
     'date-picker-sheet': SheetDefinition<{
       payload: {
         selectedDate?: string;
+        minDate?: Date;
+        maxDate?: Date;
         onSelect?: (date: Date) => void;
       };
     }>;

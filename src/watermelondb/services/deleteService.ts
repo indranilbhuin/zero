@@ -35,10 +35,10 @@ export const deleteAllData = async (): Promise<void> => {
         ...allRecords.map(record => record.prepareDestroyPermanently()),
       );
     });
-
-    console.log('All data deleted successfully');
   } catch (error) {
-    console.error('Error deleting all data:', error);
+    if (__DEV__) {
+      console.error('Error deleting all data:', error);
+    }
     throw error;
   }
 };
@@ -61,7 +61,9 @@ export const deleteAllExpensesByUserId = async (
       );
     });
   } catch (error) {
-    console.error('Error deleting expenses by userId:', error);
+    if (__DEV__) {
+      console.error('Error deleting expenses by userId:', error);
+    }
     throw error;
   }
 };
@@ -84,7 +86,9 @@ export const deleteAllCategoriesByUserId = async (
       );
     });
   } catch (error) {
-    console.error('Error deleting categories by userId:', error);
+    if (__DEV__) {
+      console.error('Error deleting categories by userId:', error);
+    }
     throw error;
   }
 };

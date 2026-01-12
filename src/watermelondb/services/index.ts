@@ -68,6 +68,7 @@ export type {DebtData} from './debtService';
 
 // Get Service
 export {getAllData, debugLogAllData} from './getService';
+export type {ExportData} from './getService';
 
 // Delete Service
 export {

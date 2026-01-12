@@ -1,7 +1,8 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import PrimaryText from '../atoms/PrimaryText';
 import {Colors} from '../../hooks/useThemeColors';
+import {gs, hitSlop} from '../../styles/globalStyles';
 
 interface SecondaryButtonProps {
   onPress(): void;
@@ -10,42 +11,30 @@ interface SecondaryButtonProps {
   width: number;
 }
 
-const SecondaryButton: React.FC<SecondaryButtonProps> = ({
-  onPress,
-  buttonText,
-  colors,
-  width,
-}) => {
+const SecondaryButton: React.FC<SecondaryButtonProps> = React.memo(({onPress, buttonText, colors, width}) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} hitSlop={hitSlop} accessibilityLabel={buttonText} accessibilityRole="button">
       <View
         style={[
-          styles.categoryContainer,
+          gs.h45,
+          gs.p10,
+          gs.mr5,
+          gs.mt5,
+          gs.rounded5,
+          gs.border2,
+          gs.center,
           {
             backgroundColor: colors.secondaryContainerColor,
             borderColor: colors.secondaryAccent,
             width: width,
           },
         ]}>
-        <PrimaryText style={{color: colors.primaryText, fontSize: 13}}>
+        <PrimaryText size={13} color={colors.primaryText}>
           {buttonText}
         </PrimaryText>
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 export default SecondaryButton;
-
-const styles = StyleSheet.create({
-  categoryContainer: {
-    height: 45,
-    padding: 10,
-    marginRight: 5,
-    marginTop: 5,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

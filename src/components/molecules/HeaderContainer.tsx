@@ -1,5 +1,5 @@
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import {Image, TouchableOpacity, View} from 'react-native';
+import React, {useState, memo, useCallback} from 'react';
 import Icon from '../atoms/Icons';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,6 +10,7 @@ import useSettings from '../../screens/SettingsScreen/useSettings';
 import ChangeNameModal from './ChangeNameModal';
 import {updateUserById} from '../../watermelondb/services';
 import {selectUserId} from '../../redux/slice/userIdSlice';
+import {gs} from '../../styles/globalStyles';
 
 interface HeaderContainerProps {
   headerText: string;
@@ -20,15 +21,15 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
   const dispatch = useDispatch();
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
-  const { handleNameModalClose} = useSettings();
+  const {handleNameModalClose} = useSettings();
   const [name, setName] = useState(userName);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
 
-  const handleProfileClick = () => {
+  const handleProfileClick = useCallback(() => {
     setIsNameModalVisible(true);
-  };
+  }, []);
 
-  const handleNameUpdate = async () => {
+  const handleNameUpdate = useCallback(async () => {
     try {
       await updateUserById(userId, {
         username: name,
@@ -36,44 +37,34 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
       dispatch(setUserName(name));
       setIsNameModalVisible(false);
     } catch (error) {
-      console.error('Error updating the name:', error);
+      if (__DEV__) {
+        console.error('Error updating the name:', error);
+      }
     }
-  };
+  }, [userId, name, dispatch]);
 
   return (
     <>
-      <View style={styles.headerContainer}>
-        <View style={styles.greetingsContainer}>
+      <View style={[gs.rowCenter, gs.mt15, gs.justifyBetween]}>
+        <View style={[gs.rowCenter, gs.flex1]}>
           <TouchableOpacity onPress={handleProfileClick}>
-            <View
-              style={[
-                styles.initialsContainer,
-                {backgroundColor: colors.primaryText},
-              ]}>
-              <Image
-                source={require('../../../assets/images/2.png')}
-                style={styles.noImage}
-              />
+            <View style={[gs.size40, gs.p2, gs.rounded50, gs.center, gs.mr8, {backgroundColor: colors.primaryText}]}>
+              <Image source={require('../../../assets/images/2.png')} style={[gs.size40, gs.absolute, gs.rounded50]} />
 
-              <PrimaryText
-                style={{color: colors.buttonText, fontSize: 20, zIndex: 3}}>
+              <PrimaryText size={20} color={colors.buttonText} style={gs.zIndex3}>
                 {userName
                   ?.split(' ')
-                  .map((name: string) => name.charAt(0))
+                  .map((n: string) => n.charAt(0))
                   .slice(0, 2)
                   .join('')}
               </PrimaryText>
             </View>
           </TouchableOpacity>
-          <PrimaryText style={{fontSize: 15}}>{headerText}</PrimaryText>
+          <PrimaryText size={15}>{headerText}</PrimaryText>
         </View>
         <View>
           <TouchableOpacity onPress={() => navigate('SettingsScreen')}>
-            <Icon
-              name="settings"
-              size={23}
-              color={colors.primaryText}
-            />
+            <Icon name="settings" size={23} color={colors.primaryText} />
           </TouchableOpacity>
         </View>
       </View>
@@ -90,33 +81,4 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
   );
 };
 
-export default HeaderContainer;
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15,
-    justifyContent: 'space-between',
-  },
-  greetingsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  initialsContainer: {
-    height: 40,
-    width: 40,
-    padding: 2,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  noImage: {
-    height: 40,
-    width: 40,
-    position: 'absolute',
-    borderRadius: 50,
-  },
-});
+export default memo(HeaderContainer);

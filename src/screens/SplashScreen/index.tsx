@@ -4,33 +4,25 @@ import useSplash from './useSplash';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import {View} from 'react-native';
+import {gs} from '../../styles/globalStyles';
 
 const SplashScreen = () => {
   const {handleClick, colors} = useSplash();
 
   return (
-    <PrimaryView colors={colors} style={{justifyContent: 'space-between'}}>
+    <PrimaryView colors={colors} style={gs.justifyBetween}>
       <View>
-        <PrimaryText
-          style={{color: colors.primaryText, fontSize: 90, paddingTop: '20%'}}>
+        <PrimaryText size={90} style={gs.pt20p} color={colors.primaryText}>
           zero
         </PrimaryText>
-        <PrimaryText style={{color: colors.secondaryText, fontSize: 25}}>
+        <PrimaryText size={25} color={colors.secondaryText}>
           Count Every
         </PrimaryText>
-        <PrimaryText
-          style={{
-            color: colors.secondaryText,
-            fontSize: 25,
-          }}>
+        <PrimaryText size={25} color={colors.secondaryText}>
           Penny with zero
         </PrimaryText>
       </View>
-      <PrimaryButton
-        onPress={handleClick}
-        colors={colors}
-        buttonTitle={'Get Started'}
-      />
+      <PrimaryButton onPress={handleClick} colors={colors} buttonTitle={'Get Started'} />
     </PrimaryView>
   );
 };

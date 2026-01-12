@@ -41,6 +41,22 @@ const CURRENCY_DECIMALS: Record<string, number> = {
   JOD: 3,
 };
 
+// Cache for Intl.NumberFormat instances to avoid recreating them on every call
+const numberFormatCache = new Map<string, Intl.NumberFormat>();
+
+const getNumberFormatter = (
+  locale: string,
+  options: Intl.NumberFormatOptions,
+): Intl.NumberFormat => {
+  const cacheKey = `${locale}|${JSON.stringify(options)}`;
+  let formatter = numberFormatCache.get(cacheKey);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, options);
+    numberFormatCache.set(cacheKey, formatter);
+  }
+  return formatter;
+};
+
 export const getCurrencyDecimals = (currencyCode?: string): number => {
   if (!currencyCode) return 2;
   return CURRENCY_DECIMALS[currencyCode.toUpperCase()] ?? 2;
@@ -58,11 +74,12 @@ export const formatNumber = (
   const {locale = 'en-IN', minimumFractionDigits = 0, maximumFractionDigits = 2, useGrouping = true} = options;
 
   try {
-    return new Intl.NumberFormat(locale, {
+    const formatter = getNumberFormatter(locale, {
       minimumFractionDigits,
       maximumFractionDigits,
       useGrouping,
-    }).format(amount);
+    });
+    return formatter.format(amount);
   } catch {
     return amount.toLocaleString();
   }
@@ -77,11 +94,12 @@ export const formatCurrency = (amount: number, currencyCode?: string, locale: st
   const minDecimals = isWholeNumber ? 0 : maxDecimals;
 
   try {
-    return new Intl.NumberFormat(locale, {
+    const formatter = getNumberFormatter(locale, {
       minimumFractionDigits: minDecimals,
       maximumFractionDigits: maxDecimals,
       useGrouping: true,
-    }).format(amount);
+    });
+    return formatter.format(amount);
   } catch {
     if (isWholeNumber) {
       return amount.toString().replaceAll(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -104,11 +122,12 @@ export const formatCompact = (amount: number, locale: string = 'en'): string => 
   if (!Number.isFinite(amount)) return '0';
 
   try {
-    return new Intl.NumberFormat(locale, {
+    const formatter = getNumberFormatter(locale, {
       notation: 'compact',
       compactDisplay: 'short',
       maximumFractionDigits: 1,
-    }).format(amount);
+    });
+    return formatter.format(amount);
   } catch {
     if (Math.abs(amount) >= 1e9) return `${(amount / 1e9).toFixed(1)}B`;
     if (Math.abs(amount) >= 1e6) return `${(amount / 1e6).toFixed(1)}M`;

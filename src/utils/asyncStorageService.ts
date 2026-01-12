@@ -1,42 +1,67 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {createMMKV} from 'react-native-mmkv';
 
-const AsyncStorageService = {
-  async setItem(key: string, value: string) {
-    try {
-      await AsyncStorage?.setItem(key, value);
-    } catch (error) {
-      console.error('AsyncStorage setItem error:', error);
-      throw error;
-    }
+const storage = createMMKV({
+  id: 'zero-app-storage',
+});
+
+const StorageService = {
+  async setItem(key: string, value: string): Promise<void> {
+    storage.set(key, value);
   },
 
-  async getItem(key: string) {
-    try {
-      const value = await AsyncStorage?.getItem(key);
-      return value ?? null;
-    } catch (error) {
-      console.error('AsyncStorage getItem error:', error);
-      throw error;
-    }
+  async getItem(key: string): Promise<string | null> {
+    return storage.getString(key) ?? null;
   },
 
-  async removeItem(key: string) {
-    try {
-      await AsyncStorage?.removeItem(key);
-    } catch (error) {
-      console.error('AsyncStorage removeItem error:', error);
-      throw error;
-    }
+  async removeItem(key: string): Promise<void> {
+    storage.remove(key);
   },
 
-  async clear() {
-    try {
-      await AsyncStorage?.clear();
-    } catch (error) {
-      console.error('AsyncStorage clear error:', error);
-      throw error;
-    }
+  async clear(): Promise<void> {
+    storage.clearAll();
+  },
+
+  setItemSync(key: string, value: string): void {
+    storage.set(key, value);
+  },
+
+  getItemSync(key: string): string | null {
+    return storage.getString(key) ?? null;
+  },
+
+  removeItemSync(key: string): void {
+    storage.remove(key);
+  },
+
+  clearSync(): void {
+    storage.clearAll();
+  },
+
+  getBoolean(key: string): boolean {
+    return storage.getBoolean(key) ?? false;
+  },
+
+  setBoolean(key: string, value: boolean): void {
+    storage.set(key, value);
+  },
+
+  getNumber(key: string): number | null {
+    return storage.getNumber(key) ?? null;
+  },
+
+  setNumber(key: string, value: number): void {
+    storage.set(key, value);
+  },
+
+  contains(key: string): boolean {
+    return storage.contains(key);
+  },
+
+  getAllKeys(): string[] {
+    return storage.getAllKeys();
   },
 };
 
-export default AsyncStorageService;
+export {storage};
+
+export default StorageService;

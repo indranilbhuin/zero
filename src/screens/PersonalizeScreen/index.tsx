@@ -1,52 +1,34 @@
 import {TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
-import styles from './style';
 import usePersonalize from './usePersonalize';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import CustomInput from '../../components/atoms/CustomInput';
+import {gs} from '../../styles/globalStyles';
 
 const PersonalizeScreen = () => {
-  const {colors, setName, name, handleSubmit, handleSkip, nameSchema} =
-    usePersonalize();
+  const {colors, setName, name, handleSubmit, handleSkip, nameSchema} = usePersonalize();
   const isValid = nameSchema.safeParse(name).success;
 
   return (
-    <PrimaryView
-      colors={colors}
-      style={{justifyContent: 'space-between'}}
-      dismissKeyboardOnTouch>
+    <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
-        <TouchableOpacity
-          style={styles.skipButtonContainer}
-          onPress={handleSkip}>
-          <PrimaryText style={{color: colors.accentGreen, fontSize: 12}}>
-            skip
-          </PrimaryText>
+        <TouchableOpacity style={[gs.selfEnd, gs.pt5p]} onPress={handleSkip}>
+          <PrimaryText size={12} color={colors.accentGreen}>skip</PrimaryText>
         </TouchableOpacity>
 
-        <View style={styles.titleTextContainer}>
-          <PrimaryText style={{fontSize: 24}}>
-            Let's Personlize your
-          </PrimaryText>
-          <PrimaryText style={{fontSize: 24}}>experience</PrimaryText>
+        <View style={gs.pt15p}>
+          <PrimaryText size={24}>Let's Personlize your</PrimaryText>
+          <PrimaryText size={24}>experience</PrimaryText>
         </View>
 
-        <View style={styles.subtitleTextContainer}>
-          <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
-            Hi, It's zero! What Do Your Friends
-          </PrimaryText>
-          <PrimaryText style={{color: colors.accentGreen, fontSize: 15}}>
-            Call You?
-          </PrimaryText>
+        <View style={[gs.pt10p, gs.pb5p]}>
+          <PrimaryText size={15} color={colors.accentGreen}>Hi, It's zero! What Do Your Friends</PrimaryText>
+          <PrimaryText size={15} color={colors.accentGreen}>Call You?</PrimaryText>
         </View>
 
-        <View
-          style={[
-            styles.textInputContainer,
-            isValid ? {marginBottom: '100%'} : null,
-          ]}>
+        <View style={isValid ? gs.mb90p : undefined}>
           <CustomInput
             input={name}
             label={'Name'}
@@ -57,12 +39,7 @@ const PersonalizeScreen = () => {
           />
         </View>
       </View>
-      <PrimaryButton
-        onPress={handleSubmit}
-        colors={colors}
-        buttonTitle={'Continue'}
-        disabled={!isValid}
-      />
+      <PrimaryButton onPress={handleSubmit} colors={colors} buttonTitle={'Continue'} disabled={!isValid} />
     </PrimaryView>
   );
 };

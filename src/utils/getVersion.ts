@@ -4,7 +4,9 @@ export const getAppVersion = () => {
   try {
     return packageJson.version;
   } catch (error) {
-    console.error('Error reading app version:', error);
+    if (__DEV__) {
+      console.error('Error reading app version:', error);
+    }
     return 'Unknown';
   }
 };

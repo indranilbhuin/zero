@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import {createUser} from '../../watermelondb/services';
 import {navigate} from '../../utils/navigationUtils';
@@ -9,24 +9,28 @@ const usePersonalize = () => {
   const [name, setName] = useState('');
   const email = 'null';
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     try {
       await nameSchema.parseAsync(name);
       await createUser(name, email);
       navigate('OnboardingScreen');
     } catch (error) {
-      console.error('Error saving user data:', error);
+      if (__DEV__) {
+        console.error('Error saving user data:', error);
+      }
     }
-  };
+  }, [name, email]);
 
-  const handleSkip = async () => {
+  const handleSkip = useCallback(async () => {
     try {
       await createUser('User', email);
       navigate('OnboardingScreen');
     } catch (error) {
-      console.error('Error saving demo user data:', error);
+      if (__DEV__) {
+        console.error('Error saving demo user data:', error);
+      }
     }
-  };
+  }, [email]);
 
   return {
     colors,

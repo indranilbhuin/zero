@@ -19,7 +19,6 @@ export const requestStoragePermission = async () => {
     const currentApiLevel = Platform.Version;
 
     if (currentApiLevel > 32) {
-      console.log('Storage permission not needed on API level 32 or higher.');
       return true;
     }
 
@@ -51,12 +50,13 @@ export const requestStoragePermission = async () => {
         ) {
           return true;
         } else {
-          console.log('Storage permission denied. Opening app settings...');
           return false;
         }
       }
     } catch (err) {
-      console.warn(err);
+      if (__DEV__) {
+        console.warn(err);
+      }
       return false;
     }
   } else {
