@@ -115,10 +115,19 @@ const useSettings = () => {
   }, []);
 
   const handlePrivacyPolicy = useCallback(() => {
-    const privacyPolicyURL = 'https://github.com/indranilbhuin/zero/blob/master/PRIVACYPOLICY.md';
+    const privacyPolicyURL = 'https://anotherwhy.com/products/awy-001/privacy-policy';
     Linking.openURL(privacyPolicyURL).catch(err => {
       if (__DEV__) {
         console.error('Error opening Privacy Policy:', err);
+      }
+    });
+  }, []);
+
+  const handleTermsAndConditions = useCallback(() => {
+    const termsURL = 'https://anotherwhy.com/products/awy-001/terms';
+    Linking.openURL(termsURL).catch(err => {
+      if (__DEV__) {
+        console.error('Error opening Terms and Conditions:', err);
       }
     });
   }, []);
@@ -174,6 +183,7 @@ const useSettings = () => {
     handleRateNow,
     handleGithub,
     handlePrivacyPolicy,
+    handleTermsAndConditions,
     handleDeleteAllData,
     isDeleteModalVisible,
     handleDeleteAllDataOk,

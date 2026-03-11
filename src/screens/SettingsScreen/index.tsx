@@ -35,6 +35,7 @@ const SettingsScreen = () => {
     handleRateNow,
     handleGithub,
     handlePrivacyPolicy,
+    handleTermsAndConditions,
     handleDeleteAllData,
     isDeleteModalVisible,
     handleDeleteAllDataOk,
@@ -199,6 +200,14 @@ const SettingsScreen = () => {
               <PrimaryText>Privacy Policy</PrimaryText>
               <PrimaryText size={11} color={colors.secondaryText}>
                 Your Data, Your Device: zero Servers, zero Access.
+              </PrimaryText>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleTermsAndConditions}>
+            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
+              <PrimaryText>Terms and Conditions</PrimaryText>
+              <PrimaryText size={11} color={colors.secondaryText}>
+                Read the terms of using zero.
               </PrimaryText>
             </View>
           </TouchableOpacity>

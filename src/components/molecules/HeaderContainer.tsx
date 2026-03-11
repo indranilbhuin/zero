@@ -51,7 +51,7 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({headerText}) => {
             <View style={[gs.size40, gs.p2, gs.rounded50, gs.center, gs.mr8, {backgroundColor: colors.primaryText}]}>
               <Image source={require('../../../assets/images/2.png')} style={[gs.size40, gs.absolute, gs.rounded50]} />
 
-              <PrimaryText size={20} color={colors.buttonText} style={gs.zIndex3}>
+              <PrimaryText size={20} color={"#000"} style={gs.zIndex3}>
                 {userName
                   ?.split(' ')
                   .map((n: string) => n.charAt(0))
