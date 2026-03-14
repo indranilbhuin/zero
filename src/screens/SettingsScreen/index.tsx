@@ -1,4 +1,4 @@
-import {Modal, ScrollView, Text, TouchableOpacity, View, Platform, Share} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View, Platform, Share} from 'react-native';
 import React, {useCallback} from 'react';
 import Icon from '../../components/atoms/Icons';
 import {goBack} from '../../utils/navigationUtils';
@@ -9,22 +9,48 @@ import CustomToast from '../../components/molecules/CustomToast';
 import RNFS from 'react-native-fs';
 import {generateUniqueKey, requestStoragePermission} from '../../utils/dataUtils';
 import {getTimestamp} from '../../utils/dateUtils';
-import ChangeNameModal from '../../components/molecules/ChangeNameModal';
 import {SheetManager} from 'react-native-actions-sheet';
-import {gs} from '../../styles/globalStyles';
+import {Colors} from '../../hooks/useThemeColors';
+import {gs, hitSlop} from '../../styles/globalStyles';
+
+interface SettingsRowProps {
+  icon: string;
+  label: string;
+  subtitle?: string;
+  value?: string;
+  valueNode?: React.ReactNode;
+  onPress?: () => void;
+  destructive?: boolean;
+  colors: Colors;
+}
+
+const SettingsRow: React.FC<SettingsRowProps> = ({icon, label, subtitle, value, valueNode, onPress, destructive, colors}) => (
+  <TouchableOpacity onPress={onPress} activeOpacity={onPress ? 0.6 : 1} disabled={!onPress}>
+    <View style={[gs.rowCenter, gs.px14, gs.py12, gs.gap10]}>
+      <View style={[gs.size32, gs.rounded8, gs.center, {backgroundColor: colors.secondaryAccent}]}>
+        <Icon name={icon} size={16} color={destructive ? colors.accentOrange : colors.secondaryText} />
+      </View>
+      <View style={[gs.flex1, gs.gap2]}>
+        <PrimaryText size={14} weight="medium" color={destructive ? colors.accentOrange : colors.primaryText}>
+          {label}
+        </PrimaryText>
+        {subtitle ? (
+          <PrimaryText size={11} color={colors.secondaryText}>{subtitle}</PrimaryText>
+        ) : null}
+      </View>
+      {value ? (
+        <PrimaryText size={13} color={colors.secondaryText}>{value}</PrimaryText>
+      ) : null}
+      {valueNode ?? null}
+      {onPress ? <Icon name="chevron-right" size={14} color={colors.secondaryText} /> : null}
+    </View>
+  </TouchableOpacity>
+);
 
 const SettingsScreen = () => {
   const {
-    isThemeModalVisible,
-    setIsThemeModalVisible,
-    isNameModalVisible,
-    setIsNameModalVisible,
-    name,
-    setName,
     appVersion,
     colors,
-    handleThemeModalClose,
-    handleNameModalClose,
     handleThemeSelection,
     handleNameUpdate,
     handleCurrencyUpdate,
@@ -107,142 +133,154 @@ const SettingsScreen = () => {
     }
   };
 
-  const renderRadioButtons = (onThemeSelect: {(theme: any): Promise<void>; (arg0: string): void}) => {
-    const themes = ['light', 'dark', 'system'];
-    return themes.map(theme => (
-      <TouchableOpacity key={theme} onPress={() => onThemeSelect(theme)}>
-        <View style={[gs.rowBetweenCenter, gs.mb20]}>
-          <PrimaryText>{theme}</PrimaryText>
-          <View style={[gs.size20, gs.rounded10, gs.border2, gs.center, {borderColor: colors.primaryText}]}>
-            {selectedTheme === theme && <View style={[gs.size10, gs.rounded5, {backgroundColor: colors.primaryText}]} />}
-          </View>
-        </View>
-      </TouchableOpacity>
-    ));
-  };
+  const openThemePicker = useCallback(() => {
+    void SheetManager.show('theme-picker-sheet', {
+      payload: {
+        currentTheme: selectedTheme,
+        onSelect: (theme: string) => {
+          handleThemeSelection(theme);
+        },
+      },
+    });
+  }, [selectedTheme, handleThemeSelection]);
 
   return (
     <PrimaryView colors={colors} dismissKeyboardOnTouch>
-      <View style={[gs.rowBetweenCenter, gs.mt5p]}>
-        <View style={gs.rowCenter}>
-          <View style={gs.mr10}>
-            <TouchableOpacity onPress={() => goBack()}>
-              <Icon name="arrow-left" size={25} color={colors.primaryText} />
-            </TouchableOpacity>
-          </View>
-          <PrimaryText size={25}>zero</PrimaryText>
-        </View>
+      <View style={[gs.rowCenter, gs.gap10, gs.mt5p]}>
+        <TouchableOpacity onPress={() => goBack()} hitSlop={hitSlop}>
+          <Icon name="arrow-left" size={22} color={colors.primaryText} />
+        </TouchableOpacity>
+        <PrimaryText size={22} weight="semibold">Settings</PrimaryText>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <PrimaryText color={colors.accentGreen} style={gs.mt20}>Appearance & Personalization</PrimaryText>
-        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
-          <TouchableOpacity onPress={() => setIsThemeModalVisible(true)}>
-            <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
-              <PrimaryText>Choose Theme</PrimaryText>
-              <PrimaryText color={colors.secondaryText}>{selectedTheme}</PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsNameModalVisible(true)}>
-            <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
-              <PrimaryText>Change Name</PrimaryText>
-              <PrimaryText color={colors.secondaryText}>{userName}</PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleOpenCurrencySheet}>
-            <View style={[gs.rowBetweenCenter, gs.minH60, gs.px14, gs.py12]}>
-              <PrimaryText style={gs.w50p}>Change Currency Symbol</PrimaryText>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={gs.pb80}>
+        <PrimaryText
+          size={11}
+          weight="semibold"
+          color={colors.accentGreen}
+          style={[gs.mt20, gs.mb6, {letterSpacing: 0.8}]}>
+          PERSONALIZATION
+        </PrimaryText>
+        <View style={[gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+          <SettingsRow
+            colors={colors}
+            icon="sun-moon"
+            label="Theme"
+            value={selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)}
+            onPress={openThemePicker}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="user"
+            label="Name"
+            value={userName}
+            onPress={() => {
+              void SheetManager.show('change-name-sheet', {
+                payload: {
+                  currentName: userName,
+                  onUpdate: (newName: string) => {
+                    handleNameUpdate(newName);
+                  },
+                },
+              });
+            }}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="banknote"
+            label="Currency"
+            onPress={handleOpenCurrencySheet}
+            valueNode={
               <View style={gs.itemsEnd}>
-                <PrimaryText color={colors.secondaryText}>{currencySymbol}</PrimaryText>
-                <PrimaryText size={11} color={colors.secondaryText}>{currencyName}</PrimaryText>
+                <PrimaryText size={13} color={colors.secondaryText} variant="number">{currencySymbol}</PrimaryText>
+                <PrimaryText size={10} color={colors.secondaryText}>{currencyName}</PrimaryText>
               </View>
-            </View>
-          </TouchableOpacity>
+            }
+          />
         </View>
 
-        <PrimaryText color={colors.accentGreen} style={gs.mt20}>Manage your Data</PrimaryText>
-        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
-          <TouchableOpacity onPress={() => exportData(allData)}>
-            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-              <PrimaryText>Download your data</PrimaryText>
-              <PrimaryText size={11} color={colors.secondaryText}>
-                You can import this data in a new device
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleDeleteAllData}>
-            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-              <PrimaryText>Delete all data</PrimaryText>
-              <PrimaryText size={11} color={colors.secondaryText}>
-                All data associated with zero will be deleted
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
+        <PrimaryText
+          size={11}
+          weight="semibold"
+          color={colors.accentGreen}
+          style={[gs.mt20, gs.mb6, {letterSpacing: 0.8}]}>
+          YOUR DATA
+        </PrimaryText>
+        <View style={[gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+          <SettingsRow
+            colors={colors}
+            icon="download"
+            label="Export data"
+            subtitle="Import on a new device later"
+            onPress={() => exportData(allData)}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="trash-2"
+            label="Delete all data"
+            subtitle="This action cannot be undone"
+            onPress={handleDeleteAllData}
+            destructive
+          />
         </View>
 
-        <PrimaryText color={colors.accentGreen} style={gs.mt20}>Help & Feedback</PrimaryText>
-        <View style={[gs.mt10, gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
-          <TouchableOpacity onPress={handleRateNow}>
-            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-              <PrimaryText>Rate the app</PrimaryText>
-              <PrimaryText size={11} color={colors.secondaryText}>
-                Enjoying zero? Your feedback helps us improve!
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleGithub}>
-            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-              <PrimaryText>Github</PrimaryText>
-              <PrimaryText size={11} color={colors.secondaryText}>Explore the Source Code</PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handlePrivacyPolicy}>
-            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-              <PrimaryText>Privacy Policy</PrimaryText>
-              <PrimaryText size={11} color={colors.secondaryText}>
-                Your Data, Your Device: zero Servers, zero Access.
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleTermsAndConditions}>
-            <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-              <PrimaryText>Terms and Conditions</PrimaryText>
-              <PrimaryText size={11} color={colors.secondaryText}>
-                Read the terms of using zero.
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-          <View style={[gs.minH60, gs.px14, gs.py12, gs.col, gs.itemsStart]}>
-            <PrimaryText>Version</PrimaryText>
-            <PrimaryText size={11} color={colors.secondaryText}>v{appVersion}</PrimaryText>
-          </View>
+        <PrimaryText
+          size={11}
+          weight="semibold"
+          color={colors.accentGreen}
+          style={[gs.mt20, gs.mb6, {letterSpacing: 0.8}]}>
+          ABOUT
+        </PrimaryText>
+        <View style={[gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+          <SettingsRow
+            colors={colors}
+            icon="star"
+            label="Rate the app"
+            subtitle="Enjoying zero? Your feedback helps!"
+            onPress={handleRateNow}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="code"
+            label="Source code"
+            subtitle="Explore on GitHub"
+            onPress={handleGithub}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="shield"
+            label="Privacy Policy"
+            onPress={handlePrivacyPolicy}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="file-text"
+            label="Terms & Conditions"
+            onPress={handleTermsAndConditions}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
+          <SettingsRow
+            colors={colors}
+            icon="info"
+            label="Version"
+            value={`v${appVersion}`}
+          />
         </View>
-        <PrimaryText size={12} style={[gs.selfCenter, gs.textCenter, gs.mt15]}>
-          Embrace the simplicity of zero
-        </PrimaryText>
-        <PrimaryText size={12} style={[gs.selfCenter, gs.textCenter, gs.mb5p]}>
-          Developed with <Text style={{color: colors.accentGreen}}>passion</Text> in India.
-        </PrimaryText>
+
+        <View style={[gs.mt20, gs.mb10, gs.center, gs.gap2]}>
+          <PrimaryText size={11} color={colors.secondaryText}>
+            Embrace the simplicity of zero
+          </PrimaryText>
+          <PrimaryText size={11} color={colors.secondaryText}>
+            Made with <Text style={{color: colors.accentGreen}}>passion</Text> in India
+          </PrimaryText>
+        </View>
       </ScrollView>
-
-      <Modal animationType="fade" transparent={true} visible={isThemeModalVisible} onRequestClose={handleThemeModalClose}>
-        <View style={[gs.wFull, gs.flex1, gs.justifyEnd, {backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
-          <View style={[gs.roundedTop15, gs.p15, {backgroundColor: colors.containerColor}]}>
-            <PrimaryText size={17} weight="semibold" style={[gs.mt10, gs.mb30]}>
-              Select Theme
-            </PrimaryText>
-            {renderRadioButtons(handleThemeSelection)}
-          </View>
-        </View>
-      </Modal>
-
-      <ChangeNameModal
-        colors={colors}
-        isNameModalVisible={isNameModalVisible}
-        handleNameModalClose={handleNameModalClose}
-        name={name}
-        setName={setName}
-        handleNameUpdate={handleNameUpdate}
-      />
 
       <CustomToast
         visible={isDeleteModalVisible}

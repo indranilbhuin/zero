@@ -2,24 +2,24 @@
   "migIndex": 1,
   "data": [
     {
-      "path": "assets/fonts/FiraCode-Bold.ttf",
-      "sha1": "45dab138e16846d4a8229207605428800e441c64"
+      "path": "assets/fonts/GoogleSansCode-Regular.ttf",
+      "sha1": "07e57d7aa3ab62f6472e3cb21d899adba80ec9b9"
     },
     {
-      "path": "assets/fonts/FiraCode-Light.ttf",
-      "sha1": "5def22a619172f3975e9b87e1c9e2ab0cb51f9eb"
+      "path": "assets/fonts/GoogleSansCode-Light.ttf",
+      "sha1": "a8008c30aeb81e26f2f240f9eb9619462b266a38"
     },
     {
-      "path": "assets/fonts/FiraCode-Medium.ttf",
-      "sha1": "d1a50c892ddb092621e6ff677acb462a58f26e2c"
+      "path": "assets/fonts/GoogleSansCode-SemiBold.ttf",
+      "sha1": "f434610f5f60a006633d5446cb9f44877407aff3"
     },
     {
-      "path": "assets/fonts/FiraCode-Regular.ttf",
-      "sha1": "8530335bb596211350eae108e9844352fcc3dcab"
+      "path": "assets/fonts/GoogleSansCode-Medium.ttf",
+      "sha1": "25bc7b19c726bd3a05875b0ed4d3ff78ed9d4dfd"
     },
     {
-      "path": "assets/fonts/FiraCode-SemiBold.ttf",
-      "sha1": "b9343cd68d71e08cc12c4cb61f32504170babacf"
+      "path": "assets/fonts/GoogleSansCode-Bold.ttf",
+      "sha1": "f82a0b00d60bc995e565f75225f3e0e3958e0d9a"
     }
   ]
 }

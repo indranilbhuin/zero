@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import PrimaryText from '../atoms/PrimaryText';
@@ -29,22 +29,39 @@ const TransactionCard: React.FC<TransactionCardProps> = React.memo(({currencySym
 
   return (
     <View
-      style={[gs.size150, gs.rounded10, gs.p10, gs.justifyBetween, gs.mr10, {backgroundColor: colors.containerColor}]}>
-      <View>
-        <View style={gs.mt7}>
-          <Icon name={getIconName(day)} size={20} color={colors.primaryText} />
-        </View>
-        <PrimaryText style={gs.mt10}>{day === 'This Month' ? `${getCurrentMonthName()}'s` : `${day}'s`}</PrimaryText>
-        <PrimaryText>Transactions</PrimaryText>
+      style={[
+        styles.card,
+        gs.rounded12,
+        gs.p14,
+        gs.gap12,
+        gs.mr10,
+        {backgroundColor: colors.containerColor},
+      ]}>
+      <View style={[gs.size30, gs.rounded8, gs.center, {backgroundColor: colors.iconContainer}]}>
+        <Icon name={getIconName(day)} size={15} color={colors.accentGreen} />
       </View>
-      <View style={[gs.rounded10, gs.justifyCenter, gs.p10, {backgroundColor: colors.lightAccent, height: '34%'}]}>
-        <PrimaryText size={13}>
+      <View>
+        <PrimaryText size={14} weight="semibold">
+          {day === 'This Month' ? `${getCurrentMonthName()}'s` : `${day}'s`}
+        </PrimaryText>
+        <PrimaryText size={11} color={colors.secondaryText}>
+          Transactions
+        </PrimaryText>
+      </View>
+      <View style={[gs.rounded8, gs.py8, gs.px10, {backgroundColor: colors.lightAccent}]}>
+        <PrimaryText size={14} weight="semibold" variant="number">
           {currencySymbol}
           {Number.isInteger(totalSpent) ? formatCurrency(totalSpent) : formatCurrency(Number(totalSpent.toFixed(2)))}
         </PrimaryText>
       </View>
     </View>
   );
+});
+
+const styles = StyleSheet.create({
+  card: {
+    width: 155,
+  },
 });
 
 export default TransactionCard;

@@ -1,8 +1,8 @@
-import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 import {PieChart} from 'react-native-svg-charts';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
-import {getFirstDayOfMonth, formatDate, getMonthIndex, getMonthNumber, getMonthNames} from '../../utils/dateUtils';
+import {getFirstDayOfMonth, formatDate, getMonthIndex, getMonthNumber} from '../../utils/dateUtils';
 import {navigate} from '../../utils/navigationUtils';
 import useReports from './useReports';
 import PrimaryView from '../../components/atoms/PrimaryView';
@@ -11,118 +11,37 @@ import PieChartLabels from '../../components/atoms/PieChartLabels';
 import {ExpenseData as Expense} from '../../watermelondb/services';
 import EmptyState from '../../components/atoms/EmptyState';
 import {formatCurrency} from '../../utils/numberUtils';
-import {FlashList} from '@shopify/flash-list';
+import {SheetManager} from 'react-native-actions-sheet';
+import Icon from '../../components/atoms/Icons';
 import {gs} from '../../styles/globalStyles';
-
-const MONTHS = getMonthNames();
 
 const ReportsScreen = () => {
   const {
     colors,
     selectedYear,
     selectedMonth,
-    showYearPicker,
     filteredTransactions,
     currencySymbol,
     dayNames,
-    handleYearPicker,
-    handleYearPickerClose,
-    years,
-    handleYearSelect,
-    handleMonthSelect,
+    availableYears,
+    handleMonthYearSelect,
     totalAmountForMonth,
     daysInMonth,
   } = useReports();
 
-  const renderYearItem = useCallback(
-    ({item: year}: {item: number}) => (
-      <TouchableOpacity onPress={() => handleYearSelect(year)}>
-        <View
-          style={[
-            gs.p3,
-            gs.rounded5,
-            gs.m10,
-            {
-              backgroundColor: year === selectedYear ? colors.primaryText : colors.containerColor,
-              borderColor: colors.secondaryText,
-            },
-          ]}>
-          <PrimaryText size={13} color={year === selectedYear ? colors.buttonText : colors.primaryText}>
-            {year}
-          </PrimaryText>
-        </View>
-      </TouchableOpacity>
-    ),
-    [colors, selectedYear, handleYearSelect],
-  );
-
-  const renderMonths = useCallback(() => {
-    return (
-      <>
-        {MONTHS.map(month => (
-          <TouchableOpacity key={month} onPress={() => handleMonthSelect(month)}>
-            <View
-              style={[
-                gs.h35,
-                gs.p5,
-                gs.mr5,
-                gs.rounded5,
-                gs.border2,
-                gs.center,
-                {
-                  backgroundColor: month === selectedMonth ? colors.accentGreen : colors.secondaryAccent,
-                  borderColor: colors.secondaryContainerColor,
-                },
-              ]}>
-              <PrimaryText size={13} color={month === selectedMonth ? colors.buttonText : colors.primaryText}>
-                {month}
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </>
-    );
-  }, [colors, selectedMonth, handleMonthSelect]);
-
-  const renderYear = useCallback(() => {
-    return (
-      <View style={[gs.mr5, gs.center, {borderRightWidth: 2, borderColor: colors.containerColor}]}>
-        <TouchableOpacity onPress={handleYearPicker}>
-          <View
-            style={[
-              gs.h35,
-              gs.p5,
-              gs.mr5,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor},
-            ]}>
-            <PrimaryText size={13} weight="semibold">{selectedYear}</PrimaryText>
-          </View>
-        </TouchableOpacity>
-        <Modal visible={showYearPicker} animationType="fade" transparent onRequestClose={handleYearPickerClose}>
-          <View style={[gs.flex1, gs.center, {backgroundColor: 'rgba(0, 0, 0, 0.3)'}]}>
-            <View style={[gs.wFull, gs.itemsCenter]}>
-              <View style={[gs.h500, gs.w80p, gs.p15, {backgroundColor: colors.containerColor}]}>
-                <View style={[gs.pb10, gs.borderBottom08, {borderColor: colors.secondaryText}]}>
-                  <PrimaryText size={20}>{selectedYear}</PrimaryText>
-                </View>
-                <View style={[gs.flex1, gs.minH200]}>
-                  <FlashList data={years} renderItem={renderYearItem} numColumns={4} keyExtractor={String} />
-                </View>
-                <View style={[gs.justifyEnd, gs.row, gs.pt10, gs.borderTop08, {borderColor: colors.secondaryText}]}>
-                  <TouchableOpacity onPress={handleYearPickerClose}>
-                    <PrimaryText>CANCEL</PrimaryText>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
-  }, [colors, selectedYear, showYearPicker, handleYearPicker, handleYearPickerClose, years, renderYearItem]);
+  const openMonthPicker = useCallback(() => {
+    const monthIndex = getMonthIndex(selectedMonth);
+    void SheetManager.show('month-year-picker-sheet', {
+      payload: {
+        selectedMonth: monthIndex,
+        selectedYear,
+        availableYears,
+        onSelect: (monthIdx: number, year: number) => {
+          handleMonthYearSelect(monthIdx, year);
+        },
+      },
+    });
+  }, [selectedMonth, selectedYear, availableYears, handleMonthYearSelect]);
 
   const pieChartData = useMemo(() => {
     const categoryMap = new Map<string, {category: any; amount: number}>();
@@ -155,7 +74,7 @@ const ReportsScreen = () => {
     return (
       <View>
         <PieChart style={gs.h200} data={pieChartData} />
-        <PieChartLabels slices={pieChartData} colors={colors} />
+        <PieChartLabels slices={pieChartData} colors={colors} currencySymbol={currencySymbol} />
       </View>
     );
   }, [pieChartData, colors]);
@@ -265,7 +184,8 @@ const ReportsScreen = () => {
           <PrimaryText
             size={12}
             weight={hasTransactions ? 'semibold' : 'regular'}
-            color={hasTransactions ? colors.buttonText : colors.primaryText}>
+            color={hasTransactions ? colors.buttonText : colors.primaryText}
+            variant="number">
             {day}
           </PrimaryText>
         </TouchableOpacity>
@@ -276,22 +196,25 @@ const ReportsScreen = () => {
   return (
     <PrimaryView colors={colors} useBottomPadding={false}>
       <HeaderContainer headerText={'Reports'} />
-      <View style={[gs.row, gs.mt15, gs.pb5, {borderColor: colors.secondaryText}]}>
-        {renderYear()}
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={gs.rowCenter}>{renderMonths()}</View>
-        </ScrollView>
-      </View>
-      <View style={[gs.row, gs.wFull, gs.justifyBetween, gs.gap8]}>
-        <View style={[gs.flex1, gs.rowBetweenCenter, gs.px12, gs.py10, gs.rounded8, {backgroundColor: colors.secondaryAccent}]}>
-          <PrimaryText size={12}>Total</PrimaryText>
-          <PrimaryText size={13} weight="semibold">
+      <View style={[gs.row, gs.wFull, gs.justifyBetween, gs.gap6, gs.mt10]}>
+        <TouchableOpacity
+          onPress={openMonthPicker}
+          activeOpacity={0.7}
+          style={[gs.rowCenter, gs.gap4, gs.px12, gs.py10, gs.rounded8, {backgroundColor: colors.accentGreen}]}>
+          <PrimaryText size={13} weight="semibold" color={colors.buttonText}>
+            {selectedMonth} {selectedYear}
+          </PrimaryText>
+          <Icon name="chevron-down" size={14} color={colors.buttonText} />
+        </TouchableOpacity>
+        <View style={[gs.flex1, gs.px12, gs.py10, gs.rounded8, {backgroundColor: colors.secondaryAccent}]}>
+          <PrimaryText size={11} color={colors.secondaryText}>Total</PrimaryText>
+          <PrimaryText size={14} weight="semibold" variant="number" numberOfLines={1}>
             {currencySymbol}{formatCurrency(totalAmountForMonth)}
           </PrimaryText>
         </View>
-        <View style={[gs.flex1, gs.rowBetweenCenter, gs.px12, gs.py10, gs.rounded8, {backgroundColor: colors.secondaryAccent}]}>
-          <PrimaryText size={12}>Avg/Day</PrimaryText>
-          <PrimaryText size={13} weight="semibold">
+        <View style={[gs.flex1, gs.px12, gs.py10, gs.rounded8, {backgroundColor: colors.secondaryAccent}]}>
+          <PrimaryText size={11} color={colors.secondaryText}>Avg/Day</PrimaryText>
+          <PrimaryText size={14} weight="semibold" variant="number" numberOfLines={1}>
             {currencySymbol}{formatCurrency(totalAmountForMonth / daysInMonth)}
           </PrimaryText>
         </View>
@@ -302,17 +225,16 @@ const ReportsScreen = () => {
           <EmptyState colors={colors} type={'Insights'} style={gs.mt20} />
         ) : (
           <>
-            <View style={[gs.mt8p, gs.mt12p]}>{renderPieChart()}</View>
-            <View style={[gs.row, gs.wrap, gs.mt10, gs.mb15]}>
+            <View style={[gs.row, gs.wrap, gs.mt15]}>
               {dayNames.map(day => (
                 <View key={day} style={[gs.h34, gs.center, {width: '13.5%', margin: 0.5}]}>
                   <PrimaryText size={13}>{day}</PrimaryText>
                 </View>
               ))}
             </View>
-            <View style={[gs.row, gs.wrap, gs.mt10, gs.mb15]}>{renderCalendar()}</View>
+            <View style={[gs.row, gs.wrap]}>{renderCalendar()}</View>
 
-            <View style={[gs.rowCenter, gs.justifyCenter, gs.mt15, gs.mb20, gs.gap4]}>
+            <View style={[gs.rowCenter, gs.justifyCenter, gs.mt10, gs.mb10, gs.gap4]}>
               <PrimaryText size={11} color={colors.secondaryText}>Less</PrimaryText>
               {[0.1, 0.3, 0.5, 0.75, 1].map((opacity, i) => (
                 <View
@@ -327,6 +249,8 @@ const ReportsScreen = () => {
               ))}
               <PrimaryText size={11} color={colors.secondaryText}>More</PrimaryText>
             </View>
+
+            <View style={[gs.mt20, gs.mb20]}>{renderPieChart()}</View>
           </>
         )}
       </ScrollView>

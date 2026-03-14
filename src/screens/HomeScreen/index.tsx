@@ -1,14 +1,15 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Icon from '../../components/atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
-import TransactionCard from '../../components/molecules/TransactionCard';
 import TransactionList from '../../components/molecules/TransactionList';
 import HeaderContainer from '../../components/molecules/HeaderContainer';
 import useHome from './useHome';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import EmptyState from '../../components/atoms/EmptyState';
+import {formatCurrency} from '../../utils/numberUtils';
+import {SheetManager} from 'react-native-actions-sheet';
 import {gs, hitSlop} from '../../styles/globalStyles';
 
 const HomeScreen = () => {
@@ -22,10 +23,27 @@ const HomeScreen = () => {
     currencySymbol,
     onRefresh,
     sortedTransactions,
-    formatTodaySpent,
-    formatYesterdaySpent,
-    formatThisMonthSpent,
+    selectedYear,
+    selectedMonthIndex,
+    selectedMonthName,
+    yearMonth,
+    availableYears,
+    totalSpent,
+    transactionCount,
+    avgPerDay,
+    handleMonthYearSelect,
   } = useHome();
+
+  const openMonthPicker = useCallback(() => {
+    void SheetManager.show('month-year-picker-sheet', {
+      payload: {
+        selectedMonth: selectedMonthIndex,
+        selectedYear,
+        availableYears,
+        onSelect: handleMonthYearSelect,
+      },
+    });
+  }, [selectedMonthIndex, selectedYear, availableYears, handleMonthYearSelect]);
 
   if (expenseLoading) {
     return <Text>Loading ...</Text>;
@@ -37,39 +55,62 @@ const HomeScreen = () => {
 
   return (
     <>
-      <PrimaryView colors={colors} useBottomPadding={false}>
-        <HeaderContainer headerText={`Hey, ${userName}`} />
+      <PrimaryView colors={colors} useBottomPadding={false} useSidePadding={false}>
+        <View style={[gs.px16, gs.mb15]}>
+          <HeaderContainer headerText={`Hey, ${userName}`} />
+        </View>
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-          <View style={[gs.mt5p, gs.mb20p]}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              <View style={[gs.mt10, gs.row]}>
-                <TransactionCard currencySymbol={currencySymbol} day={'Today'} totalSpent={Number(formatTodaySpent)} />
-                <TransactionCard
-                  currencySymbol={currencySymbol}
-                  day={'Yesterday'}
-                  totalSpent={Number(formatYesterdaySpent)}
-                />
-                <TransactionCard
-                  currencySymbol={currencySymbol}
-                  day={'This Month'}
-                  totalSpent={Number(formatThisMonthSpent)}
-                />
-              </View>
-            </ScrollView>
-            <View style={gs.mt20}>
-              <PrimaryText color={colors.accentGreen}>All Transactions</PrimaryText>
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          contentContainerStyle={gs.pb80}>
 
-              <View>
-                {allTransactions?.length === 0 ? (
-                  <EmptyState colors={colors} type={'Transactions'} />
-                ) : (
-                  <TransactionList currencySymbol={currencySymbol} allExpenses={sortedTransactions} />
-                )}
+          <TouchableOpacity
+            onPress={openMonthPicker}
+            activeOpacity={0.7}
+            style={[
+              gs.mx16,
+              gs.px14,
+              gs.py12,
+              gs.rounded12,
+              {backgroundColor: colors.accentGreen},
+            ]}>
+            <View style={gs.rowBetweenCenter}>
+              <View style={[gs.rowCenter, gs.gap6]}>
+                <PrimaryText size={14} weight="semibold" color={colors.buttonText}>
+                  {selectedMonthName} {selectedYear}
+                </PrimaryText>
+                <Icon name="chevron-down" size={14} color={colors.buttonText} />
               </View>
+              <PrimaryText size={20} weight="bold" variant="number" color={colors.buttonText}>
+                {currencySymbol}{formatCurrency(totalSpent)}
+              </PrimaryText>
             </View>
+
+            <View style={[gs.rowCenter, gs.gap8, gs.mt4]}>
+              <PrimaryText size={11} color={colors.buttonText} variant="number" style={{opacity: 0.7}}>
+                {transactionCount} transaction{transactionCount === 1 ? '' : 's'}
+              </PrimaryText>
+              <PrimaryText size={11} color={colors.buttonText} style={{opacity: 0.7}}>·</PrimaryText>
+              <PrimaryText size={11} color={colors.buttonText} variant="number" style={{opacity: 0.7}}>
+                avg {currencySymbol}{formatCurrency(Math.round(avgPerDay))}/day
+              </PrimaryText>
+            </View>
+          </TouchableOpacity>
+
+          <View>
+            {allTransactions?.length === 0 ? (
+              <View style={gs.px16}>
+                <EmptyState colors={colors} type={'Transactions'} />
+              </View>
+            ) : (
+              <TransactionList
+                currencySymbol={currencySymbol}
+                allExpenses={sortedTransactions}
+                edgeToEdge
+                targetMonth={yearMonth}
+              />
+            )}
           </View>
         </ScrollView>
       </PrimaryView>

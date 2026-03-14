@@ -7,6 +7,8 @@ import {
   Settings,
   ArrowLeft,
   ChevronLeft,
+  ChevronDown,
+  ChevronRight,
   Menu,
 
   // Actions
@@ -178,6 +180,7 @@ import {
   Meh,
   Moon,
   Sun,
+  SunMoon,
   CloudSun,
   Umbrella,
 
@@ -372,6 +375,8 @@ export const ICON_REGISTRY = {
   settings: Settings,
   'arrow-left': ArrowLeft,
   'chevron-left': ChevronLeft,
+  'chevron-down': ChevronDown,
+  'chevron-right': ChevronRight,
   menu: Menu,
 
   // Actions
@@ -543,6 +548,7 @@ export const ICON_REGISTRY = {
   meh: Meh,
   moon: Moon,
   sun: Sun,
+  'sun-moon': SunMoon,
   'cloud-sun': CloudSun,
   umbrella: Umbrella,
 

@@ -54,7 +54,10 @@ const DebtItem: React.FC<DebtItemProps> = React.memo(
             <TouchableOpacity
               onPress={() => handleEditDebt(String(debt.id), debt.description, debt.amount, debt.date, debt.type)}>
               <PrimaryText size={12} color={colors.primaryText} style={gs.mr5}>
-                {debt.description}: {currencySymbol}
+                {debt.description}:{' '}
+              </PrimaryText>
+              <PrimaryText size={12} color={colors.primaryText} variant="number">
+                {currencySymbol}
                 {formatCurrency(debt.amount)}
               </PrimaryText>
             </TouchableOpacity>

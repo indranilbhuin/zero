@@ -204,6 +204,70 @@ export const getAllExpensesByDate = async (
 };
 
 /**
+ * Gets all expenses for a user in a specific month (YYYY-MM prefix match)
+ */
+export const getAllExpensesByMonth = async (
+  userId: string,
+  yearMonth: string,
+): Promise<ExpenseWithCategory[]> => {
+  const expenses = await database
+    .get<Expense>('expenses')
+    .query(
+      Q.where('user_id', userId),
+      Q.where('date', Q.like(`${Q.sanitizeLikeString(yearMonth)}%`)),
+    )
+    .fetch();
+
+  const categories = await database
+    .get<Category>('categories')
+    .query(Q.where('user_id', userId))
+    .fetch();
+
+  const categoryMap = new Map(
+    categories.map(cat => [
+      cat.id,
+      {id: cat.id, name: cat.name, icon: cat.icon ?? '', color: cat.color ?? '#808080'},
+    ]),
+  );
+
+  return expenses.map(e => {
+    const category = categoryMap.get(e.categoryId);
+    return {
+      id: e.id,
+      title: e.title,
+      amount: e.amount,
+      description: e.description ?? '',
+      categoryId: e.categoryId,
+      userId: e.userId,
+      date: e.date,
+      category,
+    };
+  });
+};
+
+/**
+ * Gets distinct years that have expense data for a user
+ */
+export const getAvailableExpenseYears = async (
+  userId: string,
+): Promise<number[]> => {
+  const expenses = await database
+    .get<Expense>('expenses')
+    .query(Q.where('user_id', userId))
+    .fetch();
+
+  const years = new Set<number>();
+  for (const e of expenses) {
+    const year = Number.parseInt(e.date.substring(0, 4), 10);
+    if (!Number.isNaN(year)) {
+      years.add(year);
+    }
+  }
+
+  return Array.from(years).sort((a, b) => a - b);
+};
+
+/**
  * Gets an expense by ID
  */
 export const getExpenseById = async (

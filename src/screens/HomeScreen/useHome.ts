@@ -2,25 +2,37 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  fetchExpenses,
+  fetchExpensesByMonth,
+  invalidateExpenseCache,
   selectExpenseData,
   selectExpenseError,
   selectExpenseLoading,
 } from '../../redux/slice/expenseDataSlice';
+import {selectMonthIndex, selectYear, setMonthSelection} from '../../redux/slice/monthSelectionSlice';
 import {selectUserName} from '../../redux/slice/userNameSlice';
 import {fetchUserData, selectUserId} from '../../redux/slice/userIdSlice';
 import {fetchCurrency, selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {fetchCategories} from '../../redux/slice/categoryDataSlice';
-import {now, isSameDate, getYesterday, sortByDateDesc} from '../../utils/dateUtils';
+import {getCurrentYear, getMonthNumber, getMonthNames, sortByDateDesc} from '../../utils/dateUtils';
 import {ExpenseData as Expense} from '../../watermelondb/services';
 import {AppDispatch} from '../../redux/store';
+import {loadAvailableYears} from '../../utils/availableYearsCache';
+
+const MONTHS = getMonthNames();
+const CURRENT_YEAR = getCurrentYear();
+const CURRENT_MONTH_INDEX = new Date().getMonth();
 
 const useHome = () => {
   const colors = useThemeColors();
   const [refreshing, setRefreshing] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
-  const allTransactions = useSelector(selectExpenseData);
+  const [availableYears, setAvailableYears] = useState<number[]>([CURRENT_YEAR]);
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  const selectedMonthIndex = useSelector(selectMonthIndex);
+  const selectedYear = useSelector(selectYear);
+
+  const allTransactions = useSelector(selectExpenseData) ?? [];
   const sortedTransactions = useMemo(() => sortByDateDesc(allTransactions as Expense[]), [allTransactions]);
 
   const expenseLoading = useSelector(selectExpenseLoading);
@@ -29,9 +41,8 @@ const useHome = () => {
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-  }, []);
+  const selectedMonthName = MONTHS[selectedMonthIndex];
+  const yearMonth = `${selectedYear}-${getMonthNumber(selectedMonthName)}`;
 
   useEffect(() => {
     dispatch(fetchUserData());
@@ -41,59 +52,53 @@ const useHome = () => {
     if (userId) {
       dispatch(fetchCurrency());
       dispatch(fetchCategories());
-      dispatch(fetchExpenses());
+      loadAvailableYears(userId).then(years => {
+        if (years.length > 0) {
+          setAvailableYears(years);
+        }
+      });
     }
   }, [dispatch, userId]);
 
   useEffect(() => {
+    if (userId) {
+      dispatch(fetchExpensesByMonth(yearMonth));
+    }
+  }, [dispatch, userId, yearMonth]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+  }, []);
+
+  useEffect(() => {
     if (refreshing) {
-      dispatch(fetchExpenses());
+      dispatch(invalidateExpenseCache());
+      dispatch(fetchExpensesByMonth(yearMonth));
       setRefreshing(false);
     }
-  }, [dispatch, refreshing]);
+  }, [dispatch, refreshing, yearMonth]);
 
-  const {todaySpent, yesterdaySpent, thisMonthSpent} = useMemo(() => {
-    const currentDate = now();
-    const yesterdayDate = getYesterday();
+  const {totalSpent, transactionCount, avgPerDay} = useMemo(() => {
+    const total = (allTransactions ?? []).reduce((sum: number, t: Expense) => sum + t.amount, 0);
+    const count = (allTransactions ?? []).length;
+    const daysInMonth = new Date(selectedYear, selectedMonthIndex + 1, 0).getDate();
+    const isCurrentMonth = selectedYear === CURRENT_YEAR && selectedMonthIndex === CURRENT_MONTH_INDEX;
+    const daysElapsed = isCurrentMonth ? new Date().getDate() : daysInMonth;
+    const avg = daysElapsed > 0 ? total / daysElapsed : 0;
 
-    const totals = allTransactions.reduce(
-      (acc, transaction: Expense) => {
-        const isToday = isSameDate(transaction.date, currentDate, 'day');
-        const isYesterday = isSameDate(transaction.date, yesterdayDate, 'day');
-        const isThisMonth = isSameDate(transaction.date, currentDate, 'month');
+    return {totalSpent: total, transactionCount: count, avgPerDay: avg};
+  }, [allTransactions, selectedYear, selectedMonthIndex]);
 
-        if (isToday) {
-          acc.today += transaction.amount;
-        } else if (isYesterday) {
-          acc.yesterday += transaction.amount;
-        }
-
-        if (isThisMonth) {
-          acc.thisMonth += transaction.amount;
-        }
-
-        return acc;
-      },
-      {today: 0, yesterday: 0, thisMonth: 0},
-    );
-
-    return {
-      todaySpent: totals.today,
-      yesterdaySpent: totals.yesterday,
-      thisMonthSpent: totals.thisMonth,
-    };
-  }, [allTransactions]);
-
-  const formatTodaySpent = Number.isInteger(todaySpent) ? todaySpent : todaySpent.toFixed(2);
-
-  const formatYesterdaySpent = Number.isInteger(yesterdaySpent) ? yesterdaySpent : yesterdaySpent.toFixed(2);
-
-  const formatThisMonthSpent = Number.isInteger(thisMonthSpent) ? thisMonthSpent : thisMonthSpent.toFixed(2);
+  const handleMonthYearSelect = useCallback(
+    (monthIndex: number, year: number) => {
+      dispatch(setMonthSelection({monthIndex, year}));
+    },
+    [dispatch],
+  );
 
   return {
     colors,
     refreshing,
-    setRefreshing,
     allTransactions,
     expenseLoading,
     expenseError,
@@ -101,13 +106,16 @@ const useHome = () => {
     userId,
     currencySymbol,
     onRefresh,
-    todaySpent,
-    yesterdaySpent,
-    thisMonthSpent,
     sortedTransactions,
-    formatTodaySpent,
-    formatYesterdaySpent,
-    formatThisMonthSpent,
+    selectedYear,
+    selectedMonthIndex,
+    selectedMonthName,
+    yearMonth,
+    availableYears,
+    totalSpent,
+    transactionCount,
+    avgPerDay,
+    handleMonthYearSelect,
   };
 };
 

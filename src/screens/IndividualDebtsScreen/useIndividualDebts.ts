@@ -29,13 +29,13 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const colors = useThemeColors();
   const dispatch = useDispatch<AppDispatch>();
   const [refreshing, setRefreshing] = useState(false);
-  const individualDebts = useSelector(selectDebtData) as DebtDocType[];
+  const individualDebts = (useSelector(selectDebtData) ?? []) as DebtDocType[];
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
   const currencySymbol = useSelector(selectCurrencySymbol);
   const [paidToastVisible, setPaidToastVisible] = useState(false);
   const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
-  const {debtorId, debtorType} = route.params;
+  const {debtorId = '', debtorType = ''} = route.params ?? {};
   const individualDebtor = useSelector(selectIndividualDebtorData);
   const debtorName = individualDebtor?.title;
 

@@ -14,9 +14,10 @@ import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {selectUserId} from '../../redux/slice/userIdSlice';
 import {fetchCategories, selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {createExpense, updateExpenseById} from '../../watermelondb/services';
-import {fetchExpenses} from '../../redux/slice/expenseDataSlice';
+import {fetchExpensesByMonth, invalidateExpenseCache} from '../../redux/slice/expenseDataSlice';
 import DatePicker from '../atoms/DatePicker';
-import {getISODateTime} from '../../utils/dateUtils';
+import {getISODateTime, formatDate} from '../../utils/dateUtils';
+import {ensureYearInCache} from '../../utils/availableYearsCache';
 import {expenseAmountSchema, expenseDescriptionSchema, expenseSchema} from '../../utils/validationSchema';
 import {CategoryData as CategoryDocType} from '../../watermelondb/services';
 import {AppDispatch} from '../../redux/store';
@@ -38,11 +39,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
       : categories?.filter((category: CategoryDocType) => category?.name === expenseData?.category?.name) ?? [],
   );
 
-  const [createdAt, setCreatedAt] = useState(isAddButton ? getISODateTime() : expenseData.expenseDate);
+  const [createdAt, setCreatedAt] = useState(isAddButton ? getISODateTime() : expenseData?.expenseDate ?? getISODateTime());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [expenseTitle, setExpenseTitle] = useState(isAddButton ? '' : expenseData.expenseTitle);
-  const [expenseDescription, setExpenseDescription] = useState(isAddButton ? '' : expenseData.expenseDescription);
-  const [expenseAmount, setExpenseAmount] = useState(isAddButton ? '' : String(expenseData.expenseAmount));
+  const [expenseTitle, setExpenseTitle] = useState(isAddButton ? '' : expenseData?.expenseTitle ?? '');
+  const [expenseDescription, setExpenseDescription] = useState(isAddButton ? '' : expenseData?.expenseDescription ?? '');
+  const [expenseAmount, setExpenseAmount] = useState(isAddButton ? '' : String(expenseData?.expenseAmount ?? ''));
 
   const expenseAmountError = hasInteracted
     ? expenseAmountSchema?.safeParse(Number(expenseAmount)).error?.issues || []
@@ -79,7 +80,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
     try {
       await createExpense(userId, expenseTitle, Number(expenseAmount), expenseDescription, categoryId, createdAt);
 
-      dispatch(fetchExpenses());
+      const yearMonth = formatDate(createdAt, 'YYYY-MM');
+      const year = Number.parseInt(formatDate(createdAt, 'YYYY'), 10);
+      ensureYearInCache(year);
+      dispatch(invalidateExpenseCache());
+      dispatch(fetchExpensesByMonth(yearMonth));
       goBack();
     } catch (error) {
       if (__DEV__) {
@@ -103,7 +108,11 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         createdAt,
       );
 
-      dispatch(fetchExpenses());
+      const yearMonth = formatDate(createdAt, 'YYYY-MM');
+      const year = Number.parseInt(formatDate(createdAt, 'YYYY'), 10);
+      ensureYearInCache(year);
+      dispatch(invalidateExpenseCache());
+      dispatch(fetchExpensesByMonth(yearMonth));
       goBack();
     } catch (error) {
       if (__DEV__) {
@@ -135,7 +144,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   return (
     <PrimaryView colors={colors} dismissKeyboardOnTouch>
       <View style={[gs.mb20, gs.mt20]}>
-        <AppHeader onPress={() => goBack(() => dispatch(fetchExpenses()))} colors={colors} text="Transaction Screen" />
+        <AppHeader onPress={() => goBack()} colors={colors} text="Transaction Screen" />
       </View>
 
       <CustomInput
@@ -171,9 +180,9 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
             marginBottom: expenseAmountError.length > 0 ? 5 : 15,
           },
         ]}>
-        <PrimaryText size={15}>{currencySymbol}</PrimaryText>
+        <PrimaryText size={15} variant="number">{currencySymbol}</PrimaryText>
         <TextInput
-          style={[gs.px15, gs.h48, gs.wFull, gs.fontMedium, gs.noFontPadding, {color: colors.primaryText}]}
+          style={[gs.px15, gs.h48, gs.wFull, gs.numMedium, gs.noFontPadding, {color: colors.primaryText}]}
           value={expenseAmount}
           onChangeText={setExpenseAmount}
           placeholder={'eg. 320'}

@@ -25,25 +25,25 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
-	<true />
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<false />
+		<false/>
 		<key>NSAllowsLocalNetworking</key>
-		<true />
+		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string />
+	<string/>
 	<key>RCTNewArchEnabled</key>
-	<true />
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>FiraCode-Bold.ttf</string>
-		<string>FiraCode-Light.ttf</string>
-		<string>FiraCode-Medium.ttf</string>
-		<string>FiraCode-Regular.ttf</string>
-		<string>FiraCode-SemiBold.ttf</string>
+		<string>GoogleSansCode-Regular.ttf</string>
+		<string>GoogleSansCode-Light.ttf</string>
+		<string>GoogleSansCode-Medium.ttf</string>
+		<string>GoogleSansCode-SemiBold.ttf</string>
+		<string>GoogleSansCode-Bold.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -63,6 +63,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false />
+	<false/>
 </dict>
 </plist>

@@ -3,18 +3,22 @@ import useThemeColors from '../../hooks/useThemeColors';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   getCurrentYear,
-  getCurrentMonthName,
   getWeekdayShortNames,
-  getYear,
-  getMonthName,
   getDaysInMonth,
+  getMonthNumber,
+  getMonthNames,
 } from '../../utils/dateUtils';
 
 const DAY_NAMES = getWeekdayShortNames();
-import {fetchExpenses, selectExpenseData} from '../../redux/slice/expenseDataSlice';
+const MONTHS = getMonthNames();
+
+import {fetchExpensesByMonth, selectExpenseData} from '../../redux/slice/expenseDataSlice';
+import {selectMonthIndex, selectYear, setMonthSelection} from '../../redux/slice/monthSelectionSlice';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
+import {selectUserId} from '../../redux/slice/userIdSlice';
 import {ExpenseData as ExpenseDocType} from '../../watermelondb/services';
 import {AppDispatch} from '../../redux/store';
+import {loadAvailableYears} from '../../utils/availableYearsCache';
 
 interface TransactionWithCategory extends ExpenseDocType {
   category?: {
@@ -24,49 +28,56 @@ interface TransactionWithCategory extends ExpenseDocType {
   };
 }
 
+const CURRENT_YEAR = getCurrentYear();
+
 const useReports = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch<AppDispatch>();
-  const [selectedYear, setSelectedYear] = useState(getCurrentYear());
-  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthName());
-  const [showYearPicker, setShowYearPicker] = useState(false);
-  const allTransactions = useSelector(selectExpenseData) as TransactionWithCategory[];
-  const currencySymbol = useSelector(selectCurrencySymbol);
+  const [availableYears, setAvailableYears] = useState<number[]>([CURRENT_YEAR]);
 
-  const filteredTransactions = useMemo(() => {
-    const filtered = allTransactions?.filter((item: TransactionWithCategory) => {
-      const transactionYear = getYear(item.date);
-      const transactionMonth = getMonthName(item.date);
-      return transactionYear === selectedYear && (!selectedMonth || transactionMonth === selectedMonth);
-    });
-    return filtered?.length > 0 ? filtered : [];
-  }, [allTransactions, selectedYear, selectedMonth]);
+  const selectedMonthIndex = useSelector(selectMonthIndex);
+  const selectedYear = useSelector(selectYear);
+  const selectedMonth = MONTHS[selectedMonthIndex];
+
+  const filteredTransactions = (useSelector(selectExpenseData) ?? []) as TransactionWithCategory[];
+  const currencySymbol = useSelector(selectCurrencySymbol);
+  const userId = useSelector(selectUserId);
+
+  const yearMonth = `${selectedYear}-${getMonthNumber(selectedMonth)}`;
 
   useEffect(() => {
-    dispatch(fetchExpenses());
-  }, [dispatch]);
+    if (userId) {
+      loadAvailableYears(userId).then(years => {
+        if (years.length > 0) {
+          setAvailableYears(years);
+        }
+      });
+    }
+  }, [userId]);
 
-  const handleYearPicker = useCallback(() => {
-    setShowYearPicker(true);
-  }, []);
+  useEffect(() => {
+    dispatch(fetchExpensesByMonth(yearMonth));
+  }, [dispatch, yearMonth]);
 
-  const handleYearPickerClose = useCallback(() => {
-    setShowYearPicker(false);
-  }, []);
+  const handleMonthYearSelect = useCallback(
+    (monthIndex: number, year: number) => {
+      dispatch(setMonthSelection({monthIndex, year}));
+    },
+    [dispatch],
+  );
 
-  const years = useMemo(() => Array.from({length: 101}, (_, index) => 2000 + index), []);
-
-  const handleYearSelect = useCallback((year: number) => {
-    setSelectedYear(year);
-    setShowYearPicker(false);
-  }, []);
-
-  const handleMonthSelect = useCallback((month: string) => {
-    setSelectedMonth(month);
-  }, []);
+  const handleMonthSelect = useCallback(
+    (month: string) => {
+      const monthIdx = MONTHS.indexOf(month);
+      if (monthIdx >= 0) {
+        dispatch(setMonthSelection({monthIndex: monthIdx, year: selectedYear}));
+      }
+    },
+    [dispatch, selectedYear],
+  );
 
   const totalAmountForMonth = useMemo(
-    () => filteredTransactions.reduce((sum, transaction: TransactionWithCategory) => sum + transaction.amount, 0),
+    () => (filteredTransactions ?? []).reduce((sum: number, transaction: TransactionWithCategory) => sum + transaction.amount, 0),
     [filteredTransactions],
   );
 
@@ -75,19 +86,12 @@ const useReports = () => {
   return {
     colors,
     selectedYear,
-    setSelectedYear,
     selectedMonth,
-    setSelectedMonth,
-    showYearPicker,
-    setShowYearPicker,
     filteredTransactions,
-    allTransactions,
     currencySymbol,
     dayNames: DAY_NAMES,
-    handleYearPicker,
-    handleYearPickerClose,
-    years,
-    handleYearSelect,
+    availableYears,
+    handleMonthYearSelect,
     handleMonthSelect,
     totalAmountForMonth,
     daysInMonth,

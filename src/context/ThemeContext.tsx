@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode} from 'react';
+import React, {createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode} from 'react';
 import {useColorScheme, Appearance} from 'react-native';
 import StorageService from '../utils/asyncStorageService';
 
@@ -71,7 +71,6 @@ interface ThemeContextType {
   colors: ThemeColors;
   isDark: boolean;
   setThemeMode: (mode: ThemeMode) => Promise<void>;
-  isLoading: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -80,10 +79,17 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+const getInitialThemeMode = (): ThemeMode => {
+  const saved = StorageService.getItemSync('themePreference');
+  if (saved && ['light', 'dark', 'system'].includes(saved)) {
+    return saved as ThemeMode;
+  }
+  return 'system';
+};
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
   const systemColorScheme = useColorScheme();
-  const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
-  const [isLoading, setIsLoading] = useState(true);
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(getInitialThemeMode);
 
   const resolvedTheme: ResolvedTheme = useMemo(() => {
     if (themeMode === 'system') {
@@ -99,16 +105,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
   const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
-    const savedTheme = StorageService.getItemSync('themePreference');
-    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-      setThemeModeState(savedTheme as ThemeMode);
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
     const subscription = Appearance.addChangeListener(() => {});
-
     return () => subscription.remove();
   }, []);
 
@@ -124,9 +121,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
       colors,
       isDark,
       setThemeMode,
-      isLoading,
     }),
-    [themeMode, resolvedTheme, colors, isDark, setThemeMode, isLoading],
+    [themeMode, resolvedTheme, colors, isDark, setThemeMode],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

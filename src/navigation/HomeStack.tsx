@@ -2,7 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Platform, Text, View} from 'react-native';
+import {Platform, Pressable, Text, View} from 'react-native';
 import Icon from '../components/atoms/Icons';
 import useThemeColors from '../hooks/useThemeColors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -67,6 +67,10 @@ const CategoriesIcon = ({color}: {color: string}) => (
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const TabBarButton = (props: any) => (
+  <Pressable {...props} android_ripple={{color: 'transparent'}} />
+);
+
 const TabStack = () => {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
@@ -89,6 +93,7 @@ const TabStack = () => {
         tabBarInactiveTintColor: colors.primaryText,
         tabBarShowLabel: false,
         tabBarStyle: tabBarStyle,
+        tabBarButton: TabBarButton,
       }}>
       <Tab.Screen name="HomeScreen" component={HomeScreen} options={{headerShown: false, tabBarIcon: HomeIcon}} />
       <Tab.Screen

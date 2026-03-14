@@ -95,7 +95,7 @@ const DebtorList: React.FC<DebtorListProps> = ({colors, debtors, allDebts, curre
             </PrimaryText>
           </TouchableOpacity>
           <View style={[gs.wFull, gs.itemsCenter, gs.rounded5, gs.mt5, {backgroundColor: colors.iconContainer}]}>
-            <PrimaryText size={11} weight="semibold" color={amountColor} style={gs.textCenter}>
+            <PrimaryText size={11} weight="semibold" color={amountColor} style={gs.textCenter} variant="number">
               {currencySymbol}
               {formatCurrency(Math.abs(totalDebt))}
             </PrimaryText>

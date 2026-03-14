@@ -38,13 +38,19 @@ const DebtsScreen = () => {
       if (totalDebts > 0) {
         overallText = (
           <PrimaryText size={12} weight="bold" color={colors.accentOrange} style={[gs.mb5, gs.textCenter]}>
-            Overall, you need to pay others {currencySymbol} {formatCurrency(Math.abs(totalDebts))}
+            Overall, you need to pay others{' '}
+            <PrimaryText size={12} weight="bold" color={colors.accentOrange} variant="number">
+              {currencySymbol} {formatCurrency(Math.abs(totalDebts))}
+            </PrimaryText>
           </PrimaryText>
         );
       } else {
         overallText = (
           <PrimaryText size={12} weight="bold" color={colors.accentGreen} style={[gs.mb5, gs.textCenter]}>
-            Overall, others need to pay you {currencySymbol} {formatCurrency(Math.abs(totalDebts))}
+            Overall, others need to pay you{' '}
+            <PrimaryText size={12} weight="bold" color={colors.accentGreen} variant="number">
+              {currencySymbol} {formatCurrency(Math.abs(totalDebts))}
+            </PrimaryText>
           </PrimaryText>
         );
       }
@@ -56,19 +62,19 @@ const DebtsScreen = () => {
         <View style={[gs.row, gs.wFull, gs.itemsCenter, gs.justifyBetween, gs.mb10]}>
           <View style={[gs.h40, gs.p3, gs.mr5, gs.rounded5, gs.center, {backgroundColor: colors.secondaryAccent, width: '31%'}]}>
             <PrimaryText size={13} weight="semibold" color={totalColor}>Total</PrimaryText>
-            <PrimaryText size={13} weight="semibold" color={totalColor}>
+            <PrimaryText size={13} weight="semibold" color={totalColor} variant="number">
               {currencySymbol}{formatCurrency(Math.abs(totalDebts))}
             </PrimaryText>
           </View>
           <View style={[gs.h40, gs.p3, gs.mr5, gs.rounded5, gs.center, {backgroundColor: colors.secondaryAccent, width: '31%'}]}>
             <PrimaryText size={13} weight="semibold" color={personColor}>Person</PrimaryText>
-            <PrimaryText size={13} weight="semibold" color={personColor}>
+            <PrimaryText size={13} weight="semibold" color={personColor} variant="number">
               {currencySymbol}{formatCurrency(Math.abs(personTotalDebts))}
             </PrimaryText>
           </View>
           <View style={[gs.h40, gs.p3, gs.mr5, gs.rounded5, gs.center, {backgroundColor: colors.secondaryAccent, width: '31%'}]}>
             <PrimaryText size={13} weight="semibold" color={otherColor}>Other</PrimaryText>
-            <PrimaryText size={13} weight="semibold" color={otherColor}>
+            <PrimaryText size={13} weight="semibold" color={otherColor} variant="number">
               {currencySymbol}{formatCurrency(Math.abs(otherTotalDebts))}
             </PrimaryText>
           </View>

@@ -34,9 +34,9 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const debtorData = route?.params;
   const isAddButton = type === 'Add';
   const dispatch = useDispatch<AppDispatch>();
-  const [debtorTitle, setDebtorTitle] = useState(isAddButton ? '' : debtorData.debtorName);
+  const [debtorTitle, setDebtorTitle] = useState(isAddButton ? '' : debtorData?.debtorName ?? '');
   const [selectedCategories, setSelectedCategories] = useState<Array<DebtCategory>>(
-    isAddButton ? [] : debtCategories.filter(category => category.name === debtorData.debtorType),
+    isAddButton ? [] : debtCategories.filter(category => category.name === debtorData?.debtorType),
   );
   const userId = useSelector(selectUserId);
   const isValid = nameSchema.safeParse(debtorTitle).success;
@@ -73,11 +73,11 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
   const handleUpdateDebtor = useCallback(async () => {
     try {
       await updateDebtorById(
-        debtorData.debtorId,
+        debtorData?.debtorId,
         debtorTitle,
-        selectedCategories[0].icon,
-        selectedCategories[0].name,
-        selectedCategories[0].color,
+        selectedCategories[0]?.icon,
+        selectedCategories[0]?.name ?? '',
+        selectedCategories[0]?.color,
       );
       dispatch(fetchDebtors());
       dispatch(fetchDebtsByDebtor(debtorData.debtorId));

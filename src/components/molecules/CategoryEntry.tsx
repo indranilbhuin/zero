@@ -36,16 +36,16 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const categoryData = route?.params;
   const isAddButton = type === 'Add';
 
-  const [categoryName, setCategoryName] = useState(isAddButton ? '' : categoryData.categoryName);
-  const [selectedIcon, setSelectedIcon] = useState(isAddButton ? 'null' : categoryData.categoryIcon);
-  const [selectedColor, setSelectedColor] = useState(isAddButton ? 'null' : categoryData.categoryColor);
+  const [categoryName, setCategoryName] = useState(isAddButton ? '' : categoryData?.categoryName ?? '');
+  const [selectedIcon, setSelectedIcon] = useState(isAddButton ? 'null' : categoryData?.categoryIcon ?? 'null');
+  const [selectedColor, setSelectedColor] = useState(isAddButton ? 'null' : categoryData?.categoryColor ?? 'null');
   const [selectedCategories, setSelectedCategories] = useState<Array<CategorySelection>>([]);
 
   const selectedCategoryNames = useMemo(() => new Set(selectedCategories.map(c => c.name)), [selectedCategories]);
 
-  const allCategories = useSelector(selectCategoryData);
+  const allCategories = useSelector(selectCategoryData) ?? [];
   const existingCategoryNamesSet = useMemo(
-    () => new Set(allCategories.map((category: CategorySelection) => category.name)),
+    () => new Set((allCategories ?? []).map((category: CategorySelection) => category.name)),
     [allCategories],
   );
   const filteredCategories = useMemo(
@@ -78,7 +78,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const handleUpdateCategory = useCallback(async () => {
     try {
-      await updateCategoryById(categoryData.categoryId, categoryName, selectedIcon, selectedColor);
+      await updateCategoryById(categoryData?.categoryId, categoryName, selectedIcon, selectedColor);
       dispatch(fetchCategories());
       goBack();
     } catch (error) {

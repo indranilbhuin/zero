@@ -12,7 +12,7 @@ import {getAppVersion} from '../../utils/getVersion';
 import {useTheme, ThemeMode} from '../../context/ThemeContext';
 import StorageService from '../../utils/asyncStorageService';
 import {updateUserById, updateCurrencyById, deleteAllData} from '../../watermelondb/services';
-import {Linking} from 'react-native';
+import {Linking, Platform} from 'react-native';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import {fetchAllData, selectAllData} from '../../redux/slice/allDataSlice';
 import {AppDispatch} from '../../redux/store';
@@ -28,14 +28,11 @@ const useSettings = () => {
   const {colors, themeMode, setThemeMode} = useTheme();
 
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
-  const [isNameModalVisible, setIsNameModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isStorageModalVisible, setIsStorageModalVisible] = useState(false);
 
   const [isDownloadSuccessful, setIsDownloadSuccessful] = useState(false);
   const [isDownloadError, setIsDownloadError] = useState(false);
-
-  const [name, setName] = useState(userName);
   const appVersion = getAppVersion();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -46,10 +43,6 @@ const useSettings = () => {
 
   const handleThemeModalClose = useCallback(() => {
     setIsThemeModalVisible(false);
-  }, []);
-
-  const handleNameModalClose = useCallback(() => {
-    setIsNameModalVisible(false);
   }, []);
 
   const handleThemeSelection = useCallback(async (theme: string) => {
@@ -63,19 +56,16 @@ const useSettings = () => {
     }
   }, [setThemeMode]);
 
-  const handleNameUpdate = useCallback(async () => {
+  const handleNameUpdate = useCallback(async (newName: string) => {
     try {
-      await updateUserById(userId, {
-        username: name,
-      });
-      dispatch(setUserName(name));
-      setIsNameModalVisible(false);
+      await updateUserById(userId, {username: newName});
+      dispatch(setUserName(newName));
     } catch (error) {
       if (__DEV__) {
         console.error('Error updating the name:', error);
       }
     }
-  }, [userId, name, dispatch]);
+  }, [userId, dispatch]);
 
   const handleCurrencyUpdate = useCallback(
     async (currency: {code: string; name: string; symbol: string}) => {
@@ -102,7 +92,15 @@ const useSettings = () => {
   );
 
   const handleRateNow = useCallback(() => {
-    // TODO: Implement rate on playstore functionality
+    const url = Platform.select({
+      ios: 'https://apps.apple.com/app/zero-offline-expense-tracker/id6759560225?action=write-review',
+      default: 'https://play.google.com/store/apps/details?id=com.anotherwhy.zero',
+    });
+    Linking.openURL(url).catch(err => {
+      if (__DEV__) {
+        console.error('Error opening store:', err);
+      }
+    });
   }, []);
 
   const handleGithub = useCallback(() => {
@@ -165,14 +163,9 @@ const useSettings = () => {
   return {
     isThemeModalVisible,
     setIsThemeModalVisible,
-    isNameModalVisible,
-    setIsNameModalVisible,
-    name,
-    setName,
     appVersion,
     colors,
     handleThemeModalClose,
-    handleNameModalClose,
     handleThemeSelection,
     handleNameUpdate,
     handleCurrencyUpdate,

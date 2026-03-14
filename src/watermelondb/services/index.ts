@@ -27,6 +27,8 @@ export {
   getAllExpensesByUserId,
   getAllExpensesByUserIdWithCategory,
   getAllExpensesByDate,
+  getAllExpensesByMonth,
+  getAvailableExpenseYears,
   getExpenseById,
 } from './expenseService';
 export type {ExpenseData, ExpenseWithCategory} from './expenseService';

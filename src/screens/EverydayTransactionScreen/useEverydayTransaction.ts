@@ -20,8 +20,8 @@ export type EverydayTransactionRouteProp = RouteProp<
 
 const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   const dispatch = useDispatch<AppDispatch>();
-  const allEverydayTransactions = useSelector(selectEverydayExpenseData) as Expense[];
-  const expenseDate = route.params.isDate;
+  const allEverydayTransactions = (useSelector(selectEverydayExpenseData) ?? []) as Expense[];
+  const expenseDate = route.params?.isDate ?? '';
   const formattedDate = formatDate(expenseDate, 'MMM Do YY');
   const formattedDateDisplay = formatDate(expenseDate, 'MMM Do YY');
   const colors = useThemeColors();
@@ -32,7 +32,7 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   }, [dispatch, expenseDate]);
 
   const totalAmountForTheDay = useMemo(
-    () => allEverydayTransactions.reduce((sum: number, transaction: Expense) => sum + transaction.amount, 0),
+    () => (allEverydayTransactions ?? []).reduce((sum: number, transaction: Expense) => sum + transaction.amount, 0),
     [allEverydayTransactions],
   );
 

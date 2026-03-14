@@ -54,6 +54,7 @@ export const gs = StyleSheet.create({
 
   mt2: {marginTop: 2},
   mt3: {marginTop: 3},
+  mt4: {marginTop: 4},
   mt5: {marginTop: 5},
   mt6: {marginTop: 6},
   mt7: {marginTop: 7},
@@ -64,6 +65,7 @@ export const gs = StyleSheet.create({
 
   mb3: {marginBottom: 3},
   mb5: {marginBottom: 5},
+  mb6: {marginBottom: 6},
   mb8: {marginBottom: 8},
   mb10: {marginBottom: 10},
   mb15: {marginBottom: 15},
@@ -83,6 +85,7 @@ export const gs = StyleSheet.create({
   mr10: {marginRight: 10},
 
   mx3: {marginHorizontal: 3},
+  mx16: {marginHorizontal: 16},
   mx20: {marginHorizontal: 20},
 
   my4: {marginVertical: 4},
@@ -95,12 +98,17 @@ export const gs = StyleSheet.create({
   p5: {padding: 5},
   p8: {padding: 8},
   p10: {padding: 10},
+  p12: {padding: 12},
+  p14: {padding: 14},
   p15: {padding: 15},
   p20: {padding: 20},
 
   pt5: {paddingTop: 5},
   pt8: {paddingTop: 8},
   pt10: {paddingTop: 10},
+  pt12: {paddingTop: 12},
+  pt15: {paddingTop: 15},
+  pt20: {paddingTop: 20},
 
   pb5: {paddingBottom: 5},
   pb10: {paddingBottom: 10},
@@ -146,11 +154,17 @@ export const gs = StyleSheet.create({
   textLeft: {textAlign: 'left'},
   textRight: {textAlign: 'right'},
 
-  fontRegular: {fontFamily: 'FiraCode-Regular'},
-  fontMedium: {fontFamily: 'FiraCode-Medium'},
-  fontSemiBold: {fontFamily: 'FiraCode-SemiBold'},
-  fontBold: {fontFamily: 'FiraCode-Bold'},
-  fontLight: {fontFamily: 'FiraCode-Light'},
+  fontRegular: {fontFamily: 'GoogleSansCode-Regular'},
+  fontMedium: {fontFamily: 'GoogleSansCode-Medium'},
+  fontSemiBold: {fontFamily: 'GoogleSansCode-SemiBold'},
+  fontBold: {fontFamily: 'GoogleSansCode-Bold'},
+  fontLight: {fontFamily: 'GoogleSansCode-Light'},
+
+  numRegular: {fontFamily: 'GoogleSansCode-Regular'},
+  numMedium: {fontFamily: 'GoogleSansCode-Medium'},
+  numSemiBold: {fontFamily: 'GoogleSansCode-SemiBold'},
+  numBold: {fontFamily: 'GoogleSansCode-Bold'},
+  numLight: {fontFamily: 'GoogleSansCode-Light'},
 
   // BORDER RADIUS
 
@@ -220,6 +234,7 @@ export const gs = StyleSheet.create({
 
   size8: {width: 8, height: 8},
   size30: {width: 30, height: 30},
+  size32: {width: 32, height: 32},
   size35: {width: 35, height: 35},
   size40: {width: 40, height: 40},
   size50: {width: 50, height: 50},
@@ -229,8 +244,13 @@ export const gs = StyleSheet.create({
 
   // GAP
 
+  gap2: {gap: 2},
   gap4: {gap: 4},
+  gap6: {gap: 6},
   gap8: {gap: 8},
+  gap10: {gap: 10},
+  gap12: {gap: 12},
+  gap16: {gap: 16},
 
   // POSITION
 
@@ -272,6 +292,7 @@ export const gs = StyleSheet.create({
   size10: {width: 10, height: 10},
   size16: {width: 16, height: 16},
   size20: {width: 20, height: 20},
+  size24: {width: 24, height: 24},
   size36: {width: 36, height: 36},
   size80: {width: 80, height: 80},
 

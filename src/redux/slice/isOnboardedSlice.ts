@@ -1,8 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
+import StorageService from '../../utils/asyncStorageService';
+
+const storedValue = StorageService.getItemSync('isOnboarded');
 
 const initialState = {
-  isOnboarded: false,
+  isOnboarded: storedValue ? JSON.parse(storedValue) : false,
 };
 
 const isOnboardedSlice = createSlice({

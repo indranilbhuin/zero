@@ -3,12 +3,20 @@ import React, {ReactNode, useMemo, memo} from 'react';
 import useThemeColors from '../../hooks/useThemeColors';
 
 type FontWeight = 'regular' | 'medium' | 'semibold' | 'bold';
+type FontVariant = 'text' | 'number';
 
-const FONT_FAMILIES: Record<FontWeight, string> = {
-  regular: 'FiraCode-Regular',
-  medium: 'FiraCode-Medium',
-  semibold: 'FiraCode-SemiBold',
-  bold: 'FiraCode-Bold',
+const TEXT_FONTS: Record<FontWeight, string> = {
+  regular: 'GoogleSansCode-Regular',
+  medium: 'GoogleSansCode-Medium',
+  semibold: 'GoogleSansCode-SemiBold',
+  bold: 'GoogleSansCode-Bold',
+};
+
+const NUMBER_FONTS: Record<FontWeight, string> = {
+  regular: 'GoogleSansCode-Regular',
+  medium: 'GoogleSansCode-Medium',
+  semibold: 'GoogleSansCode-SemiBold',
+  bold: 'GoogleSansCode-Bold',
 };
 
 interface PrimaryTextProps {
@@ -16,6 +24,7 @@ interface PrimaryTextProps {
   style?: StyleProp<TextStyle>;
   size?: number;
   weight?: FontWeight;
+  variant?: FontVariant;
   color?: string;
   numberOfLines?: number;
   ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
@@ -28,6 +37,7 @@ const PrimaryText: React.FC<PrimaryTextProps> = ({
   style,
   size = 14,
   weight = 'medium',
+  variant = 'text',
   color,
   numberOfLines,
   ellipsizeMode,
@@ -35,22 +45,26 @@ const PrimaryText: React.FC<PrimaryTextProps> = ({
   selectable = false,
 }) => {
   const colors = useThemeColors();
+  const fonts = variant === 'number' ? NUMBER_FONTS : TEXT_FONTS;
+
+  const resolvedEllipsizeMode = ellipsizeMode ?? (numberOfLines ? 'tail' : undefined);
 
   const textStyle = useMemo<TextStyle>(
     () => ({
       fontSize: size,
-      fontFamily: FONT_FAMILIES[weight],
+      fontFamily: fonts[weight],
       includeFontPadding: false,
       color: color ?? colors.primaryText,
+      flexShrink: numberOfLines ? 1 : undefined,
     }),
-    [size, weight, color, colors.primaryText],
+    [size, weight, fonts, color, colors.primaryText, numberOfLines],
   );
 
   const textElement = (
     <Text
       style={[textStyle, style]}
       numberOfLines={numberOfLines}
-      ellipsizeMode={ellipsizeMode}
+      ellipsizeMode={resolvedEllipsizeMode}
       selectable={selectable}>
       {children}
     </Text>

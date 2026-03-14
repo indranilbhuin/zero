@@ -172,9 +172,9 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
               marginBottom: debtAmountError.length > 0 ? 5 : 15,
             },
           ]}>
-          <PrimaryText size={15}>{currencySymbol}</PrimaryText>
+          <PrimaryText size={15} variant="number">{currencySymbol}</PrimaryText>
           <TextInput
-            style={[gs.px15, gs.h48, gs.wFull, gs.fontMedium, gs.noFontPadding, {color: colors.primaryText}]}
+            style={[gs.px15, gs.h48, gs.wFull, gs.numMedium, gs.noFontPadding, {color: colors.primaryText}]}
             value={debtAmount}
             onChangeText={setDebtAmount}
             placeholder={'eg. 200'}

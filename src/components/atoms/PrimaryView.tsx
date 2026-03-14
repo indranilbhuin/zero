@@ -10,6 +10,7 @@ interface PrimaryViewProps {
   style?: ViewStyle;
   dismissKeyboardOnTouch?: boolean;
   useBottomPadding?: boolean;
+  useSidePadding?: boolean;
 }
 
 const PrimaryView: React.FC<PrimaryViewProps> = ({
@@ -18,6 +19,7 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
   style,
   dismissKeyboardOnTouch = false,
   useBottomPadding = true,
+  useSidePadding = true,
 }) => {
   const insets = useSafeAreaInsets();
   const {colors: contextColors, isDark} = useTheme();
@@ -34,8 +36,8 @@ const PrimaryView: React.FC<PrimaryViewProps> = ({
           backgroundColor: colors.primaryBackground,
           paddingTop: insets.top,
           paddingBottom: bottomPadding,
-          paddingLeft: '4%',
-          paddingRight: '4%',
+          paddingLeft: useSidePadding ? '4%' : 0,
+          paddingRight: useSidePadding ? '4%' : 0,
         },
         style,
       ]}>

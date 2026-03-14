@@ -61,7 +61,7 @@ const IndividualDebtsScreen = () => {
               {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor, width: '49%'},
             ]}>
             <PrimaryText size={12} weight="semibold" color={debtorTotalColor}>Total</PrimaryText>
-            <PrimaryText size={12} weight="semibold" color={debtorTotalColor}>
+            <PrimaryText size={12} weight="semibold" color={debtorTotalColor} variant="number">
               {currencySymbol}{formatCurrency(Math.abs(debtorTotal))}
             </PrimaryText>
           </View>
@@ -130,7 +130,7 @@ const IndividualDebtsScreen = () => {
             <PrimaryText size={12} weight="semibold" color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText} style={gs.textCenter}>
               Borrowed
             </PrimaryText>
-            <PrimaryText size={12} weight="semibold" color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText} style={gs.textCenter}>
+            <PrimaryText size={12} weight="semibold" color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText} style={gs.textCenter} variant="number">
               {currencySymbol}{formatCurrency(totalBorrowings)}
             </PrimaryText>
           </TouchableOpacity>
@@ -152,7 +152,7 @@ const IndividualDebtsScreen = () => {
             <PrimaryText size={12} weight="semibold" color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText} style={gs.textCenter}>
               Lent
             </PrimaryText>
-            <PrimaryText size={12} weight="semibold" color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText} style={gs.textCenter}>
+            <PrimaryText size={12} weight="semibold" color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText} style={gs.textCenter} variant="number">
               {currencySymbol}{formatCurrency(totalLendings)}
             </PrimaryText>
           </TouchableOpacity>

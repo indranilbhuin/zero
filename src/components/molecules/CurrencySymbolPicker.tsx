@@ -44,7 +44,7 @@ const CurrencySymbolPicker: React.FC<CurrencySymbolPickerProps> = ({
             },
           ]}>
           <View style={gs.rowBetweenCenter}>
-            <PrimaryText size={20} color={colors.primaryText}>
+            <PrimaryText size={20} color={colors.primaryText} variant="number">
               {currency.symbol}
             </PrimaryText>
             <PrimaryText size={13} color={colors.primaryText}>
