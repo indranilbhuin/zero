@@ -1,4 +1,4 @@
-import {RefreshControl, Text, TouchableOpacity, View} from 'react-native';
+import {RefreshControl, TouchableOpacity, View} from 'react-native';
 import React, {useMemo, useState} from 'react';
 import AppHeader from '../../components/atoms/AppHeader';
 import {goBack, navigate} from '../../utils/navigationUtils';
@@ -17,12 +17,9 @@ const IndividualDebtsScreen = () => {
   const {
     colors,
     refreshing,
-    debtLoading,
-    debtError,
     debtorName,
     debtorId,
     debtorTotal,
-    debtorTotalColor,
     onRefresh,
     handleEditDebt,
     handleDeleteDebt,
@@ -44,136 +41,124 @@ const IndividualDebtsScreen = () => {
 
   const [debtsType, setDebtsType] = useState('Borrow');
 
+  const netColor = useMemo(() => {
+    if (debtorTotal > 0) return colors.accentOrange;
+    if (debtorTotal < 0) return colors.accentGreen;
+    return colors.primaryText;
+  }, [debtorTotal, colors]);
+
+  const netLabel = useMemo(() => {
+    if (debtorTotal > 0) return 'You owe';
+    if (debtorTotal < 0) return 'Owes you';
+    return 'Settled';
+  }, [debtorTotal]);
+
   const ListHeader = useMemo(
     () => (
-      <>
-        <View style={[gs.row, gs.wFull, gs.justifyBetween, gs.itemsCenter]}>
+      <View style={gs.mx16}>
+        <View style={[gs.row, gs.gap8, gs.mb10]}>
           <View
             style={[
-              gs.h40,
-              gs.p5,
-              gs.mr5,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              gs.col,
-              gs.mb5,
-              {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor, width: '49%'},
+              gs.flex1,
+              gs.py10,
+              gs.px14,
+              gs.rounded12,
+              {backgroundColor: colors.accentOrange + '14'},
             ]}>
-            <PrimaryText size={12} weight="semibold" color={debtorTotalColor}>Total</PrimaryText>
-            <PrimaryText size={12} weight="semibold" color={debtorTotalColor} variant="number">
-              {currencySymbol}{formatCurrency(Math.abs(debtorTotal))}
+            <PrimaryText size={11} color={colors.accentOrange} style={gs.mb5}>
+              Borrowed
+            </PrimaryText>
+            <PrimaryText size={18} weight="bold" variant="number" color={colors.accentOrange}>
+              {currencySymbol}{formatCurrency(totalBorrowings)}
             </PrimaryText>
           </View>
-          <View style={[gs.row, {width: '49%'}]}>
-            <TouchableOpacity
-              style={[
-                gs.h40,
-                gs.p5,
-                gs.mr5,
-                gs.rounded5,
-                gs.border2,
-                gs.center,
-                gs.mb5,
-                {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor, width: '31.2%'},
-              ]}
-              onPress={handleMarkAsPaid}>
-              <Icon name="check-circle" size={20} color={colors.accentBlue} />
+          <View
+            style={[
+              gs.flex1,
+              gs.py10,
+              gs.px14,
+              gs.rounded12,
+              {backgroundColor: colors.accentGreen + '14'},
+            ]}>
+            <PrimaryText size={11} color={colors.accentGreen} style={gs.mb5}>
+              Lent
+            </PrimaryText>
+            <PrimaryText size={18} weight="bold" variant="number" color={colors.accentGreen}>
+              {currencySymbol}{formatCurrency(totalLendings)}
+            </PrimaryText>
+          </View>
+        </View>
+
+        <View style={[gs.rowBetweenCenter, gs.mb15]}>
+          <PrimaryText size={12} color={colors.secondaryText}>
+            {netLabel}{' '}
+            <PrimaryText size={12} weight="bold" variant="number" color={netColor}>
+              {currencySymbol}{formatCurrency(Math.abs(debtorTotal))}
+            </PrimaryText>
+          </PrimaryText>
+
+          <View style={[gs.row, gs.gap8]}>
+            <TouchableOpacity onPress={handleMarkAsPaid} hitSlop={hitSlop}>
+              <View style={[gs.size32, gs.roundedFull, gs.center, {backgroundColor: colors.secondaryAccent}]}>
+                <Icon name="check-circle" size={16} color={colors.accentBlue} />
+              </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                gs.h40,
-                gs.p5,
-                gs.mr5,
-                gs.rounded5,
-                gs.border2,
-                gs.center,
-                gs.mb5,
-                {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor, width: '31.2%'},
-              ]}
-              onPress={handleUpdateDebtor}>
-              <Icon name="pencil" size={20} color={colors.accentGreen} />
+            <TouchableOpacity onPress={handleUpdateDebtor} hitSlop={hitSlop}>
+              <View style={[gs.size32, gs.roundedFull, gs.center, {backgroundColor: colors.secondaryAccent}]}>
+                <Icon name="pencil" size={16} color={colors.accentGreen} />
+              </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                gs.h40,
-                gs.p5,
-                gs.mr5,
-                gs.rounded5,
-                gs.border2,
-                gs.center,
-                gs.mb5,
-                {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor, width: '31.2%'},
-              ]}
-              onPress={handleDeleteDebtor}>
-              <Icon name="trash-2" size={20} color={colors.accentOrange} />
+            <TouchableOpacity onPress={handleDeleteDebtor} hitSlop={hitSlop}>
+              <View style={[gs.size32, gs.roundedFull, gs.center, {backgroundColor: colors.secondaryAccent}]}>
+                <Icon name="trash-2" size={16} color={colors.accentOrange} />
+              </View>
             </TouchableOpacity>
           </View>
         </View>
-        <View style={[gs.row, gs.wFull, gs.itemsCenter, gs.justifyBetween, gs.mb15]}>
+
+        <View style={[gs.row, gs.gap8, gs.mb15]}>
           <TouchableOpacity
             onPress={() => setDebtsType('Borrow')}
+            activeOpacity={0.7}
             style={[
-              gs.h40,
-              gs.p3,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {
-                backgroundColor: debtsType === 'Borrow' ? colors.accentOrange : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-                width: '49%',
-                height: 50,
-                marginRight: '2%',
-              },
+              gs.py8,
+              gs.px14,
+              gs.rounded12,
+              {backgroundColor: debtsType === 'Borrow' ? colors.primaryText : colors.secondaryAccent},
             ]}>
-            <PrimaryText size={12} weight="semibold" color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText} style={gs.textCenter}>
+            <PrimaryText
+              size={13}
+              weight="semibold"
+              color={debtsType === 'Borrow' ? colors.buttonText : colors.secondaryText}>
               Borrowed
-            </PrimaryText>
-            <PrimaryText size={12} weight="semibold" color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText} style={gs.textCenter} variant="number">
-              {currencySymbol}{formatCurrency(totalBorrowings)}
             </PrimaryText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setDebtsType('Lend')}
+            activeOpacity={0.7}
             style={[
-              gs.h40,
-              gs.p3,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {
-                backgroundColor: debtsType === 'Lend' ? colors.accentGreen : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-                width: '49%',
-                height: 50,
-              },
+              gs.py8,
+              gs.px14,
+              gs.rounded12,
+              {backgroundColor: debtsType === 'Lend' ? colors.primaryText : colors.secondaryAccent},
             ]}>
-            <PrimaryText size={12} weight="semibold" color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText} style={gs.textCenter}>
+            <PrimaryText
+              size={13}
+              weight="semibold"
+              color={debtsType === 'Lend' ? colors.buttonText : colors.secondaryText}>
               Lent
-            </PrimaryText>
-            <PrimaryText size={12} weight="semibold" color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText} style={gs.textCenter} variant="number">
-              {currencySymbol}{formatCurrency(totalLendings)}
             </PrimaryText>
           </TouchableOpacity>
         </View>
-      </>
+      </View>
     ),
-    [colors, currencySymbol, debtsType, debtorTotal, debtorTotalColor, handleDeleteDebtor, handleMarkAsPaid, handleUpdateDebtor, totalBorrowings, totalLendings],
+    [colors, currencySymbol, debtsType, debtorTotal, handleDeleteDebtor, handleMarkAsPaid, handleUpdateDebtor, netColor, netLabel, totalBorrowings, totalLendings],
   );
-
-  if (debtLoading) {
-    return <Text>Loading ...</Text>;
-  }
-
-  if (debtError) {
-    return <Text>Error</Text>;
-  }
 
   return (
     <>
-      <PrimaryView colors={colors}>
-        <View style={[gs.mb20, gs.mt20]}>
+      <PrimaryView colors={colors} useBottomPadding={false} useSidePadding={false}>
+        <View style={[gs.px16, gs.mb15, gs.mt20]}>
           <AppHeader onPress={goBack} colors={colors} text={debtorName ?? ''} />
         </View>
         <DebtList

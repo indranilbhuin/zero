@@ -2,10 +2,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
 import {fetchDebtors, selectDebtorData} from '../../redux/slice/debtorDataSlice';
 import {fetchAllDebts, selectAllDebtData} from '../../redux/slice/allDebtDataSlice';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {DebtorData as Debtor, DebtData as Debt} from '../../watermelondb/services';
 import {AppDispatch} from '../../redux/store';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface DebtWithDebtor extends Debt {
   debtor?: {type: string};
@@ -57,10 +58,12 @@ const useDebts = () => {
     };
   }, [allDebts]);
 
-  useEffect(() => {
-    dispatch(fetchDebtors());
-    dispatch(fetchAllDebts());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchDebtors());
+      dispatch(fetchAllDebts());
+    }, [dispatch]),
+  );
 
   return {
     colors,

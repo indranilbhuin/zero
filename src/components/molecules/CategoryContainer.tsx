@@ -26,40 +26,42 @@ const CategoryContainer: React.FC<CategoryContainerProps> = React.memo(
   ({categories, colors, toggleCategorySelection, selectedCategories}) => {
     return (
       <View style={[gs.row, gs.wrap]}>
-        {categories.map(category => (
-          <TouchableOpacity
-            key={String(category.id || category._id || category.name)}
-            onPress={() => toggleCategorySelection(category)}>
-            <View
-              style={[
-                gs.h45,
-                gs.p10,
-                gs.mr8,
-                gs.mb8,
-                gs.rounded5,
-                gs.border2,
-                gs.center,
-                gs.row,
-                {
-                  backgroundColor:
-                    category?.name === selectedCategories[0]?.name ? `${colors.accentGreen}75` : colors.secondaryAccent,
-                  borderColor: colors.secondaryContainerColor,
-                },
-              ]}>
-              {category.icon !== undefined ? (
-                <View style={gs.mr5}>
-                  <Icon name={category.icon ?? 'shapes'} size={20} color={category.color ?? colors.primaryText} />
-                </View>
-              ) : null}
+        {categories.map(category => {
+          const isSelected = category?.name === selectedCategories[0]?.name;
 
-              <PrimaryText
-                size={13}
-                color={category?.name === selectedCategories[0]?.name ? colors.buttonText : colors.primaryText}>
-                {category.name}
-              </PrimaryText>
-            </View>
-          </TouchableOpacity>
-        ))}
+          return (
+            <TouchableOpacity
+              key={String(category.id || category._id || category.name)}
+              onPress={() => toggleCategorySelection(category)}
+              activeOpacity={0.7}>
+              <View
+                style={[
+                  gs.py8,
+                  gs.px14,
+                  gs.mr8,
+                  gs.mb8,
+                  gs.rounded12,
+                  gs.rowCenter,
+                  gs.gap6,
+                  {backgroundColor: isSelected ? colors.primaryText : colors.secondaryAccent},
+                ]}>
+                {category.icon !== undefined && (
+                  <Icon
+                    name={category.icon ?? 'shapes'}
+                    size={16}
+                    color={isSelected ? colors.buttonText : (category.color ?? colors.secondaryText)}
+                  />
+                )}
+                <PrimaryText
+                  size={13}
+                  weight={isSelected ? 'semibold' : 'regular'}
+                  color={isSelected ? colors.buttonText : colors.primaryText}>
+                  {category.name}
+                </PrimaryText>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     );
   },

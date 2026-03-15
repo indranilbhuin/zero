@@ -29,7 +29,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
   const colors = useThemeColors();
   const dispatch = useDispatch<AppDispatch>();
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const {debtId, debtDescription, amount, debtorName, debtDate, debtorId, debtType} = route.params;
+  const {debtId = '', debtDescription = '', amount = 0, debtorName = '', debtDate = '', debtorId = '', debtType = 'Borrow'} = route.params ?? {};
   const isAddButton = buttonText === 'Add';
   const [hasInteracted, setHasInteracted] = useState(false);
   const [debtName, setDebtName] = useState(isAddButton ? '' : debtDescription);
@@ -65,7 +65,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
       return;
     }
     try {
-      await updateDebtById(debtId, debtorId, Number(debtAmount), debtDescription, createdAt, debtsType);
+      await updateDebtById(debtId, debtorId, Number(debtAmount), debtName, createdAt, debtsType);
 
       dispatch(fetchAllDebts());
       dispatch(fetchDebtsByDebtor(debtorId));
@@ -75,7 +75,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         console.error('Error updating debt:', error);
       }
     }
-  }, [isValid, debtId, debtorId, debtAmount, debtDescription, createdAt, debtsType, dispatch]);
+  }, [isValid, debtId, debtorId, debtAmount, debtName, createdAt, debtsType, dispatch]);
 
   const handleTextInputFocus = useCallback(() => {
     setHasInteracted(true);
@@ -85,99 +85,74 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
     <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
         <View style={[gs.mb20, gs.mt20]}>
-          <AppHeader onPress={goBack} colors={colors} text={`${buttonText} Debt ◦ ${debtorName}`} />
+          <AppHeader onPress={goBack} colors={colors} text={isAddButton ? 'Add Debt' : 'Edit Debt'} />
         </View>
-        <View style={[gs.row, gs.wFull, gs.center, gs.mb15]}>
-          <TouchableOpacity
-            onPress={() => setDebtsType('Borrow')}
-            style={[
-              gs.h40,
-              gs.p3,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {
-                backgroundColor: debtsType === 'Borrow' ? colors.accentOrange : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-                width: '48.5%',
-                height: 50,
-              },
-            ]}>
-            <PrimaryText
-              size={13}
-              weight="semibold"
-              color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText}>
-              Borrowing from
-            </PrimaryText>
-            <PrimaryText
-              size={13}
-              weight="semibold"
-              color={debtsType === 'Borrow' ? colors.buttonText : colors.primaryText}>
-              {debtorName}
-            </PrimaryText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setDebtsType('Lend')}
-            style={[
-              gs.h40,
-              gs.p3,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {
-                backgroundColor: debtsType === 'Lend' ? colors.accentGreen : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-                width: '48.5%',
-                height: 50,
-              },
-            ]}>
-            <PrimaryText
-              size={13}
-              weight="semibold"
-              color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText}>
-              Lending to
-            </PrimaryText>
-            <PrimaryText
-              size={13}
-              weight="semibold"
-              color={debtsType === 'Lend' ? colors.buttonText : colors.primaryText}>
-              {debtorName}
-            </PrimaryText>
-          </TouchableOpacity>
+
+        <PrimaryText size={12} color={colors.secondaryText} style={gs.mb8}>
+          {debtorName}
+        </PrimaryText>
+        <View style={[gs.row, gs.gap8, gs.mb15]}>
+          {(['Borrow', 'Lend'] as const).map(t => {
+            const isSelected = debtsType === t;
+            const label = t === 'Borrow' ? 'Borrowing' : 'Lending';
+            let bgColor = colors.secondaryAccent;
+            if (isSelected && t === 'Borrow') {
+              bgColor = colors.accentOrange;
+            } else if (isSelected) {
+              bgColor = colors.accentGreen;
+            }
+            return (
+              <TouchableOpacity
+                key={t}
+                onPress={() => setDebtsType(t)}
+                activeOpacity={0.7}
+                style={[
+                  gs.py8,
+                  gs.px14,
+                  gs.rounded12,
+                  gs.center,
+                  {backgroundColor: bgColor},
+                ]}>
+                <PrimaryText
+                  size={13}
+                  weight={isSelected ? 'semibold' : 'regular'}
+                  color={isSelected ? colors.buttonText : colors.primaryText}>
+                  {label}
+                </PrimaryText>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <CustomInput
           colors={colors}
           input={debtName}
           setInput={setDebtName}
-          placeholder="eg. tea"
-          label={`${debtsType} Title`}
+          placeholder="eg. Coffee"
+          label="Description"
           schema={expenseSchema}
         />
-        <PrimaryText style={gs.mb5}>{debtsType} Amount</PrimaryText>
 
+        <PrimaryText size={12} color={colors.secondaryText} style={gs.mb5}>Amount</PrimaryText>
         <View
           style={[
             gs.h48,
             gs.itemsCenter,
-            gs.border2,
-            gs.mt5,
-            gs.rounded10,
+            gs.rounded12,
             gs.pl10,
             gs.justifyStart,
             gs.row,
             {
-              borderColor: colors.secondaryContainerColor,
               backgroundColor: colors.secondaryAccent,
               marginBottom: debtAmountError.length > 0 ? 5 : 15,
             },
           ]}>
-          <PrimaryText size={15} variant="number">{currencySymbol}</PrimaryText>
+          <PrimaryText size={15} variant="number" color={colors.secondaryText}>{currencySymbol}</PrimaryText>
           <TextInput
             style={[gs.px15, gs.h48, gs.wFull, gs.numMedium, gs.noFontPadding, {color: colors.primaryText}]}
             value={debtAmount}
             onChangeText={setDebtAmount}
-            placeholder={'eg. 200'}
+            placeholder={'0'}
             onChange={handleTextInputFocus}
             placeholderTextColor={colors.secondaryText}
             keyboardType="numeric"
@@ -194,11 +169,13 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
             ))}
           </View>
         )}
+
         <DatePicker
           setShowDatePicker={setShowDatePicker}
           createdAt={createdAt}
           showDatePicker={showDatePicker}
           setCreatedAt={setCreatedAt}
+          label="Date"
         />
       </View>
 
@@ -206,7 +183,7 @@ const DebtEntry: React.FC<DebtEntryProps> = ({buttonText, route}) => {
         <PrimaryButton
           onPress={isAddButton ? handleAddDebt : handleUpdateDebt}
           colors={colors}
-          buttonTitle={buttonText}
+          buttonTitle={isAddButton ? 'Add' : 'Update'}
           disabled={!isValid}
         />
       </View>

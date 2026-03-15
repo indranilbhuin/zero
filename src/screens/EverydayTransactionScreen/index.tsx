@@ -1,4 +1,4 @@
-import {Image, ScrollView, View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
 import AppHeader from '../../components/atoms/AppHeader';
@@ -8,13 +8,12 @@ import TransactionList from '../../components/molecules/TransactionList';
 import useEverydayTransaction, {EverydayTransactionRouteProp} from './useEverydayTransaction';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
+import Icon from '../../components/atoms/Icons';
 import {formatCurrency} from '../../utils/numberUtils';
-import {useTheme} from '../../context/ThemeContext';
 import {gs} from '../../styles/globalStyles';
 
 const EverydayTransactionScreen = () => {
   const route = useRoute<EverydayTransactionRouteProp>();
-  const {isDark} = useTheme();
   const {formatDate, formattedDate, colors, currencySymbol, expenseDate, allEverydayTransactions, totalAmountForTheDay} =
     useEverydayTransaction(route);
 
@@ -24,17 +23,12 @@ const EverydayTransactionScreen = () => {
         <AppHeader onPress={goBack} colors={colors} text={formattedDate === undefined ? formattedDate : formatDate} />
       </View>
       {allEverydayTransactions?.length === 0 ? (
-        <View style={[gs.center, {height: '90%'}]}>
-          <Image
-            source={
-              isDark
-                ? require('../../../assets/images/darkNoTransaction.png')
-                : require('../../../assets/images/lightNoTransaction.png')
-            }
-            style={gs.size80}
-          />
-          <PrimaryText size={13} style={gs.mt5}>
-            No Transactions on {formatDateUtil(expenseDate, 'Do MMM YY')}
+        <View style={[gs.center, gs.mt30p]}>
+          <View style={[gs.size50, gs.roundedFull, gs.center, {backgroundColor: colors.secondaryAccent}]}>
+            <Icon name="receipt" size={22} color={colors.secondaryText} />
+          </View>
+          <PrimaryText size={13} color={colors.secondaryText} style={gs.mt10}>
+            No transactions on {formatDateUtil(expenseDate, 'Do MMM YY')}
           </PrimaryText>
         </View>
       ) : (

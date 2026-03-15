@@ -15,34 +15,32 @@ const ChooseCurrencyScreen = () => {
   return (
     <PrimaryView colors={colors} dismissKeyboardOnTouch>
       <View style={gs.pt15p}>
-        <PrimaryText size={24}>Your money,</PrimaryText>
-        <PrimaryText size={24}>your currency.</PrimaryText>
-        <PrimaryText size={24}>Pick the one you prefer</PrimaryText>
+        <PrimaryText size={28} weight="bold">Choose your</PrimaryText>
+        <PrimaryText size={28} weight="bold">currency</PrimaryText>
       </View>
 
-      <View style={[gs.pt5p, gs.pb5p]}>
-        <PrimaryText size={15} color={colors.accentGreen}>Select your currency</PrimaryText>
-      </View>
+      <PrimaryText size={14} color={colors.secondaryText} style={gs.mt6}>
+        Select the currency you use daily
+      </PrimaryText>
 
       <View
         style={[
           gs.h48,
           gs.itemsCenter,
-          gs.border2,
-          gs.mt5,
+          gs.mt20,
           gs.mb15,
-          gs.rounded10,
+          gs.rounded12,
           gs.pl10,
           gs.justifyStart,
           gs.row,
-          {borderColor: colors.secondaryContainerColor, backgroundColor: colors.secondaryAccent},
+          {backgroundColor: colors.secondaryAccent},
         ]}>
-        <Icon name="search" size={20} color={colors.primaryText} />
+        <Icon name="search" size={18} color={colors.secondaryText} />
         <TextInput
           style={[gs.px15, gs.h48, gs.wFull, gs.fontMedium, gs.noFontPadding, {color: colors.primaryText}]}
           value={search}
           onChangeText={handleSearch}
-          placeholder={'eg. INR'}
+          placeholder={'Search currency...'}
           placeholderTextColor={colors.secondaryText}
         />
       </View>

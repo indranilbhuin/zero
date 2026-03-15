@@ -140,29 +140,29 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
       const isSelected = selectedCategoryNames.has(category.name);
 
       return (
-        <TouchableOpacity onPress={() => toggleCategorySelection(category)}>
+        <TouchableOpacity onPress={() => toggleCategorySelection(category)} activeOpacity={0.7}>
           <View
             style={[
-              gs.h45,
-              gs.p10,
-              gs.mr5,
+              gs.py8,
+              gs.px14,
+              gs.mr8,
               gs.mt5,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              gs.row,
-              {
-                backgroundColor: isSelected ? `${colors.accentGreen}75` : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-              },
+              gs.rounded12,
+              gs.rowCenter,
+              gs.gap6,
+              {backgroundColor: isSelected ? colors.primaryText : colors.secondaryAccent},
             ]}>
             {category.icon ? (
-              <View style={gs.mr5}>
-                <Icon name={category.icon} size={20} color={category.color} />
-              </View>
+              <Icon
+                name={category.icon}
+                size={16}
+                color={isSelected ? colors.buttonText : (category.color ?? colors.secondaryText)}
+              />
             ) : null}
-
-            <PrimaryText size={13} color={isSelected ? colors.buttonText : colors.primaryText}>
+            <PrimaryText
+              size={13}
+              weight={isSelected ? 'semibold' : 'regular'}
+              color={isSelected ? colors.buttonText : colors.primaryText}>
               {category.name}
             </PrimaryText>
           </View>
@@ -176,7 +176,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
         <View style={[gs.mb20, gs.mt20]}>
-          <AppHeader onPress={goBack} colors={colors} text="Add Category" />
+          <AppHeader onPress={goBack} colors={colors} text={isAddButton ? 'Add Category' : 'Edit Category'} />
         </View>
 
         <CustomInput
@@ -188,58 +188,77 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
           schema={categorySchema}
         />
 
-        <PrimaryText style={gs.mb10}>Pick your own icon and color</PrimaryText>
-        <View style={[gs.rowCenter, gs.mb10]}>
+        <PrimaryText size={12} color={colors.secondaryText} style={gs.mb8}>Appearance</PrimaryText>
+        <View style={[gs.row, gs.gap8, gs.mb15]}>
           <TouchableOpacity
+            onPress={handleOpenIconPicker}
+            activeOpacity={0.7}
             style={[
-              gs.size40,
-              gs.center,
-              gs.rounded5,
-              gs.border2,
-              gs.mr10,
-              {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor},
-            ]}
-            onPress={handleOpenIconPicker}>
-            {selectedIcon === 'null' ? (
-              <Icon name="more-horizontal" size={25} color={colors.primaryText} />
-            ) : (
-              <Icon name={selectedIcon} size={25} color={colors.primaryText} />
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleOpenIconPicker}>
-            <PrimaryText>Tap to select icon</PrimaryText>
-          </TouchableOpacity>
-        </View>
-
-        <View style={[gs.rowCenter, gs.mb10]}>
-          <TouchableOpacity
-            style={[
-              gs.size40,
-              gs.center,
-              gs.rounded5,
-              gs.border2,
-              gs.mr10,
-              {backgroundColor: colors.secondaryAccent, borderColor: colors.secondaryContainerColor},
-            ]}
-            onPress={handleOpenColorPicker}>
+              gs.py10,
+              gs.px14,
+              gs.rounded12,
+              gs.rowCenter,
+              gs.gap8,
+              gs.flex1,
+              {backgroundColor: colors.secondaryAccent},
+            ]}>
             <View
               style={[
-                gs.size30,
-                gs.rounded50,
+                gs.size32,
+                gs.roundedFull,
+                gs.center,
+                {backgroundColor: colors.containerColor},
+              ]}>
+              <Icon
+                name={selectedIcon === 'null' ? 'shapes' : selectedIcon}
+                size={16}
+                color={colors.primaryText}
+              />
+            </View>
+            <View style={gs.flex1}>
+              <PrimaryText size={11} color={colors.secondaryText}>Icon</PrimaryText>
+              <PrimaryText size={13} weight="medium">
+                {selectedIcon === 'null' ? 'Choose' : 'Change'}
+              </PrimaryText>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleOpenColorPicker}
+            activeOpacity={0.7}
+            style={[
+              gs.py10,
+              gs.px14,
+              gs.rounded12,
+              gs.rowCenter,
+              gs.gap8,
+              gs.flex1,
+              {backgroundColor: colors.secondaryAccent},
+            ]}>
+            <View
+              style={[
+                gs.size32,
+                gs.roundedFull,
+                gs.center,
                 {backgroundColor: selectedColor === 'null' ? colors.accentGreen : selectedColor},
               ]}
             />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleOpenColorPicker}>
-            <PrimaryText>Tap to select Color</PrimaryText>
+            <View style={gs.flex1}>
+              <PrimaryText size={11} color={colors.secondaryText}>Color</PrimaryText>
+              <PrimaryText size={13} weight="medium">
+                {selectedColor === 'null' ? 'Choose' : 'Change'}
+              </PrimaryText>
+            </View>
           </TouchableOpacity>
         </View>
+
         {filteredCategories.length !== 0 && isAddButton ? (
           <>
-            <PrimaryText color={colors.accentGreen} style={[gs.mb5p, gs.mt3p]}>
-              or
-            </PrimaryText>
-            <PrimaryText>Add from default categories</PrimaryText>
+            <View style={[gs.rowCenter, gs.gap8, gs.mb8]}>
+              <View style={[gs.flex1, {height: 0.5, backgroundColor: colors.secondaryAccent}]} />
+              <PrimaryText size={11} color={colors.secondaryText}>or pick from defaults</PrimaryText>
+              <View style={[gs.flex1, {height: 0.5, backgroundColor: colors.secondaryAccent}]} />
+            </View>
             <View style={[gs.minH55, gs.mt5]}>
               <FlashList
                 data={filteredCategories}
@@ -256,7 +275,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
       <PrimaryButton
         onPress={handleAddFromDefaultOrAddCategory}
         colors={colors}
-        buttonTitle={type}
+        buttonTitle={isAddButton ? 'Add' : 'Update'}
         disabled={!isValid && selectedCategories.length === 0}
       />
     </PrimaryView>

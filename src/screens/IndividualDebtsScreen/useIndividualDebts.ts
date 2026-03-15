@@ -5,7 +5,7 @@ import {fetchDebtsByDebtor, selectDebtData, selectDebtError, selectDebtLoading} 
 import {goBack, navigate} from '../../utils/navigationUtils';
 import {deleteAllDebtsByDebtorId, deleteDebtById, deleteDebtorById} from '../../watermelondb/services';
 import {fetchAllDebts} from '../../redux/slice/allDebtDataSlice';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useFocusEffect} from '@react-navigation/native';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
 import {fetchDebtors} from '../../redux/slice/debtorDataSlice';
 import {sortByDateDesc} from '../../utils/dateUtils';
@@ -126,10 +126,12 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     navigate('UpdateDebtorScreen', {debtorId, debtorName, debtorType});
   }, [debtorId, debtorName, debtorType]);
 
-  useEffect(() => {
-    dispatch(fetchDebtsByDebtor(debtorId));
-    dispatch(fetchIndividualDebtor(debtorId));
-  }, [debtorId, dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchDebtsByDebtor(debtorId));
+      dispatch(fetchIndividualDebtor(debtorId));
+    }, [debtorId, dispatch]),
+  );
 
   useEffect(() => {
     if (refreshing) {

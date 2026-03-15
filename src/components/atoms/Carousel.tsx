@@ -9,9 +9,9 @@ import SvgImage2 from '../../../assets/images/6.svg';
 import {gs} from '../../styles/globalStyles';
 
 const SLIDES = [
-  {id: '1', text: 'Track your expenses'},
-  {id: '2', text: 'Analyse your spendings'},
-  {id: '3', text: 'Track your Borrowings and Lendings'},
+  {id: '1', title: 'Track Expenses', subtitle: 'Simple, fast, always offline'},
+  {id: '2', title: 'Visual Reports', subtitle: 'Understand where your money goes'},
+  {id: '3', title: 'Manage Debts', subtitle: 'Never forget who owes what'},
 ] as const;
 
 const SLIDE_IMAGES: Record<string, React.FC<{width: string; height: string}>> = {
@@ -29,16 +29,21 @@ const Carousel = () => {
       height={300}
       horizontal={true}
       autoplay
-      dot={<View style={[gs.m3, gs.rounded4, gs.size8, {backgroundColor: colors.secondaryAccent}]} />}
-      activeDot={<View style={[gs.m3, gs.rounded5, {backgroundColor: colors.primaryText, width: 9, height: 9}]} />}
+      dot={<View style={[gs.m3, gs.rounded4, {backgroundColor: colors.secondaryAccent, width: 6, height: 6}]} />}
+      activeDot={<View style={[gs.m3, gs.rounded5, {backgroundColor: colors.primaryText, width: 8, height: 8}]} />}
       paginationStyle={[gs.bottom15p, gs.left0, gs.right0]}
       loop>
       {SLIDES.map(slide => {
         const ImageComponent = SLIDE_IMAGES[slide.id];
         return (
           <View style={gs.center} key={slide.id}>
-            <ImageComponent width="250" height="250" />
-            <PrimaryText style={gs.mt3p}>{slide.text}</PrimaryText>
+            <ImageComponent width="220" height="220" />
+            <PrimaryText size={16} weight="semibold" style={gs.mt15}>
+              {slide.title}
+            </PrimaryText>
+            <PrimaryText size={12} color={colors.secondaryText} style={gs.mt4}>
+              {slide.subtitle}
+            </PrimaryText>
           </View>
         );
       })}

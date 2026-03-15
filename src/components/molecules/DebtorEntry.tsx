@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import React, {useCallback, useState, memo} from 'react';
 import PrimaryView from '../atoms/PrimaryView';
 import {goBack} from '../../utils/navigationUtils';
@@ -75,8 +75,8 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
       await updateDebtorById(
         debtorData?.debtorId,
         debtorTitle,
-        selectedCategories[0]?.icon,
         selectedCategories[0]?.name ?? '',
+        selectedCategories[0]?.icon,
         selectedCategories[0]?.color,
       );
       dispatch(fetchDebtors());
@@ -93,32 +93,32 @@ const DebtorEntry: React.FC<DebtorEntryProps> = ({type, route}) => {
     <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
         <View style={[gs.mb20, gs.mt20]}>
-          <AppHeader onPress={goBack} colors={colors} text={`${type} Debtor`} />
+          <AppHeader onPress={goBack} colors={colors} text={isAddButton ? 'Add Person' : 'Edit Person'} />
         </View>
-        <PrimaryText style={gs.mb5}>Select Debt Category</PrimaryText>
 
-        <View style={gs.mb10}>
+        <PrimaryText size={12} color={colors.secondaryText} style={gs.mb8}>Type</PrimaryText>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={gs.mb15}>
           <CategoryContainer
             categories={debtCategories}
             colors={colors}
             toggleCategorySelection={toggleCategorySelection}
             selectedCategories={selectedCategories}
           />
-        </View>
+        </ScrollView>
 
         <CustomInput
           colors={colors}
           input={debtorTitle}
           setInput={setDebtorTitle}
           placeholder="eg. John Doe or Axis"
-          label="Debtor Name"
+          label="Name"
           schema={nameSchema}
         />
       </View>
       <PrimaryButton
         onPress={isAddButton ? handleAddDebtor : handleUpdateDebtor}
         colors={colors}
-        buttonTitle={type}
+        buttonTitle={isAddButton ? 'Add' : 'Update'}
         disabled={!isValid}
       />
     </PrimaryView>

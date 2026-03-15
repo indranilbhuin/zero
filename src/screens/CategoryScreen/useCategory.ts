@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import useThemeColors from '../../hooks/useThemeColors';
 import {fetchCategories, selectActiveCategories} from '../../redux/slice/categoryDataSlice';
 import {useCallback, useEffect, useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {navigate} from '../../utils/navigationUtils';
 import {softDeleteCategoryById} from '../../watermelondb/services';
 import {AppDispatch} from '../../redux/store';
@@ -12,9 +13,11 @@ const useCategory = () => {
   const categories = useSelector(selectActiveCategories);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchCategories());
+    }, [dispatch]),
+  );
 
   useEffect(() => {
     if (refreshing) {

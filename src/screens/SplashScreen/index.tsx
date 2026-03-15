@@ -11,16 +11,18 @@ const SplashScreen = () => {
 
   return (
     <PrimaryView colors={colors} style={gs.justifyBetween}>
-      <View>
-        <PrimaryText size={90} style={gs.pt20p} color={colors.primaryText}>
+      <View style={gs.pt20p}>
+        <PrimaryText size={72} weight="bold" color={colors.primaryText}>
           zero
         </PrimaryText>
-        <PrimaryText size={25} color={colors.secondaryText}>
-          Count Every
-        </PrimaryText>
-        <PrimaryText size={25} color={colors.secondaryText}>
-          Penny with zero
-        </PrimaryText>
+        <View style={gs.mt10}>
+          <PrimaryText size={18} color={colors.secondaryText}>
+            Count every penny.
+          </PrimaryText>
+          <PrimaryText size={18} color={colors.secondaryText} style={{opacity: 0.5}}>
+            Privately.
+          </PrimaryText>
+        </View>
       </View>
       <PrimaryButton onPress={handleClick} colors={colors} buttonTitle={'Get Started'} />
     </PrimaryView>

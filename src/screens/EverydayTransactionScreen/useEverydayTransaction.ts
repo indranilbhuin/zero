@@ -2,9 +2,9 @@ import {formatDate} from '../../utils/dateUtils';
 import useThemeColors from '../../hooks/useThemeColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectCurrencySymbol} from '../../redux/slice/currencyDataSlice';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useFocusEffect} from '@react-navigation/native';
 import {ExpenseData as Expense} from '../../watermelondb/services';
-import {useEffect, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {fetchEverydayExpenses, selectEverydayExpenseData} from '../../redux/slice/everydayExpenseDataSlice';
 import {AppDispatch} from '../../redux/store';
 
@@ -27,9 +27,11 @@ const useEverydayTransaction = (route: EverydayTransactionRouteProp) => {
   const colors = useThemeColors();
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  useEffect(() => {
-    dispatch(fetchEverydayExpenses(expenseDate));
-  }, [dispatch, expenseDate]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchEverydayExpenses(expenseDate));
+    }, [dispatch, expenseDate]),
+  );
 
   const totalAmountForTheDay = useMemo(
     () => (allEverydayTransactions ?? []).reduce((sum: number, transaction: Expense) => sum + transaction.amount, 0),

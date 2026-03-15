@@ -8,7 +8,6 @@ import useDebts from './useDebts';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import EmptyState from '../../components/atoms/EmptyState';
-import useAmountColor from '../../hooks/useAmountColor';
 import {formatCurrency} from '../../utils/numberUtils';
 import {gs, hitSlop} from '../../styles/globalStyles';
 
@@ -22,115 +21,99 @@ const DebtsScreen = () => {
     personDebtors,
     otherAccountsDebtors,
     totalDebts,
-    personTotalDebts,
-    otherTotalDebts,
     debtors,
   } = useDebts();
 
-  const totalColor = useAmountColor(totalDebts);
-  const personColor = useAmountColor(personTotalDebts);
-  const otherColor = useAmountColor(otherTotalDebts);
+  const overallLabel = useMemo(() => {
+    if (totalDebts > 0) return 'You owe others';
+    if (totalDebts < 0) return 'Others owe you';
+    return 'All settled';
+  }, [totalDebts]);
 
-  const ListHeader = useMemo(() => {
-    let overallText = null;
+  const amountColor = useMemo(() => {
+    if (totalDebts > 0) return colors.accentOrange;
+    if (totalDebts < 0) return colors.accentGreen;
+    return colors.primaryText;
+  }, [totalDebts, colors]);
 
-    if (Math.abs(totalDebts) !== 0) {
-      if (totalDebts > 0) {
-        overallText = (
-          <PrimaryText size={12} weight="bold" color={colors.accentOrange} style={[gs.mb5, gs.textCenter]}>
-            Overall, you need to pay others{' '}
-            <PrimaryText size={12} weight="bold" color={colors.accentOrange} variant="number">
-              {currencySymbol} {formatCurrency(Math.abs(totalDebts))}
-            </PrimaryText>
+  const ListHeader = useMemo(() => (
+    <View style={gs.mx16}>
+      <View
+        style={[
+          gs.py12,
+          gs.px14,
+          gs.rounded12,
+          gs.mb15,
+          gs.center,
+          {backgroundColor: colors.containerColor},
+        ]}>
+        <PrimaryText size={11} weight="medium" color={colors.secondaryText} style={gs.mb5}>
+          {overallLabel}
+        </PrimaryText>
+        <PrimaryText size={28} weight="bold" variant="number" color={amountColor}>
+          {currencySymbol}{formatCurrency(Math.abs(totalDebts))}
+        </PrimaryText>
+        <View style={[gs.rowCenter, gs.gap6, gs.mt6]}>
+          <PrimaryText size={11} color={colors.secondaryText} variant="number">
+            {personDebtors.length} person{personDebtors.length === 1 ? '' : 's'}
           </PrimaryText>
-        );
-      } else {
-        overallText = (
-          <PrimaryText size={12} weight="bold" color={colors.accentGreen} style={[gs.mb5, gs.textCenter]}>
-            Overall, others need to pay you{' '}
-            <PrimaryText size={12} weight="bold" color={colors.accentGreen} variant="number">
-              {currencySymbol} {formatCurrency(Math.abs(totalDebts))}
-            </PrimaryText>
+          <PrimaryText size={11} color={colors.secondaryText}>·</PrimaryText>
+          <PrimaryText size={11} color={colors.secondaryText} variant="number">
+            {otherAccountsDebtors.length} account{otherAccountsDebtors.length === 1 ? '' : 's'}
           </PrimaryText>
-        );
-      }
-    }
-
-    return (
-      <>
-        {overallText}
-        <View style={[gs.row, gs.wFull, gs.itemsCenter, gs.justifyBetween, gs.mb10]}>
-          <View style={[gs.h40, gs.p3, gs.mr5, gs.rounded5, gs.center, {backgroundColor: colors.secondaryAccent, width: '31%'}]}>
-            <PrimaryText size={13} weight="semibold" color={totalColor}>Total</PrimaryText>
-            <PrimaryText size={13} weight="semibold" color={totalColor} variant="number">
-              {currencySymbol}{formatCurrency(Math.abs(totalDebts))}
-            </PrimaryText>
-          </View>
-          <View style={[gs.h40, gs.p3, gs.mr5, gs.rounded5, gs.center, {backgroundColor: colors.secondaryAccent, width: '31%'}]}>
-            <PrimaryText size={13} weight="semibold" color={personColor}>Person</PrimaryText>
-            <PrimaryText size={13} weight="semibold" color={personColor} variant="number">
-              {currencySymbol}{formatCurrency(Math.abs(personTotalDebts))}
-            </PrimaryText>
-          </View>
-          <View style={[gs.h40, gs.p3, gs.mr5, gs.rounded5, gs.center, {backgroundColor: colors.secondaryAccent, width: '31%'}]}>
-            <PrimaryText size={13} weight="semibold" color={otherColor}>Other</PrimaryText>
-            <PrimaryText size={13} weight="semibold" color={otherColor} variant="number">
-              {currencySymbol}{formatCurrency(Math.abs(otherTotalDebts))}
-            </PrimaryText>
-          </View>
         </View>
+      </View>
 
-        <View style={[gs.row, gs.wFull, gs.itemsCenter, gs.justifyBetween, gs.mb15]}>
-          <TouchableOpacity
-            onPress={() => setDebtorType('Person')}
-            style={[
-              gs.h40,
-              gs.p3,
-              gs.mr5,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {
-                backgroundColor: debtorType === 'Person' ? colors.accentGreen : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-                width: '48%',
-              },
-            ]}>
-            <PrimaryText size={13} weight="semibold" color={debtorType === 'Person' ? colors.buttonText : colors.primaryText}>
-              Person
-            </PrimaryText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setDebtorType('Other')}
-            style={[
-              gs.h40,
-              gs.p3,
-              gs.mr5,
-              gs.rounded5,
-              gs.border2,
-              gs.center,
-              {
-                backgroundColor: debtorType === 'Other' ? colors.accentGreen : colors.secondaryAccent,
-                borderColor: colors.secondaryContainerColor,
-                width: '48%',
-              },
-            ]}>
-            <PrimaryText size={13} weight="semibold" color={debtorType === 'Other' ? colors.buttonText : colors.primaryText}>
-              Other Accounts
-            </PrimaryText>
-          </TouchableOpacity>
-        </View>
-      </>
-    );
-  }, [colors, currencySymbol, debtorType, otherColor, otherTotalDebts, personColor, personTotalDebts, setDebtorType, totalColor, totalDebts]);
+      <View style={[gs.row, gs.gap8, gs.mb15]}>
+        <TouchableOpacity
+          onPress={() => setDebtorType('Person')}
+          activeOpacity={0.7}
+          style={[
+            gs.py8,
+            gs.px14,
+            gs.rounded12,
+            {
+              backgroundColor: debtorType === 'Person' ? colors.primaryText : colors.secondaryAccent,
+            },
+          ]}>
+          <PrimaryText
+            size={13}
+            weight="semibold"
+            color={debtorType === 'Person' ? colors.buttonText : colors.secondaryText}>
+            Person
+          </PrimaryText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setDebtorType('Other')}
+          activeOpacity={0.7}
+          style={[
+            gs.py8,
+            gs.px14,
+            gs.rounded12,
+            {
+              backgroundColor: debtorType === 'Other' ? colors.primaryText : colors.secondaryAccent,
+            },
+          ]}>
+          <PrimaryText
+            size={13}
+            weight="semibold"
+            color={debtorType === 'Other' ? colors.buttonText : colors.secondaryText}>
+            Accounts
+          </PrimaryText>
+        </TouchableOpacity>
+      </View>
+    </View>
+  ), [amountColor, colors, currencySymbol, debtorType, overallLabel, otherAccountsDebtors.length, personDebtors.length, setDebtorType, totalDebts]);
 
   return (
-    <PrimaryView colors={colors} useBottomPadding={false}>
-      <View style={gs.mb15}>
+    <PrimaryView colors={colors} useBottomPadding={false} useSidePadding={false}>
+      <View style={[gs.px16, gs.mb15]}>
         <HeaderContainer headerText={'Debts'} />
       </View>
       {debtors.length === 0 ? (
-        <EmptyState colors={colors} type={'Debts'} style={gs.mt30p} />
+        <View style={gs.px16}>
+          <EmptyState colors={colors} type={'Debts'} style={gs.mt30p} />
+        </View>
       ) : (
         <DebtorList
           colors={colors}

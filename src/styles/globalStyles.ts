@@ -58,6 +58,7 @@ export const gs = StyleSheet.create({
   mt5: {marginTop: 5},
   mt6: {marginTop: 6},
   mt7: {marginTop: 7},
+  mt8: {marginTop: 8},
   mt10: {marginTop: 10},
   mt15: {marginTop: 15},
   mt20: {marginTop: 20},

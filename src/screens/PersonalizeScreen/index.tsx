@@ -15,25 +15,24 @@ const PersonalizeScreen = () => {
     <PrimaryView colors={colors} style={gs.justifyBetween} dismissKeyboardOnTouch>
       <View>
         <TouchableOpacity style={[gs.selfEnd, gs.pt5p]} onPress={handleSkip}>
-          <PrimaryText size={12} color={colors.accentGreen}>skip</PrimaryText>
+          <PrimaryText size={13} weight="medium" color={colors.secondaryText}>Skip</PrimaryText>
         </TouchableOpacity>
 
         <View style={gs.pt15p}>
-          <PrimaryText size={24}>Let's Personlize your</PrimaryText>
-          <PrimaryText size={24}>experience</PrimaryText>
+          <PrimaryText size={28} weight="bold">What should we</PrimaryText>
+          <PrimaryText size={28} weight="bold">call you?</PrimaryText>
         </View>
 
-        <View style={[gs.pt10p, gs.pb5p]}>
-          <PrimaryText size={15} color={colors.accentGreen}>Hi, It's zero! What Do Your Friends</PrimaryText>
-          <PrimaryText size={15} color={colors.accentGreen}>Call You?</PrimaryText>
-        </View>
+        <PrimaryText size={14} color={colors.secondaryText} style={gs.mt6}>
+          This helps personalize your experience
+        </PrimaryText>
 
-        <View style={isValid ? gs.mb90p : undefined}>
+        <View style={gs.mt30}>
           <CustomInput
             input={name}
-            label={'Name'}
+            label={'Your name'}
             colors={colors}
-            placeholder={'eg. Indranil Bhuin'}
+            placeholder={'eg. Indranil'}
             setInput={setName}
             schema={nameSchema}
           />

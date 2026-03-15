@@ -54,39 +54,34 @@ const DatePicker: React.FC<DatePickerProps> = React.memo(
     }, [createdAt, setCreatedAt, setShowDatePicker, minDate, maxDate]);
 
     return (
-      <View>
-        {label && <PrimaryText style={gs.mb5}>{label}</PrimaryText>}
-        <View style={[gs.rowCenter, gs.mb10]}>
-          <TouchableOpacity onPress={handleOpenDatePicker} style={gs.rowCenter}>
-            <View
-              style={[
-                gs.size40,
-                gs.center,
-                gs.rounded5,
-                gs.border2,
-                gs.mr10,
-                {
-                  backgroundColor: colors.secondaryAccent,
-                  borderColor: colors.secondaryContainerColor,
-                },
-              ]}>
-              <Icon name="calendar" size={20} color={colors.primaryText} />
-            </View>
-            <PrimaryText>{formatDate(createdAt, 'Do MMM YYYY')}</PrimaryText>
-          </TouchableOpacity>
+      <View style={gs.mb15}>
+        {label && <PrimaryText size={12} color={colors.secondaryText} style={gs.mb5}>{label}</PrimaryText>}
+        <TouchableOpacity
+          onPress={handleOpenDatePicker}
+          activeOpacity={0.7}
+          style={[
+            gs.h48,
+            gs.rounded12,
+            gs.px14,
+            gs.rowCenter,
+            gs.gap8,
+            {backgroundColor: colors.secondaryAccent},
+          ]}>
+          <Icon name="calendar" size={18} color={colors.secondaryText} />
+          <PrimaryText size={14}>{formatDate(createdAt, 'Do MMM YYYY')}</PrimaryText>
+        </TouchableOpacity>
 
-          {Platform.OS === 'android' && showDatePicker && (
-            <DateTimePicker
-              value={new Date(createdAt)}
-              mode="date"
-              is24Hour={false}
-              display="default"
-              onChange={handleDateChange}
-              minimumDate={minDate}
-              maximumDate={maxDate}
-            />
-          )}
-        </View>
+        {Platform.OS === 'android' && showDatePicker && (
+          <DateTimePicker
+            value={new Date(createdAt)}
+            mode="date"
+            is24Hour={false}
+            display="default"
+            onChange={handleDateChange}
+            minimumDate={minDate}
+            maximumDate={maxDate}
+          />
+        )}
       </View>
     );
   },

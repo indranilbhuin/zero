@@ -66,54 +66,66 @@ const DebtorList: React.FC<DebtorListProps> = ({colors, debtors, allDebts, curre
       const debtorId = String(debtor.id);
       const totalDebt = getDebtTotal(debtorId);
       const amountColor = getAmountColor(debtorId);
+      let debtLabel = 'Settled';
+      if (totalDebt > 0) debtLabel = 'You owe';
+      else if (totalDebt < 0) debtLabel = 'Owes you';
 
       return (
-        <View style={[gs.itemsCenter, gs.flex1, {marginRight: '4%', marginBottom: '4%'}]}>
-          <TouchableOpacity
-            onPress={() => handleDebtor(debtorId, debtor.title, debtor.type)}
-            delayLongPress={500}
-            style={gs.center}>
-            <View
-              style={[
-                gs.size50,
-                gs.rounded50,
-                gs.p5,
-                gs.center,
-                gs.mb5,
-                gs.border2,
-                {
-                  backgroundColor: colors.sameWhite,
-                  borderColor: debtor.color ?? colors.primaryText,
-                },
-              ]}>
-              <View>
-                <Icon name={debtor.icon ?? 'user'} size={30} color={debtor.color ?? colors.primaryText} />
-              </View>
-            </View>
-            <PrimaryText size={12} color={colors.primaryText} style={[gs.textCenter, gs.selfCenter]}>
+        <TouchableOpacity
+          onPress={() => handleDebtor(debtorId, debtor.title, debtor.type)}
+          activeOpacity={0.7}
+          style={[gs.mx16, gs.py12, gs.rowCenter, {borderBottomWidth: 0.5, borderBottomColor: colors.secondaryAccent}]}>
+          <View
+            style={[
+              gs.size36,
+              gs.rounded50,
+              gs.center,
+              {backgroundColor: (debtor.color ?? colors.primaryText) + '18'},
+            ]}>
+            <Icon name={debtor.icon ?? 'user'} size={18} color={debtor.color ?? colors.primaryText} />
+          </View>
+
+          <View style={[gs.flex1, gs.ml12]}>
+            <PrimaryText size={14} weight="semibold" numberOfLines={1}>
               {debtor.title}
             </PrimaryText>
-          </TouchableOpacity>
-          <View style={[gs.wFull, gs.itemsCenter, gs.rounded5, gs.mt5, {backgroundColor: colors.iconContainer}]}>
-            <PrimaryText size={11} weight="semibold" color={amountColor} style={gs.textCenter} variant="number">
-              {currencySymbol}
-              {formatCurrency(Math.abs(totalDebt))}
+            <PrimaryText size={11} color={colors.secondaryText}>
+              {debtLabel}
             </PrimaryText>
           </View>
-        </View>
+
+          <View style={[gs.itemsEnd, gs.mr3]}>
+            <PrimaryText size={14} weight="bold" color={amountColor} variant="number">
+              {currencySymbol}{formatCurrency(Math.abs(totalDebt))}
+            </PrimaryText>
+          </View>
+
+          <Icon name="chevron-right" size={16} color={colors.secondaryText} />
+        </TouchableOpacity>
       );
     },
     [colors, currencySymbol, getDebtTotal, getAmountColor, handleDebtor],
   );
+
+  const ListEmpty = useCallback(() => (
+    <View style={[gs.center, gs.mt30p]}>
+      <View style={[gs.size50, gs.roundedFull, gs.center, {backgroundColor: colors.secondaryAccent}]}>
+        <Icon name="users" size={22} color={colors.secondaryText} />
+      </View>
+      <PrimaryText size={13} color={colors.secondaryText} style={gs.mt10}>
+        No one here yet
+      </PrimaryText>
+    </View>
+  ), [colors]);
 
   return (
     <View style={gs.flex1}>
       <FlashList
         data={debtors}
         renderItem={renderDebtorItem}
-        numColumns={4}
         keyExtractor={item => String(item.id)}
         ListHeaderComponent={ListHeaderComponent}
+        ListEmptyComponent={ListEmpty}
         contentContainerStyle={gs.pb80}
       />
     </View>

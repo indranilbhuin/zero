@@ -5,7 +5,6 @@ import AppHeader from '../atoms/AppHeader';
 import CustomInput from '../atoms/CustomInput';
 import PrimaryText from '../atoms/PrimaryText';
 import CategoryContainer from './CategoryContainer';
-import SecondaryButton from './SecondaryButton';
 import PrimaryButton from '../atoms/PrimaryButton';
 import useThemeColors from '../../hooks/useThemeColors';
 import {goBack, navigate} from '../../utils/navigationUtils';
@@ -144,7 +143,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
   return (
     <PrimaryView colors={colors} dismissKeyboardOnTouch>
       <View style={[gs.mb20, gs.mt20]}>
-        <AppHeader onPress={() => goBack()} colors={colors} text="Transaction Screen" />
+        <AppHeader onPress={() => goBack()} colors={colors} text={isAddButton ? 'Add Transaction' : 'Edit Transaction'} />
       </View>
 
       <CustomInput
@@ -152,7 +151,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         input={expenseTitle}
         setInput={setExpenseTitle}
         placeholder="eg. Biryani"
-        label="Expense"
+        label="Title"
         schema={expenseSchema}
       />
       <CustomInput
@@ -160,32 +159,30 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
         input={expenseDescription}
         setInput={setExpenseDescription}
         placeholder="eg. From Aroma's"
-        label="Expense Description"
+        label="Description"
         schema={expenseDescriptionSchema}
       />
-      <PrimaryText style={gs.mb5}>Expense Amount</PrimaryText>
+
+      <PrimaryText size={12} color={colors.secondaryText} style={gs.mb5}>Amount</PrimaryText>
       <View
         style={[
           gs.h48,
           gs.itemsCenter,
-          gs.border2,
-          gs.mt5,
-          gs.rounded10,
+          gs.rounded12,
           gs.pl10,
           gs.justifyStart,
           gs.row,
           {
-            borderColor: colors.secondaryContainerColor,
             backgroundColor: colors.secondaryAccent,
             marginBottom: expenseAmountError.length > 0 ? 5 : 15,
           },
         ]}>
-        <PrimaryText size={15} variant="number">{currencySymbol}</PrimaryText>
+        <PrimaryText size={15} variant="number" color={colors.secondaryText}>{currencySymbol}</PrimaryText>
         <TextInput
           style={[gs.px15, gs.h48, gs.wFull, gs.numMedium, gs.noFontPadding, {color: colors.primaryText}]}
           value={expenseAmount}
           onChangeText={setExpenseAmount}
-          placeholder={'eg. 320'}
+          placeholder={'0'}
           onChange={handleTextInputFocus}
           placeholderTextColor={colors.secondaryText}
           keyboardType="numeric"
@@ -202,13 +199,16 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           ))}
         </View>
       )}
+
       <DatePicker
         setShowDatePicker={setShowDatePicker}
         createdAt={createdAt}
         showDatePicker={showDatePicker}
         setCreatedAt={setCreatedAt}
+        label="Date"
       />
-      <PrimaryText style={gs.mb5}>Select any category</PrimaryText>
+
+      <PrimaryText size={12} color={colors.secondaryText} style={gs.mb8}>Category</PrimaryText>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CategoryContainer
           categories={categories}
@@ -216,15 +216,20 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
           toggleCategorySelection={toggleCategorySelection}
           selectedCategories={selectedCategories}
         />
-        <View style={gs.mb10}>
-          <SecondaryButton onPress={handleAddCategory} buttonText="Add More" colors={colors} width={100} />
-        </View>
+        <PrimaryButton
+          onPress={handleAddCategory}
+          colors={colors}
+          buttonTitle="Add Category"
+          variant="ghost"
+          size="sm"
+          fullWidth={false}
+        />
       </ScrollView>
       <View style={gs.mt5}>
         <PrimaryButton
           onPress={isAddButton ? handleAddExpense : handleUpdateExpense}
           colors={colors}
-          buttonTitle={type}
+          buttonTitle={isAddButton ? 'Add' : 'Update'}
           disabled={!isValid}
         />
       </View>

@@ -1,4 +1,4 @@
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
@@ -13,17 +13,22 @@ const WelcomeScreen = () => {
   return (
     <PrimaryView colors={colors} style={gs.justifyBetween}>
       <View style={gs.pt15p}>
-        <PrimaryText size={24}>
-          Welcome to <Text style={{color: colors.accentGreen}}>zero</Text>
+        <PrimaryText size={28} weight="bold" color={colors.primaryText}>
+          Welcome to{' '}
+          <PrimaryText size={28} weight="bold" color={colors.accentGreen}>
+            zero
+          </PrimaryText>
+        </PrimaryText>
+        <PrimaryText size={14} color={colors.secondaryText} style={gs.mt6}>
+          Your finances, your device, your control.
         </PrimaryText>
       </View>
 
       <Carousel />
 
-      <View>
-        <PrimaryButton onPress={handleAllreadyUser} colors={colors} buttonTitle={'Existing User'} disabled={undefined} />
-        <PrimaryText style={[gs.textCenter, gs.mt2p, gs.mb2p]}>or</PrimaryText>
-        <PrimaryButton onPress={handleNewUser} colors={colors} buttonTitle={'New User'} disabled={undefined} />
+      <View style={gs.gap12}>
+        <PrimaryButton onPress={handleNewUser} colors={colors} buttonTitle={'Get Started'} />
+        <PrimaryButton onPress={handleAllreadyUser} colors={colors} buttonTitle={'I have a backup'} variant="outline" />
       </View>
     </PrimaryView>
   );

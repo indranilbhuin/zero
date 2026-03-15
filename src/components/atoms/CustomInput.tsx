@@ -57,8 +57,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
   const hasIcons = hasLeftIcon || hasRightIcon;
 
   const inputBorderColor = useMemo(() => {
-    return isFocused ? colors.primaryText : colors.secondaryContainerColor;
-  }, [isFocused, colors.primaryText, colors.secondaryContainerColor]);
+    return isFocused ? colors.primaryText : 'transparent';
+  }, [isFocused, colors.primaryText]);
 
   const inputBackgroundColor = useMemo(() => {
     return disabled ? colors.secondaryContainerColor : colors.secondaryAccent;
@@ -87,21 +87,22 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <View style={disabled ? gs.opacity60 : undefined}>
-      {label ? <PrimaryText style={gs.mb5}>{label}</PrimaryText> : null}
+      {label ? (
+        <PrimaryText size={12} color={colors.secondaryText} style={gs.mb5}>
+          {label}
+        </PrimaryText>
+      ) : null}
       <View
         style={
           hasIcons
             ? [
                 gs.h48,
                 gs.itemsCenter,
-                gs.border2,
-                gs.mt5,
-                gs.mb15,
-                gs.rounded10,
+                gs.rounded12,
                 gs.pl10,
                 gs.justifyStart,
                 gs.row,
-                {borderColor: inputBorderColor, backgroundColor: inputBackgroundColor},
+                {borderWidth: 1.5, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor},
               ]
             : undefined
         }>
@@ -116,14 +117,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
               ? [gs.px15, gs.h48, gs.wFull, gs.fontMedium, gs.noFontPadding, {color: colors.primaryText}]
               : [
                   gs.h48,
-                  gs.border2,
-                  gs.mt5,
-                  gs.mb5,
-                  gs.rounded10,
+                  gs.rounded12,
                   gs.px15,
                   gs.fontMedium,
                   gs.noFontPadding,
-                  {borderColor: inputBorderColor, color: colors.primaryText, backgroundColor: inputBackgroundColor},
+                  {borderWidth: 1.5, borderColor: inputBorderColor, color: colors.primaryText, backgroundColor: inputBackgroundColor, marginBottom: 5},
                 ]
           }
           value={input}
