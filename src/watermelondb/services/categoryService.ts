@@ -2,6 +2,7 @@ import {Q} from '@nozbe/watermelondb';
 import {nanoid} from 'nanoid';
 import {database} from '../database';
 import Category from '../models/Category';
+import {sanitizeString, DEFAULTS} from '../../backend/sanitize';
 
 // Type for category data - all properties initialized for Hidden Class optimization
 export interface CategoryData {
@@ -30,8 +31,8 @@ export const createCategory = async (
       cat.categoryStatus = true;
       cat.userId = userId;
       // Always assign string values for consistent Hidden Class shape
-      cat.icon = icon ?? '';
-      cat.color = color ?? '#808080';
+      cat.icon = sanitizeString(icon, DEFAULTS.icon);
+      cat.color = sanitizeString(color, DEFAULTS.color);
     });
   });
   return id;
@@ -86,8 +87,8 @@ export const getAllCategories = async (): Promise<CategoryData[]> => {
     name: c.name,
     categoryStatus: c.categoryStatus,
     userId: c.userId,
-    icon: c.icon ?? '',
-    color: c.color ?? '#808080',
+    icon: sanitizeString(c.icon, DEFAULTS.icon),
+    color: sanitizeString(c.color, DEFAULTS.color),
   }));
 };
 
@@ -106,8 +107,8 @@ export const getAllCategoriesByUserId = async (
     name: c.name,
     categoryStatus: c.categoryStatus,
     userId: c.userId,
-    icon: c.icon ?? '',
-    color: c.color ?? '#808080',
+    icon: sanitizeString(c.icon, DEFAULTS.icon),
+    color: sanitizeString(c.color, DEFAULTS.color),
   }));
 };
 
@@ -126,8 +127,8 @@ export const getActiveCategoriesByUserId = async (
     name: c.name,
     categoryStatus: c.categoryStatus,
     userId: c.userId,
-    icon: c.icon ?? '',
-    color: c.color ?? '#808080',
+    icon: sanitizeString(c.icon, DEFAULTS.icon),
+    color: sanitizeString(c.color, DEFAULTS.color),
   }));
 };
 
@@ -146,8 +147,8 @@ export const getCategoryById = async (
       name: category.name,
       categoryStatus: category.categoryStatus,
       userId: category.userId,
-      icon: category.icon ?? '',
-      color: category.color ?? '#808080',
+      icon: sanitizeString(category.icon, DEFAULTS.icon),
+      color: sanitizeString(category.color, DEFAULTS.color),
     };
   } catch {
     return null;

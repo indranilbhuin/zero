@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {RefreshControl, ScrollView, TouchableOpacity, View} from 'react-native';
 import Icon from '../../components/atoms/Icons';
 import {navigate} from '../../utils/navigationUtils';
 import TransactionList from '../../components/molecules/TransactionList';
@@ -17,8 +17,6 @@ const HomeScreen = () => {
     colors,
     refreshing,
     allTransactions,
-    expenseLoading,
-    expenseError,
     userName,
     currencySymbol,
     onRefresh,
@@ -44,14 +42,6 @@ const HomeScreen = () => {
       },
     });
   }, [selectedMonthIndex, selectedYear, availableYears, handleMonthYearSelect]);
-
-  if (expenseLoading) {
-    return <Text>Loading ...</Text>;
-  }
-
-  if (expenseError) {
-    return <Text>Error</Text>;
-  }
 
   return (
     <>

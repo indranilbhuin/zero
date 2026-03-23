@@ -26,23 +26,23 @@ export interface ThemeColors {
 }
 
 const LightColors: ThemeColors = {
-  primaryBackground: '#FFFFFF',
-  primaryText: '#000000',
-  secondaryBackground: '#E0E6D3',
-  secondaryText: '#333333',
+  primaryBackground: '#FAFAF8',
+  primaryText: '#1A1A1A',
+  secondaryBackground: '#E4E9D8',
+  secondaryText: '#505050',
   accentGreen: '#6E8B3D',
-  accentOrange: '#FFA500',
+  accentOrange: '#E89530',
   accentBlue: '#1E90FF',
   buttonText: '#FFFFFF',
-  containerColor: '#F4F4F0',
-  cardBackground: '#EFEFEF',
-  secondaryContainerColor: '#E0E6D3',
-  iconContainer: '#E0E6D3',
-  secondaryAccent: '#F0F2ED',
+  containerColor: '#ECEEE7',
+  cardBackground: '#E8EAE3',
+  secondaryContainerColor: '#E4E9D8',
+  iconContainer: '#E4E9D8',
+  secondaryAccent: '#EEEFE9',
   sameBlack: '#000000',
   sameWhite: '#FAFBF7',
-  accentRed: '#FF8C6B',
-  lightAccent: '#FAFBF7',
+  accentRed: '#E87E5E',
+  lightAccent: '#F5F6F2',
 };
 
 const DarkColors: ThemeColors = {

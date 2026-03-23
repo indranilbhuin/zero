@@ -1,6 +1,6 @@
 {
   "name": "zero",
-  "version": "2.2",
+  "version": "2.3.0",
   "private": true,
   "author": "anotherwhy technologies",
   "homepage": "https://anotherwhy.com",
@@ -19,7 +19,7 @@
     "start:reset": "react-native start --reset-cache",
     "test": "jest",
     "typecheck": "tsc --strict",
-    "postversion": "react-native-version"
+    "version:set": "node scripts/bump-version.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.6",

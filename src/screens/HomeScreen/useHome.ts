@@ -5,8 +5,6 @@ import {
   fetchExpensesByMonth,
   invalidateExpenseCache,
   selectExpenseData,
-  selectExpenseError,
-  selectExpenseLoading,
 } from '../../redux/slice/expenseDataSlice';
 import {selectMonthIndex, selectYear, setMonthSelection} from '../../redux/slice/monthSelectionSlice';
 import {selectUserName} from '../../redux/slice/userNameSlice';
@@ -35,8 +33,6 @@ const useHome = () => {
   const allTransactions = useSelector(selectExpenseData) ?? [];
   const sortedTransactions = useMemo(() => sortByDateDesc(allTransactions as Expense[]), [allTransactions]);
 
-  const expenseLoading = useSelector(selectExpenseLoading);
-  const expenseError = useSelector(selectExpenseError);
   const userName = useSelector(selectUserName);
   const userId = useSelector(selectUserId);
   const currencySymbol = useSelector(selectCurrencySymbol);
@@ -100,8 +96,6 @@ const useHome = () => {
     colors,
     refreshing,
     allTransactions,
-    expenseLoading,
-    expenseError,
     userName,
     userId,
     currencySymbol,

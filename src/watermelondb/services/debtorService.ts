@@ -2,6 +2,7 @@ import {Q} from '@nozbe/watermelondb';
 import {nanoid} from 'nanoid';
 import {database} from '../database';
 import Debtor from '../models/Debtor';
+import {sanitizeString, DEFAULTS} from '../../backend/sanitize';
 
 // Type for debtor data - all properties initialized for Hidden Class optimization
 export interface DebtorData {
@@ -33,8 +34,8 @@ export const createDebtor = async (
       debtor.debtorStatus = true;
       debtor.userId = userId;
       // Always assign string values for consistent Hidden Class shape
-      debtor.icon = icon ?? '';
-      debtor.color = color ?? '#808080';
+      debtor.icon = sanitizeString(icon, DEFAULTS.icon);
+      debtor.color = sanitizeString(color, DEFAULTS.color);
     });
   });
   return id;
@@ -102,8 +103,8 @@ export const getAllDebtors = async (): Promise<DebtorData[]> => {
     type: d.type,
     debtorStatus: d.debtorStatus,
     userId: d.userId,
-    icon: d.icon ?? '',
-    color: d.color ?? '#808080',
+    icon: sanitizeString(d.icon, DEFAULTS.icon),
+    color: sanitizeString(d.color, DEFAULTS.color),
   }));
 };
 
@@ -123,8 +124,8 @@ export const getAllDebtorsByUserId = async (
     type: d.type,
     debtorStatus: d.debtorStatus,
     userId: d.userId,
-    icon: d.icon ?? '',
-    color: d.color ?? '#808080',
+    icon: sanitizeString(d.icon, DEFAULTS.icon),
+    color: sanitizeString(d.color, DEFAULTS.color),
   }));
 };
 
@@ -144,8 +145,8 @@ export const getActiveDebtorsByUserId = async (
     type: d.type,
     debtorStatus: d.debtorStatus,
     userId: d.userId,
-    icon: d.icon ?? '',
-    color: d.color ?? '#808080',
+    icon: sanitizeString(d.icon, DEFAULTS.icon),
+    color: sanitizeString(d.color, DEFAULTS.color),
   }));
 };
 
@@ -163,8 +164,8 @@ export const getDebtorByDebtorId = async (
       type: debtor.type,
       debtorStatus: debtor.debtorStatus,
       userId: debtor.userId,
-      icon: debtor.icon ?? '',
-      color: debtor.color ?? '#808080',
+      icon: sanitizeString(debtor.icon, DEFAULTS.icon),
+      color: sanitizeString(debtor.color, DEFAULTS.color),
     };
   } catch {
     return null;

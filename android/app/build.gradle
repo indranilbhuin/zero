@@ -91,8 +91,8 @@ android {
         applicationId "com.anotherwhy.zero"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "2.2"
+        versionCode 6
+        versionName "2.3.0"
     }
 
     // Enable 16 KB page size support for Android 15+ devices

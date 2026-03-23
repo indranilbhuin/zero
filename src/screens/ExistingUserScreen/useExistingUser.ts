@@ -23,27 +23,10 @@ import {fetchAllDebts} from '../../redux/slice/allDebtDataSlice';
 import StorageService from '../../utils/asyncStorageService';
 import {setIsOnboarded} from '../../redux/slice/isOnboardedSlice';
 import {AppDispatch} from '../../redux/store';
+import {upgradeExportData} from '../../backend/export/upgrader';
+import type {ExportData} from '../../backend/export/format';
 
-interface ImportedData {
-  users: Array<{username: string; email: string}>;
-  categories: Array<{name: string; icon?: string; color?: string}>;
-  currencies: Array<{code: string; symbol: string; name: string}>;
-  expenses: Array<{
-    title: string;
-    amount: number;
-    description?: string;
-    category: {name: string};
-    date: string;
-  }>;
-  debtors: Array<{title: string; icon?: string; type?: string; color?: string}>;
-  debts: Array<{
-    amount: number;
-    description: string;
-    debtor: {title: string};
-    date: string;
-    type: string;
-  }>;
-}
+type ImportedData = ExportData;
 
 interface SyncStatus {
   user: 'pending' | 'syncing' | 'done' | 'error';
@@ -253,18 +236,20 @@ const useExistingUser = () => {
       const fileContent = await RNFS.readFile(path, 'utf8');
       const jsonData = JSON.parse(fileContent);
 
-      const {key, data} = jsonData;
+      const {key} = jsonData;
       if (!key || !isValidKey(key)) {
         setUploadMessage('Invalid key. Please upload a valid zero export file.');
         return;
       }
+
+      const data: ImportedData = upgradeExportData(jsonData);
 
       setFileName(res.name ?? 'data.json');
       setUploadMessage('Syncing your data...');
       setIsSyncing(true);
 
       setSyncStatus(prev => ({...prev, user: 'syncing'}));
-      const {users} = data as ImportedData;
+      const {users} = data;
       const {username, email} = users[0];
       const newUserId = await createUser(username, email);
 
@@ -275,7 +260,7 @@ const useExistingUser = () => {
       setSyncStatus(prev => ({...prev, user: 'done'}));
       dispatch(fetchUserData());
 
-      await syncAllData(data as ImportedData, newUserId);
+      await syncAllData(data, newUserId);
 
       setIsSyncing(false);
       setIsSyncComplete(true);

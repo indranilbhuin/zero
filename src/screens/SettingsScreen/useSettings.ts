@@ -91,6 +91,15 @@ const useSettings = () => {
     [currencyId, dispatch],
   );
 
+  const handleReportBug = useCallback(() => {
+    const bugSheetURL = 'https://docs.google.com/spreadsheets/d/187UDxJbFloEUkxxX29ZJnAI7HSdhAAdSbIcAByc8CDU/edit?usp=sharing';
+    Linking.openURL(bugSheetURL).catch(err => {
+      if (__DEV__) {
+        console.error('Error opening bug report sheet:', err);
+      }
+    });
+  }, []);
+
   const handleRateNow = useCallback(() => {
     const url = Platform.select({
       ios: 'https://apps.apple.com/app/zero-offline-expense-tracker/id6759560225?action=write-review',
@@ -173,6 +182,7 @@ const useSettings = () => {
     userName,
     currencySymbol,
     currencyName,
+    handleReportBug,
     handleRateNow,
     handleGithub,
     handlePrivacyPolicy,

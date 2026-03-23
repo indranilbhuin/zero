@@ -9,6 +9,7 @@ import CustomToast from '../../components/molecules/CustomToast';
 import RNFS from 'react-native-fs';
 import {generateUniqueKey, requestStoragePermission} from '../../utils/dataUtils';
 import {getTimestamp} from '../../utils/dateUtils';
+import {CURRENT_EXPORT_VERSION} from '../../backend/export/format';
 import {SheetManager} from 'react-native-actions-sheet';
 import {Colors} from '../../hooks/useThemeColors';
 import {gs, hitSlop} from '../../styles/globalStyles';
@@ -58,6 +59,7 @@ const SettingsScreen = () => {
     userName,
     currencySymbol,
     currencyName,
+    handleReportBug,
     handleRateNow,
     handleGithub,
     handlePrivacyPolicy,
@@ -98,8 +100,8 @@ const SettingsScreen = () => {
       }
 
       const currentDateAndTime = getTimestamp();
-      const fileName = `zero${currentDateAndTime}.json`;
-      const jsonData = JSON.stringify({key: generateUniqueKey(), data: dataToExport}, null, 2);
+      const fileName = `zero_v${CURRENT_EXPORT_VERSION}_${currentDateAndTime}.json`;
+      const jsonData = JSON.stringify({key: generateUniqueKey(), version: CURRENT_EXPORT_VERSION, data: dataToExport}, null, 2);
 
       if (Platform.OS === 'ios') {
         const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
@@ -234,6 +236,14 @@ const SettingsScreen = () => {
           ABOUT
         </PrimaryText>
         <View style={[gs.rounded12, gs.overflowHidden, {backgroundColor: colors.containerColor}]}>
+          <SettingsRow
+            colors={colors}
+            icon="bug"
+            label="Report a bug"
+            subtitle="Found an issue? Let us know"
+            onPress={handleReportBug}
+          />
+          <View style={[gs.mx16, {height: 1, backgroundColor: colors.secondaryAccent}]} />
           <SettingsRow
             colors={colors}
             icon="star"

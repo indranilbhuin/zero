@@ -82,7 +82,7 @@ const DebtorList: React.FC<DebtorListProps> = ({colors, debtors, allDebts, curre
               gs.center,
               {backgroundColor: (debtor.color ?? colors.primaryText) + '18'},
             ]}>
-            <Icon name={debtor.icon ?? 'user'} size={18} color={debtor.color ?? colors.primaryText} />
+            <Icon name={debtor.icon || 'user'} size={18} color={debtor.color || colors.primaryText} />
           </View>
 
           <View style={[gs.flex1, gs.ml12]}>

@@ -5,47 +5,14 @@ import Expense from '../models/Expense';
 import Currency from '../models/Currency';
 import Debtor from '../models/Debtor';
 import Debt from '../models/Debt';
+import {sanitizeString, DEFAULTS} from '../../backend/sanitize';
+import type {ExportData} from '../../backend/export/format';
 
-// Export format interface - compatible with import in ExistingUserScreen
-export interface ExportData {
-  users: Array<{
-    username: string;
-    email: string;
-  }>;
-  categories: Array<{
-    name: string;
-    icon?: string;
-    color?: string;
-  }>;
-  expenses: Array<{
-    title: string;
-    amount: number;
-    description?: string;
-    category: {name: string};
-    date: string;
-  }>;
-  currencies: Array<{
-    code: string;
-    symbol: string;
-    name: string;
-  }>;
-  debtors: Array<{
-    title: string;
-    icon?: string;
-    type?: string;
-    color?: string;
-  }>;
-  debts: Array<{
-    amount: number;
-    description: string;
-    debtor: {title: string};
-    date: string;
-    type: string;
-  }>;
-}
+export type {ExportData} from '../../backend/export/format';
 
 /**
- * Gets all data from the database in a format suitable for export/import
+ * Gets all data from the database in a format suitable for export/import.
+ * Sanitizes all values before returning.
  */
 export const getAllData = async (): Promise<ExportData | null> => {
   try {
@@ -59,7 +26,6 @@ export const getAllData = async (): Promise<ExportData | null> => {
         database.get<Debt>('debts').query().fetch(),
       ]);
 
-    // Create lookup maps for category and debtor names
     const categoryMap = new Map<string, string>();
     categories.forEach(c => {
       categoryMap.set(c.id, c.name);
@@ -77,8 +43,8 @@ export const getAllData = async (): Promise<ExportData | null> => {
       })),
       categories: categories.map(c => ({
         name: c.name,
-        icon: c.icon ?? '',
-        color: c.color ?? '#808080',
+        icon: sanitizeString(c.icon, DEFAULTS.icon),
+        color: sanitizeString(c.color, DEFAULTS.color),
       })),
       expenses: expenses.map(e => ({
         title: e.title,
@@ -94,9 +60,9 @@ export const getAllData = async (): Promise<ExportData | null> => {
       })),
       debtors: debtors.map(d => ({
         title: d.title,
-        icon: d.icon ?? '',
-        type: d.type ?? 'Person',
-        color: d.color ?? '#808080',
+        icon: sanitizeString(d.icon, DEFAULTS.icon),
+        type: d.type ?? DEFAULTS.type,
+        color: sanitizeString(d.color, DEFAULTS.color),
       })),
       debts: debts.map(d => ({
         amount: d.amount,

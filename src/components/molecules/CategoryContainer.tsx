@@ -45,11 +45,11 @@ const CategoryContainer: React.FC<CategoryContainerProps> = React.memo(
                   gs.gap6,
                   {backgroundColor: isSelected ? colors.primaryText : colors.secondaryAccent},
                 ]}>
-                {category.icon !== undefined && (
+                {!!category.icon && (
                   <Icon
-                    name={category.icon ?? 'shapes'}
+                    name={category.icon}
                     size={16}
-                    color={isSelected ? colors.buttonText : (category.color ?? colors.secondaryText)}
+                    color={isSelected ? colors.buttonText : (category.color || colors.secondaryText)}
                   />
                 )}
                 <PrimaryText

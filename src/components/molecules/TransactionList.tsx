@@ -1,4 +1,5 @@
-import {TouchableOpacity, View} from 'react-native';
+import {View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import React, {useCallback, useRef, memo} from 'react';
 import Animated, {SharedValue, useAnimatedStyle, interpolate} from 'react-native-reanimated';
 import useThemeColors, {Colors} from '../../hooks/useThemeColors';
@@ -11,7 +12,6 @@ import {useDispatch} from 'react-redux';
 import {fetchExpenses, fetchExpensesByMonth, invalidateExpenseCache} from '../../redux/slice/expenseDataSlice';
 import PrimaryText from '../atoms/PrimaryText';
 import {fetchEverydayExpenses} from '../../redux/slice/everydayExpenseDataSlice';
-import UndoModal from '../atoms/UndoModal';
 import {formatCurrency} from '../../utils/numberUtils';
 import {FlashList, useRecyclingState} from '@shopify/flash-list';
 import {AppDispatch} from '../../redux/store';
@@ -98,6 +98,7 @@ const SwipeAction = ({
       style={[
         gs.center,
         {
+          flex: 1,
           width: ACTION_WIDTH + extraPadding,
           paddingLeft: side === 'left' ? extraPadding : 0,
           paddingRight: side === 'right' ? extraPadding : 0,
@@ -134,8 +135,8 @@ const ExpenseRow: React.FC<ExpenseRowProps> = React.memo(
               side="left"
               edgeToEdge={edgeToEdge}
               onPress={() => {
-                swipeableMethods.close();
                 onEdit(expense);
+                swipeableMethods.close();
               }}
             />
           )}
@@ -148,8 +149,8 @@ const ExpenseRow: React.FC<ExpenseRowProps> = React.memo(
               side="right"
               edgeToEdge={edgeToEdge}
               onPress={() => {
-                swipeableMethods.close();
                 onDelete(String(expense.id));
+                swipeableMethods.close();
               }}
             />
           )}
@@ -170,9 +171,9 @@ const ExpenseRow: React.FC<ExpenseRowProps> = React.memo(
             <View style={[gs.rowCenter, gs.flex1]}>
               <View style={[gs.size36, gs.center, gs.rounded10, gs.mr10, {backgroundColor: colors.iconContainer}]}>
                 <Icon
-                  name={expense.category?.icon ?? 'circle-dot'}
+                  name={expense.category?.icon || 'circle-dot'}
                   size={18}
-                  color={expense.category?.color ?? colors.buttonText}
+                  color={expense.category?.color || colors.buttonText}
                 />
               </View>
               <View style={[gs.flex1, gs.gap2]}>
@@ -200,6 +201,36 @@ const ExpenseRow: React.FC<ExpenseRowProps> = React.memo(
   },
 );
 
+const InlineUndo: React.FC<{
+  colors: Colors;
+  onUndo: () => void;
+  edgeToEdge: boolean;
+}> = memo(({colors, onUndo, edgeToEdge}) => (
+  <View style={gs.mb5}>
+    <View
+      style={[
+        gs.rounded12,
+        gs.rowBetweenCenter,
+        gs.px14,
+        gs.py12,
+        edgeToEdge && gs.mx16,
+        {backgroundColor: colors.secondaryAccent},
+      ]}>
+      <PrimaryText size={13} color={colors.secondaryText}>
+        Transaction deleted
+      </PrimaryText>
+      <TouchableOpacity
+        onPress={onUndo}
+        activeOpacity={0.7}
+        style={[gs.py8, gs.px14, gs.rounded10, {backgroundColor: colors.accentGreen}]}>
+        <PrimaryText size={12} weight="semibold" color={colors.buttonText}>
+          Undo
+        </PrimaryText>
+      </TouchableOpacity>
+    </View>
+  </View>
+));
+
 const TransactionItem: React.FC<TransactionItemProps> = React.memo(
   ({currencySymbol, expense: initialExpense, colors, dispatch, label, targetDate, targetMonth, openSwipeableRef, edgeToEdge}) => {
     const deletionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -209,7 +240,8 @@ const TransactionItem: React.FC<TransactionItemProps> = React.memo(
         clearTimeout(deletionTimeoutRef.current);
       }
     });
-    const [deletedItem, setDeletedItem] = useRecyclingState<Expense | null>(null, [initialExpense]);
+    const [deletedItemId, setDeletedItemId] = useRecyclingState<string | null>(null, [initialExpense]);
+    const deletedItemRef = useRef<Expense | null>(null);
 
     const handleEdit = useCallback((expense: Expense) => {
       navigate('UpdateTransactionScreen', {
@@ -224,15 +256,18 @@ const TransactionItem: React.FC<TransactionItemProps> = React.memo(
 
     const handleDelete = useCallback(
       (expenseId: string) => {
-        const deletedExpense = expenses.find(expense => String(expense.id) === expenseId);
-        setExpenses(prevExpenses => prevExpenses.filter(expense => String(expense.id) !== expenseId));
-        setDeletedItem(deletedExpense || null);
+        const deletedExpense = expenses.find(expense => String(expense.id) === expenseId) ?? null;
+        deletedItemRef.current = deletedExpense;
+        setDeletedItemId(expenseId);
 
         if (deletionTimeoutRef.current) {
           clearTimeout(deletionTimeoutRef.current);
         }
 
         deletionTimeoutRef.current = setTimeout(async () => {
+          setExpenses(prev => prev.filter(e => String(e.id) !== expenseId));
+          setDeletedItemId(null);
+          deletedItemRef.current = null;
           await deleteExpenseById(expenseId);
           dispatch(invalidateExpenseCache());
           if (targetMonth) {
@@ -243,36 +278,38 @@ const TransactionItem: React.FC<TransactionItemProps> = React.memo(
           if (targetDate) {
             dispatch(fetchEverydayExpenses(targetDate));
           }
-          setDeletedItem(null);
         }, 3000);
       },
-      [expenses, dispatch, targetDate, targetMonth, setExpenses, setDeletedItem],
+      [expenses, dispatch, targetDate, targetMonth, setExpenses, setDeletedItemId],
     );
 
     const handleUndo = useCallback(() => {
-      if (deletedItem) {
-        if (deletionTimeoutRef.current) {
-          clearTimeout(deletionTimeoutRef.current);
-          deletionTimeoutRef.current = null;
-        }
-        setExpenses(prevExpenses => [...prevExpenses, deletedItem]);
-        setDeletedItem(null);
+      if (deletionTimeoutRef.current) {
+        clearTimeout(deletionTimeoutRef.current);
+        deletionTimeoutRef.current = null;
       }
-    }, [deletedItem, setExpenses, setDeletedItem]);
+      setDeletedItemId(null);
+      deletedItemRef.current = null;
+    }, [setDeletedItemId]);
 
     const renderExpenseItem = useCallback(
-      ({item}: {item: Expense}) => (
-        <ExpenseRow
-          expense={item}
-          colors={colors}
-          currencySymbol={currencySymbol}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          openSwipeableRef={openSwipeableRef}
-          edgeToEdge={edgeToEdge}
-        />
-      ),
-      [colors, currencySymbol, handleEdit, handleDelete, openSwipeableRef, edgeToEdge],
+      ({item}: {item: Expense}) => {
+        if (String(item.id) === deletedItemId) {
+          return <InlineUndo colors={colors} onUndo={handleUndo} edgeToEdge={edgeToEdge} />;
+        }
+        return (
+          <ExpenseRow
+            expense={item}
+            colors={colors}
+            currencySymbol={currencySymbol}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            openSwipeableRef={openSwipeableRef}
+            edgeToEdge={edgeToEdge}
+          />
+        );
+      },
+      [colors, currencySymbol, handleEdit, handleDelete, handleUndo, openSwipeableRef, edgeToEdge, deletedItemId],
     );
 
     return (
@@ -285,8 +322,8 @@ const TransactionItem: React.FC<TransactionItemProps> = React.memo(
           renderItem={renderExpenseItem}
           keyExtractor={item => String(item.id)}
           scrollEnabled={false}
+          extraData={deletedItemId}
         />
-        <UndoModal isVisible={deletedItem !== null} onUndo={handleUndo} type={'Transaction'} />
       </View>
     );
   },
@@ -313,7 +350,9 @@ const TransactionList: React.FC<TransactionListProps> = ({currencySymbol, allExp
 
     return sortedDates.map(date => ({
       date,
-      expenses: groupedExpenses.get(date) ?? [],
+      expenses: (groupedExpenses.get(date) ?? []).sort((a, b) =>
+        b.date.localeCompare(a.date),
+      ),
       label: formatCalendar(date),
     }));
   }, [allExpenses]);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {setNavigationRef} from './src/utils/navigationUtils';
 import {Provider} from 'react-redux';
@@ -11,11 +11,16 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {ThemeProvider} from './src/context/ThemeContext';
 import {SheetProvider} from 'react-native-actions-sheet';
 import ErrorBoundary from './src/components/atoms/ErrorBoundary';
+import {initBackend} from './src/backend';
 import './src/sheets/sheets';
 import './src/utils/globalErrorHandler';
 
 const App = () => {
   LogBox.ignoreAllLogs();
+
+  useEffect(() => {
+    initBackend();
+  }, []);
 
   return (
     <ErrorBoundary>

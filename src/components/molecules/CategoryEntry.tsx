@@ -37,8 +37,18 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const isAddButton = type === 'Add';
 
   const [categoryName, setCategoryName] = useState(isAddButton ? '' : categoryData?.categoryName ?? '');
-  const [selectedIcon, setSelectedIcon] = useState(isAddButton ? 'null' : categoryData?.categoryIcon ?? 'null');
-  const [selectedColor, setSelectedColor] = useState(isAddButton ? 'null' : categoryData?.categoryColor ?? 'null');
+
+  const resolveIconParam = (val?: string): string | null => {
+    if (!val || val === 'null' || val === '') { return null; }
+    return val;
+  };
+
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(
+    isAddButton ? null : resolveIconParam(categoryData?.categoryIcon),
+  );
+  const [selectedColor, setSelectedColor] = useState<string | null>(
+    isAddButton ? null : resolveIconParam(categoryData?.categoryColor),
+  );
   const [selectedCategories, setSelectedCategories] = useState<Array<CategorySelection>>([]);
 
   const selectedCategoryNames = useMemo(() => new Set(selectedCategories.map(c => c.name)), [selectedCategories]);
@@ -78,7 +88,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
 
   const handleUpdateCategory = useCallback(async () => {
     try {
-      await updateCategoryById(categoryData?.categoryId, categoryName, selectedIcon, selectedColor);
+      await updateCategoryById(categoryData?.categoryId, categoryName, selectedIcon ?? undefined, selectedColor ?? undefined);
       dispatch(fetchCategories());
       goBack();
     } catch (error) {
@@ -103,7 +113,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const handleOpenIconPicker = useCallback(() => {
     SheetManager.show('icon-picker-sheet', {
       payload: {
-        selectedIcon,
+        selectedIcon: selectedIcon ?? undefined,
         onSelect: (icon: string) => {
           setSelectedIcon(icon);
           SheetManager.hide('icon-picker-sheet');
@@ -115,7 +125,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
   const handleOpenColorPicker = useCallback(() => {
     SheetManager.show('color-picker-sheet', {
       payload: {
-        selectedColor,
+        selectedColor: selectedColor ?? undefined,
         onSelect: (color: string) => {
           setSelectedColor(color);
           SheetManager.hide('color-picker-sheet');
@@ -210,7 +220,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
                 {backgroundColor: colors.containerColor},
               ]}>
               <Icon
-                name={selectedIcon === 'null' ? 'shapes' : selectedIcon}
+                name={selectedIcon ?? 'shapes'}
                 size={16}
                 color={colors.primaryText}
               />
@@ -218,7 +228,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
             <View style={gs.flex1}>
               <PrimaryText size={11} color={colors.secondaryText}>Icon</PrimaryText>
               <PrimaryText size={13} weight="medium">
-                {selectedIcon === 'null' ? 'Choose' : 'Change'}
+                {selectedIcon ? 'Change' : 'Choose'}
               </PrimaryText>
             </View>
           </TouchableOpacity>
@@ -240,13 +250,13 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
                 gs.size32,
                 gs.roundedFull,
                 gs.center,
-                {backgroundColor: selectedColor === 'null' ? colors.accentGreen : selectedColor},
+                {backgroundColor: selectedColor ?? colors.accentGreen},
               ]}
             />
             <View style={gs.flex1}>
               <PrimaryText size={11} color={colors.secondaryText}>Color</PrimaryText>
               <PrimaryText size={13} weight="medium">
-                {selectedColor === 'null' ? 'Choose' : 'Change'}
+                {selectedColor ? 'Change' : 'Choose'}
               </PrimaryText>
             </View>
           </TouchableOpacity>
