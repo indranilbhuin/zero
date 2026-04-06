@@ -31,7 +31,7 @@ const LightColors: ThemeColors = {
   secondaryBackground: '#E4E9D8',
   secondaryText: '#505050',
   accentGreen: '#6E8B3D',
-  accentOrange: '#E89530',
+  accentOrange: '#B86E00',
   accentBlue: '#1E90FF',
   buttonText: '#FFFFFF',
   containerColor: '#ECEEE7',
@@ -41,7 +41,7 @@ const LightColors: ThemeColors = {
   secondaryAccent: '#EEEFE9',
   sameBlack: '#000000',
   sameWhite: '#FAFBF7',
-  accentRed: '#E87E5E',
+  accentRed: '#C4503C',
   lightAccent: '#F5F6F2',
 };
 

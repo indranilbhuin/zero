@@ -1,4 +1,5 @@
 import {sanitizeString, DEFAULTS} from '../sanitize';
+import {COLOR_REMAP} from '../migrations/scripts/002_remap_category_colors';
 import {CURRENT_EXPORT_VERSION, type ExportData} from './format';
 
 interface RawExport {
@@ -28,7 +29,10 @@ export const upgradeExportData = (raw: RawExport): ExportData => {
     version = 2;
   }
 
-  // Future: if (version < 3) { data = upgradeV2toV3(data); version = 3; }
+  if (version < 3) {
+    data = upgradeV2toV3(data);
+    version = 3;
+  }
 
   if (__DEV__ && version < CURRENT_EXPORT_VERSION) {
     console.warn(`Export format v${version} is behind current v${CURRENT_EXPORT_VERSION}`);
@@ -64,3 +68,24 @@ const upgradeV0toV1 = (data: ExportData): ExportData => sanitizeEntities(data);
  * to guarantee all values meet the v2 contract.
  */
 const upgradeV1toV2 = (data: ExportData): ExportData => sanitizeEntities(data);
+
+const remapColor = (color: string | undefined): string | undefined => {
+  if (!color) {return color;}
+  return COLOR_REMAP[color.toUpperCase()] ?? color;
+};
+
+/**
+ * v2 → v3: WCAG 2.2 color compliance. Remaps old category/debtor colors
+ * to the new accessible palette. Colors not in the remap table are untouched.
+ */
+const upgradeV2toV3 = (data: ExportData): ExportData => ({
+  ...data,
+  categories: data.categories.map(c => ({
+    ...c,
+    color: remapColor(c.color),
+  })),
+  debtors: data.debtors.map(d => ({
+    ...d,
+    color: remapColor(d.color),
+  })),
+});

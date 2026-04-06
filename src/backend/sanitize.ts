@@ -22,6 +22,6 @@ export const isPoisonedValue = (val: string | null | undefined): boolean => {
 
 export const DEFAULTS = {
   icon: '',
-  color: '#808080',
+  color: '#758595',
   type: 'Person',
 } as const;

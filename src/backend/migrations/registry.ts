@@ -1,4 +1,5 @@
 import {migration_001} from './scripts/001_sanitize_icon_color';
+import {migration_002} from './scripts/002_remap_category_colors';
 
 export interface DataMigration {
   version: number;
@@ -17,4 +18,5 @@ export interface DataMigration {
  */
 export const DATA_MIGRATIONS: DataMigration[] = [
   migration_001,
+  migration_002,
 ];
