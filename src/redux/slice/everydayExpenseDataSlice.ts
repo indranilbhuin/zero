@@ -1,6 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../rootReducer';
-import {ExpenseWithCategory, getAllExpensesByDate} from '../../watermelondb/services';
+import {ExpenseWithCategory, getAllExpensesByDate, getAllExpensesByCategoryAndMonth} from '../../watermelondb/services';
 import {selectUserId} from './userIdSlice';
 
 const everydayExpensesAdapter = createEntityAdapter<ExpenseWithCategory>();
@@ -19,6 +19,19 @@ export const fetchEverydayExpenses = createAsyncThunk(
       return expenses;
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch everyday expenses');
+    }
+  },
+);
+
+export const fetchExpensesByCategory = createAsyncThunk(
+  'everydayExpense/fetchByCategory',
+  async ({categoryId, yearMonth}: {categoryId: string; yearMonth: string}, {getState, rejectWithValue}) => {
+    try {
+      const userId = selectUserId(getState() as RootState);
+      const expenses = await getAllExpensesByCategoryAndMonth(userId, categoryId, yearMonth);
+      return expenses;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch category expenses');
     }
   },
 );
@@ -43,6 +56,19 @@ const everydayExpenseDataSlice = createSlice({
         everydayExpensesAdapter.setAll(state, action.payload);
       })
       .addCase(fetchEverydayExpenses.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchExpensesByCategory.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchExpensesByCategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        everydayExpensesAdapter.setAll(state, action.payload);
+      })
+      .addCase(fetchExpensesByCategory.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

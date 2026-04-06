@@ -246,6 +246,43 @@ export const getAllExpensesByMonth = async (
 };
 
 /**
+ * Gets all expenses for a user in a specific month filtered by category ID
+ */
+export const getAllExpensesByCategoryAndMonth = async (
+  userId: string,
+  categoryId: string,
+  yearMonth: string,
+): Promise<ExpenseWithCategory[]> => {
+  const expenses = await database
+    .get<Expense>('expenses')
+    .query(
+      Q.where('user_id', userId),
+      Q.where('category_id', categoryId),
+      Q.where('date', Q.like(`${Q.sanitizeLikeString(yearMonth)}%`)),
+    )
+    .fetch();
+
+  const category = await database.get<Category>('categories').find(categoryId);
+  const categoryData = {
+    id: category.id,
+    name: category.name,
+    icon: category.icon ?? '',
+    color: category.color ?? '#808080',
+  };
+
+  return expenses.map(e => ({
+    id: e.id,
+    title: e.title,
+    amount: e.amount,
+    description: e.description ?? '',
+    categoryId: e.categoryId,
+    userId: e.userId,
+    date: e.date,
+    category: categoryData,
+  }));
+};
+
+/**
  * Gets distinct years that have expense data for a user
  */
 export const getAvailableExpenseYears = async (

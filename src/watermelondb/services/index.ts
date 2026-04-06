@@ -28,6 +28,7 @@ export {
   getAllExpensesByUserIdWithCategory,
   getAllExpensesByDate,
   getAllExpensesByMonth,
+  getAllExpensesByCategoryAndMonth,
   getAvailableExpenseYears,
   getExpenseById,
 } from './expenseService';

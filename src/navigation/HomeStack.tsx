@@ -19,6 +19,7 @@ import IndividualDebtsScreen from '../screens/IndividualDebtsScreen';
 import AddDebtsScreen from '../screens/AddDebtsScreen';
 import UpdateDebtScreen from '../screens/UpdateDebtScreen';
 import EverydayTransactionScreen from '../screens/EverydayTransactionScreen';
+import CategoryTransactionScreen from '../screens/CategoryTransactionScreen';
 import UpdateDebtorScreen from '../screens/UpdateDebtorScreen';
 import {gs} from '../styles/globalStyles';
 
@@ -122,6 +123,7 @@ const HomeStack = () => {
       <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
       <Stack.Screen name="UpdateCategoryScreen" component={UpdateCategoryScreen} />
       <Stack.Screen name="EverydayTransactionScreen" component={EverydayTransactionScreen} />
+      <Stack.Screen name="CategoryTransactionScreen" component={CategoryTransactionScreen} />
       <Stack.Screen name="AddDebtorScreen" component={AddDebtorScreen} />
       <Stack.Screen name="IndividualDebtsScreen" component={IndividualDebtsScreen} />
       <Stack.Screen name="AddDebtsScreen" component={AddDebtsScreen} />

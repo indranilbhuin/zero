@@ -43,6 +43,11 @@ const ReportsScreen = () => {
     });
   }, [selectedMonth, selectedYear, availableYears, handleMonthYearSelect]);
 
+  const yearMonth = useMemo(
+    () => `${selectedYear}-${getMonthNumber(selectedMonth)}`,
+    [selectedYear, selectedMonth],
+  );
+
   const pieChartData = useMemo(() => {
     const categoryMap = new Map<string, {category: any; amount: number}>();
 
@@ -67,17 +72,38 @@ const ReportsScreen = () => {
       value: item.amount,
       svg: {fill: item.category.color ?? '#808080', onPress: () => {}},
       label: `${item.category.name}: ${currencySymbol} ${item.amount}`,
+      categoryId: item.category.id,
+      categoryIcon: item.category.icon,
     }));
   }, [filteredTransactions, currencySymbol]);
+
+  const handleCategoryPress = useCallback(
+    (categoryId: string, categoryName: string, categoryColor: string, categoryIcon?: string) => {
+      navigate('CategoryTransactionScreen', {
+        categoryId,
+        categoryName,
+        categoryColor,
+        categoryIcon,
+        yearMonth,
+        monthLabel: `${selectedMonth} ${selectedYear}`,
+      });
+    },
+    [yearMonth, selectedMonth, selectedYear],
+  );
 
   const renderPieChart = useCallback(() => {
     return (
       <View>
         <PieChart style={gs.h200} data={pieChartData} />
-        <PieChartLabels slices={pieChartData} colors={colors} currencySymbol={currencySymbol} />
+        <PieChartLabels
+          slices={pieChartData}
+          colors={colors}
+          currencySymbol={currencySymbol}
+          onCategoryPress={handleCategoryPress}
+        />
       </View>
     );
-  }, [pieChartData, colors]);
+  }, [pieChartData, colors, currencySymbol, handleCategoryPress]);
 
   const {transactionsByDay, maxDayAmount} = useMemo(() => {
     const byDay = new Map<string, {total: number; count: number}>();
