@@ -83,7 +83,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
       const year = Number.parseInt(formatDate(createdAt, 'YYYY'), 10);
       ensureYearInCache(year);
       dispatch(invalidateExpenseCache());
-      dispatch(fetchExpensesByMonth(yearMonth));
+      await dispatch(fetchExpensesByMonth(yearMonth));
       goBack();
     } catch (error) {
       if (__DEV__) {
@@ -111,7 +111,7 @@ const ExpenseEntry: React.FC<ExpenseEntryProps> = ({type, route}) => {
       const year = Number.parseInt(formatDate(createdAt, 'YYYY'), 10);
       ensureYearInCache(year);
       dispatch(invalidateExpenseCache());
-      dispatch(fetchExpensesByMonth(yearMonth));
+      await dispatch(fetchExpensesByMonth(yearMonth));
       goBack();
     } catch (error) {
       if (__DEV__) {

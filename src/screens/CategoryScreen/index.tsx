@@ -164,7 +164,7 @@ const CategoryScreen = () => {
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             ListEmptyComponent={ListEmptyComponent}
-            contentContainerStyle={gs.px16}
+            contentContainerStyle={{...gs.px16, ...gs.pb80}}
           />
         </View>
       </PrimaryView>

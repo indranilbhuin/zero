@@ -47,7 +47,7 @@ const CategoryEntry: React.FC<CategoryEntryProps> = ({type, route}) => {
     isAddButton ? null : resolveIconParam(categoryData?.categoryIcon),
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(
-    isAddButton ? null : resolveIconParam(categoryData?.categoryColor),
+    isAddButton ? '#808080' : resolveIconParam(categoryData?.categoryColor),
   );
   const [selectedCategories, setSelectedCategories] = useState<Array<CategorySelection>>([]);
 

@@ -1,6 +1,6 @@
-import {View} from 'react-native';
+import {RefreshControl, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import React, {useCallback, useRef, memo} from 'react';
+import React, {useCallback, useMemo, useRef, memo} from 'react';
 import Animated, {SharedValue, useAnimatedStyle, interpolate} from 'react-native-reanimated';
 import useThemeColors, {Colors} from '../../hooks/useThemeColors';
 import Icon from '../atoms/Icons';
@@ -34,6 +34,11 @@ interface TransactionListProps {
   targetDate?: string;
   targetMonth?: string;
   edgeToEdge?: boolean;
+  ListHeaderComponent?: React.ReactElement;
+  ListEmptyComponent?: React.ReactElement;
+  refreshing?: boolean;
+  onRefresh?: () => void;
+  contentContainerStyle?: {paddingBottom?: number};
 }
 
 interface TransactionItemProps {
@@ -292,49 +297,49 @@ const TransactionItem: React.FC<TransactionItemProps> = React.memo(
       deletedItemRef.current = null;
     }, [setDeletedItemId]);
 
-    const renderExpenseItem = useCallback(
-      ({item}: {item: Expense}) => {
-        if (String(item.id) === deletedItemId) {
-          return <InlineUndo colors={colors} onUndo={handleUndo} edgeToEdge={edgeToEdge} />;
-        }
-        return (
-          <ExpenseRow
-            expense={item}
-            colors={colors}
-            currencySymbol={currencySymbol}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            openSwipeableRef={openSwipeableRef}
-            edgeToEdge={edgeToEdge}
-          />
-        );
-      },
-      [colors, currencySymbol, handleEdit, handleDelete, handleUndo, openSwipeableRef, edgeToEdge, deletedItemId],
-    );
-
     return (
       <View>
         <PrimaryText size={12} weight="semibold" color={colors.secondaryText} style={[gs.mb8, gs.mt15, edgeToEdge && gs.px16]}>
           {label}
         </PrimaryText>
-        <FlashList
-          data={expenses}
-          renderItem={renderExpenseItem}
-          keyExtractor={item => String(item.id)}
-          scrollEnabled={false}
-          extraData={deletedItemId}
-        />
+        {expenses.map(item =>
+          String(item.id) === deletedItemId ? (
+            <InlineUndo key={String(item.id)} colors={colors} onUndo={handleUndo} edgeToEdge={edgeToEdge} />
+          ) : (
+            <ExpenseRow
+              key={String(item.id)}
+              expense={item}
+              colors={colors}
+              currencySymbol={currencySymbol}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              openSwipeableRef={openSwipeableRef}
+              edgeToEdge={edgeToEdge}
+            />
+          ),
+        )}
       </View>
     );
   },
 );
 
-const TransactionList: React.FC<TransactionListProps> = ({currencySymbol, allExpenses, targetDate, targetMonth, edgeToEdge = false}) => {
+const TransactionList: React.FC<TransactionListProps> = ({
+  currencySymbol,
+  allExpenses,
+  targetDate,
+  targetMonth,
+  edgeToEdge = false,
+  ListHeaderComponent,
+  ListEmptyComponent,
+  refreshing,
+  onRefresh,
+  contentContainerStyle,
+}) => {
   const colors = useThemeColors();
   const dispatch = useDispatch<AppDispatch>();
   const openSwipeableRef = useRef<{close: () => void} | null>(null);
 
-  const groupedData: GroupedExpense[] = React.useMemo(() => {
+  const groupedData: GroupedExpense[] = useMemo(() => {
     const groupedExpenses = new Map<string, Array<Expense>>();
 
     allExpenses?.forEach(expense => {
@@ -374,15 +379,26 @@ const TransactionList: React.FC<TransactionListProps> = ({currencySymbol, allExp
     [currencySymbol, colors, dispatch, targetDate, targetMonth, edgeToEdge],
   );
 
+  const refreshControl = useMemo(
+    () =>
+      onRefresh ? (
+        <RefreshControl refreshing={refreshing ?? false} onRefresh={onRefresh} />
+      ) : undefined,
+    [refreshing, onRefresh],
+  );
+
   return (
-    <View style={gs.mt10}>
-      <FlashList
-        data={groupedData}
-        renderItem={renderGroupItem}
-        keyExtractor={item => item.date}
-        scrollEnabled={false}
-      />
-    </View>
+    <FlashList
+      data={groupedData}
+      renderItem={renderGroupItem}
+      keyExtractor={item => item.date}
+      extraData={allExpenses}
+      ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={ListEmptyComponent}
+      refreshControl={refreshControl}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={contentContainerStyle}
+    />
   );
 };
 

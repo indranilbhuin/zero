@@ -83,7 +83,6 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
       await deleteDebtById(debtId);
       dispatch(fetchDebtsByDebtor(debtorId));
       dispatch(fetchAllDebts());
-      setRefreshing(true);
     },
     [debtorId, dispatch],
   );
@@ -134,11 +133,17 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   );
 
   useEffect(() => {
-    if (refreshing) {
-      dispatch(fetchDebtsByDebtor(debtorId));
-      dispatch(fetchIndividualDebtor(debtorId));
-      setRefreshing(false);
-    }
+    if (!refreshing) return;
+
+    let cancelled = false;
+    Promise.all([
+      dispatch(fetchDebtsByDebtor(debtorId)),
+      dispatch(fetchIndividualDebtor(debtorId)),
+    ]).finally(() => {
+      if (!cancelled) setRefreshing(false);
+    });
+
+    return () => { cancelled = true; };
   }, [dispatch, debtorId, refreshing]);
 
   return {

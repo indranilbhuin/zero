@@ -15,6 +15,7 @@ import {getCurrentYear, getMonthNumber, getMonthNames, sortByDateDesc} from '../
 import {ExpenseData as Expense} from '../../watermelondb/services';
 import {AppDispatch} from '../../redux/store';
 import {loadAvailableYears} from '../../utils/availableYearsCache';
+import {useFocusEffect} from '@react-navigation/native';
 
 const MONTHS = getMonthNames();
 const CURRENT_YEAR = getCurrentYear();
@@ -56,22 +57,26 @@ const useHome = () => {
     }
   }, [dispatch, userId]);
 
-  useEffect(() => {
-    if (userId) {
-      dispatch(fetchExpensesByMonth(yearMonth));
-    }
-  }, [dispatch, userId, yearMonth]);
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) {
+        dispatch(invalidateExpenseCache());
+        dispatch(fetchExpensesByMonth(yearMonth));
+      }
+    }, [dispatch, userId, yearMonth]),
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
   }, []);
 
   useEffect(() => {
-    if (refreshing) {
-      dispatch(invalidateExpenseCache());
-      dispatch(fetchExpensesByMonth(yearMonth));
+    if (!refreshing) return;
+
+    dispatch(invalidateExpenseCache());
+    dispatch(fetchExpensesByMonth(yearMonth)).finally(() => {
       setRefreshing(false);
-    }
+    });
   }, [dispatch, refreshing, yearMonth]);
 
   const {totalSpent, transactionCount, avgPerDay} = useMemo(() => {

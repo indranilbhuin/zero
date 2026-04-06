@@ -40,6 +40,8 @@ const IndividualDebtsScreen = () => {
   } = useIndividualDebts(route);
 
   const [debtsType, setDebtsType] = useState('Borrow');
+  console.log("refreshing", refreshing);
+  
 
   const netColor = useMemo(() => {
     if (debtorTotal > 0) return colors.accentOrange;

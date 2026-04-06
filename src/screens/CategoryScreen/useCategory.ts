@@ -20,10 +20,11 @@ const useCategory = () => {
   );
 
   useEffect(() => {
-    if (refreshing) {
-      dispatch(fetchCategories());
+    if (!refreshing) return;
+
+    dispatch(fetchCategories()).finally(() => {
       setRefreshing(false);
-    }
+    });
   }, [refreshing, dispatch]);
 
   const onRefresh = useCallback(() => {
@@ -48,7 +49,6 @@ const useCategory = () => {
     try {
       await softDeleteCategoryById(categoryId);
       dispatch(fetchCategories());
-      setRefreshing(true);
     } catch (error) {
       if (__DEV__) {
         console.error('Error deleting category:', categoryId, error);
