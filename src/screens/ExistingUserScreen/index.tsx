@@ -4,7 +4,6 @@ import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import Icon from '../../components/atoms/Icons';
 import PrimaryButton from '../../components/atoms/PrimaryButton';
-import CustomToast from '../../components/molecules/CustomToast';
 import useExistingUser from './useExistingUser';
 import {gs} from '../../styles/globalStyles';
 
@@ -57,17 +56,13 @@ const ExistingUserScreen = () => {
     isSyncComplete,
     syncStatus,
     syncStats,
-    isStorageModalVisible,
-    handleAccessStorageOk,
-    handleAccessStorageCancel,
   } = useExistingUser();
 
   const showSyncProgress = isSyncing || isSyncComplete;
 
   return (
-    <>
-      <PrimaryView colors={colors} style={gs.justifyBetween}>
-        <View>
+    <PrimaryView colors={colors} style={gs.justifyBetween}>
+      <View>
           <View style={gs.pt10p}>
             <PrimaryText size={28} weight="bold">Restore your</PrimaryText>
             <PrimaryText size={28} weight="bold">data</PrimaryText>
@@ -146,16 +141,8 @@ const ExistingUserScreen = () => {
           )}
         </View>
 
-        <PrimaryButton onPress={handleContinue} colors={colors} buttonTitle={'Continue'} disabled={!isSyncComplete} />
-      </PrimaryView>
-      <CustomToast
-        visible={isStorageModalVisible}
-        message={'Storage permission is required to upload your backup file'}
-        type="warning"
-        onOk={handleAccessStorageOk}
-        onCancel={handleAccessStorageCancel}
-      />
-    </>
+      <PrimaryButton onPress={handleContinue} colors={colors} buttonTitle={'Continue'} disabled={!isSyncComplete} />
+    </PrimaryView>
   );
 };
 

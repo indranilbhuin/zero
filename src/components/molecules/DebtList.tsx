@@ -1,4 +1,5 @@
-import {RefreshControlProps, TouchableOpacity, View} from 'react-native';
+import {RefreshControlProps, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import React, {useCallback, useMemo, useRef, memo} from 'react';
 import Animated, {SharedValue, useAnimatedStyle, interpolate} from 'react-native-reanimated';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -57,6 +58,7 @@ const SwipeAction = ({
       style={[
         gs.center,
         {
+          flex: 1,
           width: ACTION_WIDTH + EDGE_INSET,
           paddingLeft: side === 'left' ? EDGE_INSET : 0,
           paddingRight: side === 'right' ? EDGE_INSET : 0,
@@ -105,8 +107,8 @@ const DebtRow = memo(({
             backgroundColor={colors.lightAccent}
             side="left"
             onPress={() => {
-              swipeableMethods.close();
               onEdit(debt);
+              swipeableMethods.close();
             }}
           />
         )}
@@ -118,8 +120,8 @@ const DebtRow = memo(({
             backgroundColor={colors.lightAccent}
             side="right"
             onPress={() => {
-              swipeableMethods.close();
               onDelete(String(debt.id));
+              swipeableMethods.close();
             }}
           />
         )}

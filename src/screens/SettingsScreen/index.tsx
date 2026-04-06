@@ -5,7 +5,6 @@ import {goBack} from '../../utils/navigationUtils';
 import useSettings from './useSettings';
 import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
-import CustomToast from '../../components/molecules/CustomToast';
 import RNFS from 'react-native-fs';
 import {generateUniqueKey, requestStoragePermission} from '../../utils/dataUtils';
 import {getTimestamp} from '../../utils/dateUtils';
@@ -65,20 +64,9 @@ const SettingsScreen = () => {
     handlePrivacyPolicy,
     handleTermsAndConditions,
     handleDeleteAllData,
-    isDeleteModalVisible,
-    handleDeleteAllDataOk,
-    handleDeleteAllDataCancel,
     allData,
-    isStorageModalVisible,
-    handleAccessStorageOk,
-    handleAccessStorageCancel,
-    setIsStorageModalVisible,
-    isDownloadSuccessful,
-    setIsDownloadSuccessful,
-    isDownloadError,
-    setIsDownloadError,
-    handleDownloadSuccessful,
-    handleDownloadError,
+    handleExportResult,
+    requestStorageViaDialog,
   } = useSettings();
 
   const handleOpenCurrencySheet = useCallback(() => {
@@ -95,7 +83,7 @@ const SettingsScreen = () => {
   const exportData = async (dataToExport: unknown) => {
     try {
       if (!dataToExport) {
-        setIsDownloadError(true);
+        handleExportResult(false);
         return;
       }
 
@@ -113,25 +101,25 @@ const SettingsScreen = () => {
           title: 'Export Zero Data',
         });
 
-        setIsDownloadSuccessful(true);
+        handleExportResult(true);
       } else {
         const storagePermissionGranted = await requestStoragePermission();
 
         if (!storagePermissionGranted) {
-          setIsStorageModalVisible(true);
+          requestStorageViaDialog();
           return;
         }
 
         const path = `${RNFS.DownloadDirectoryPath}/${fileName}`;
 
         await RNFS.writeFile(path, jsonData, 'utf8');
-        setIsDownloadSuccessful(true);
+        handleExportResult(true);
       }
     } catch (error) {
       if (__DEV__) {
         console.error('Error saving file:', error);
       }
-      setIsDownloadError(true);
+      handleExportResult(false);
     }
   };
 
@@ -292,33 +280,6 @@ const SettingsScreen = () => {
         </View>
       </ScrollView>
 
-      <CustomToast
-        visible={isDeleteModalVisible}
-        message={'Are you sure you want to delete all your data'}
-        type="warning"
-        onOk={handleDeleteAllDataOk}
-        onCancel={handleDeleteAllDataCancel}
-      />
-
-      <CustomToast
-        visible={isStorageModalVisible}
-        message={'You need to manually give permission for the storage to download your data'}
-        type="warning"
-        onOk={handleAccessStorageOk}
-        onCancel={handleAccessStorageCancel}
-      />
-      <CustomToast
-        visible={isDownloadSuccessful}
-        message={'You data is successfuly exported in Downloads folder'}
-        type="success"
-        onOk={handleDownloadSuccessful}
-      />
-      <CustomToast
-        visible={isDownloadError}
-        message={'There is an error in exporting your data'}
-        type="warning"
-        onOk={handleDownloadError}
-      />
     </PrimaryView>
   );
 };

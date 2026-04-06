@@ -9,6 +9,7 @@ import {LogBox} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {ThemeProvider} from './src/context/ThemeContext';
+import {DialogProvider} from './src/context/DialogContext';
 import {SheetProvider} from 'react-native-actions-sheet';
 import ErrorBoundary from './src/components/atoms/ErrorBoundary';
 import {initBackend} from './src/backend';
@@ -29,11 +30,13 @@ const App = () => {
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               <ThemeProvider>
-                <SheetProvider>
-                  <NavigationContainer ref={setNavigationRef}>
-                    <MainStack />
-                  </NavigationContainer>
-                </SheetProvider>
+                <DialogProvider>
+                  <SheetProvider>
+                    <NavigationContainer ref={setNavigationRef}>
+                      <MainStack />
+                    </NavigationContainer>
+                  </SheetProvider>
+                </DialogProvider>
               </ThemeProvider>
             </PersistGate>
           </Provider>

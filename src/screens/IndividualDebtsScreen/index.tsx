@@ -9,7 +9,6 @@ import PrimaryView from '../../components/atoms/PrimaryView';
 import PrimaryText from '../../components/atoms/PrimaryText';
 import DebtList from '../../components/molecules/DebtList';
 import {formatCurrency} from '../../utils/numberUtils';
-import CustomToast from '../../components/molecules/CustomToast';
 import {gs, hitSlop} from '../../styles/globalStyles';
 
 const IndividualDebtsScreen = () => {
@@ -31,17 +30,10 @@ const IndividualDebtsScreen = () => {
     sortedLendings,
     totalBorrowings,
     totalLendings,
-    paidToastVisible,
-    handleOk,
-    handleCancel,
-    deleteDebtorVisible,
-    handleDeleteOk,
-    handleDeleteCancel,
   } = useIndividualDebts(route);
 
   const [debtsType, setDebtsType] = useState('Borrow');
-  console.log("refreshing", refreshing);
-  
+
 
   const netColor = useMemo(() => {
     if (debtorTotal > 0) return colors.accentOrange;
@@ -158,46 +150,30 @@ const IndividualDebtsScreen = () => {
   );
 
   return (
-    <>
-      <PrimaryView colors={colors} useBottomPadding={false} useSidePadding={false}>
-        <View style={[gs.px16, gs.mb15, gs.mt20]}>
-          <AppHeader onPress={goBack} colors={colors} text={debtorName ?? ''} />
-        </View>
-        <DebtList
-          colors={colors}
-          handleEditDebt={handleEditDebt}
-          handleDeleteDebt={handleDeleteDebt}
-          individualDebts={debtsType === 'Borrow' ? sortedBorrowings : sortedLendings}
-          currencySymbol={currencySymbol}
-          ListHeaderComponent={ListHeader}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        />
-        <View style={[gs.absolute, gs.bottom15, gs.right15, gs.zIndex1]}>
-          <TouchableOpacity
-            style={[gs.size50, gs.rounded8, gs.center, {backgroundColor: colors.secondaryBackground}]}
-            onPress={() => navigate('AddDebtsScreen', {debtorId, debtorName})}
-            hitSlop={hitSlop}
-            accessibilityLabel="Add new debt"
-            accessibilityRole="button">
-            <Icon name="plus" size={30} color={colors.primaryText} />
-          </TouchableOpacity>
-        </View>
-      </PrimaryView>
-      <CustomToast
-        visible={paidToastVisible}
-        message={`You want to settle payment with ${debtorName}`}
-        onCancel={handleCancel}
-        onOk={handleOk}
-        type="success"
+    <PrimaryView colors={colors} useBottomPadding={false} useSidePadding={false}>
+      <View style={[gs.px16, gs.mb15, gs.mt20]}>
+        <AppHeader onPress={goBack} colors={colors} text={debtorName ?? ''} />
+      </View>
+      <DebtList
+        colors={colors}
+        handleEditDebt={handleEditDebt}
+        handleDeleteDebt={handleDeleteDebt}
+        individualDebts={debtsType === 'Borrow' ? sortedBorrowings : sortedLendings}
+        currencySymbol={currencySymbol}
+        ListHeaderComponent={ListHeader}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
-      <CustomToast
-        visible={deleteDebtorVisible}
-        message={`First you need to settle payment with ${debtorName}`}
-        onCancel={handleDeleteCancel}
-        onOk={handleDeleteOk}
-        type="success"
-      />
-    </>
+      <View style={[gs.absolute, gs.bottom15, gs.right15, gs.zIndex1]}>
+        <TouchableOpacity
+          style={[gs.size50, gs.rounded8, gs.center, {backgroundColor: colors.secondaryBackground}]}
+          onPress={() => navigate('AddDebtsScreen', {debtorId, debtorName})}
+          hitSlop={hitSlop}
+          accessibilityLabel="Add new debt"
+          accessibilityRole="button">
+          <Icon name="plus" size={30} color={colors.primaryText} />
+        </TouchableOpacity>
+      </View>
+    </PrimaryView>
   );
 };
 

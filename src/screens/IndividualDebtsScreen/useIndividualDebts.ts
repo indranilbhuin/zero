@@ -13,6 +13,7 @@ import {DebtData as DebtDocType} from '../../watermelondb/services';
 import useAmountColor from '../../hooks/useAmountColor';
 import {fetchIndividualDebtor, selectIndividualDebtorData} from '../../redux/slice/IndividualDebtorSlice';
 import {AppDispatch} from '../../redux/store';
+import {useDialog} from '../../context/DialogContext';
 
 export type IndividualDebtsScreenRouteProp = RouteProp<
   {
@@ -28,13 +29,12 @@ export type IndividualDebtsScreenRouteProp = RouteProp<
 const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
   const colors = useThemeColors();
   const dispatch = useDispatch<AppDispatch>();
+  const {showDialog} = useDialog();
   const [refreshing, setRefreshing] = useState(false);
   const individualDebts = (useSelector(selectDebtData) ?? []) as DebtDocType[];
   const debtLoading = useSelector(selectDebtLoading);
   const debtError = useSelector(selectDebtError);
   const currencySymbol = useSelector(selectCurrencySymbol);
-  const [paidToastVisible, setPaidToastVisible] = useState(false);
-  const [deleteDebtorVisible, setDeleteDebtorVisible] = useState(false);
   const {debtorId = '', debtorType = ''} = route.params ?? {};
   const individualDebtor = useSelector(selectIndividualDebtorData);
   const debtorName = individualDebtor?.title;
@@ -93,33 +93,29 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
       dispatch(fetchDebtors());
       goBack();
     } else {
-      setDeleteDebtorVisible(true);
+      const confirmed = await showDialog({
+        type: 'warning',
+        message: `First you need to settle payment with ${debtorName}`,
+      });
+      if (confirmed) {
+        await deleteAllDebtsByDebtorId(debtorId);
+        dispatch(fetchDebtsByDebtor(debtorId));
+        dispatch(fetchAllDebts());
+      }
     }
-  }, [debtorId, dispatch, individualDebts.length]);
+  }, [debtorId, debtorName, dispatch, individualDebts.length, showDialog]);
 
-  const handleMarkAsPaid = useCallback(() => {
-    setPaidToastVisible(true);
-  }, []);
-
-  const handleOk = useCallback(async () => {
-    await deleteAllDebtsByDebtorId(debtorId);
-    dispatch(fetchDebtsByDebtor(debtorId));
-    dispatch(fetchAllDebts());
-    setPaidToastVisible(false);
-  }, [debtorId, dispatch]);
-
-  const handleDeleteOk = useCallback(() => {
-    setPaidToastVisible(true);
-    setDeleteDebtorVisible(false);
-  }, []);
-
-  const handleCancel = useCallback(() => {
-    setPaidToastVisible(false);
-  }, []);
-
-  const handleDeleteCancel = useCallback(() => {
-    setDeleteDebtorVisible(false);
-  }, []);
+  const handleMarkAsPaid = useCallback(async () => {
+    const confirmed = await showDialog({
+      type: 'success',
+      message: `You want to settle payment with ${debtorName}?`,
+    });
+    if (confirmed) {
+      await deleteAllDebtsByDebtorId(debtorId);
+      dispatch(fetchDebtsByDebtor(debtorId));
+      dispatch(fetchAllDebts());
+    }
+  }, [debtorId, debtorName, dispatch, showDialog]);
 
   const handleUpdateDebtor = useCallback(() => {
     navigate('UpdateDebtorScreen', {debtorId, debtorName, debtorType});
@@ -167,12 +163,6 @@ const useIndividualDebts = (route: IndividualDebtsScreenRouteProp) => {
     debtorTotalColor,
     totalBorrowings,
     totalLendings,
-    paidToastVisible,
-    handleOk,
-    handleCancel,
-    deleteDebtorVisible,
-    handleDeleteOk,
-    handleDeleteCancel,
   };
 };
 

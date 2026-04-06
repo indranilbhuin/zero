@@ -3,6 +3,7 @@ import useThemeColors from '../../hooks/useThemeColors';
 import {useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import {requestStoragePermission} from '../../utils/dataUtils';
+import {useDialog} from '../../context/DialogContext';
 import {pick, types} from '@react-native-documents/picker';
 import RNFS from 'react-native-fs';
 import {
@@ -40,10 +41,10 @@ interface SyncStatus {
 const useExistingUser = () => {
   const colors = useThemeColors();
   const dispatch = useDispatch<AppDispatch>();
+  const {showDialog} = useDialog();
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadMessage, setUploadMessage] = useState('Upload your file');
-  const [isStorageModalVisible, setIsStorageModalVisible] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSyncComplete, setIsSyncComplete] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -217,7 +218,13 @@ const useExistingUser = () => {
       const storagePermissionGranted = await requestStoragePermission();
 
       if (!storagePermissionGranted) {
-        setIsStorageModalVisible(true);
+        const confirmed = await showDialog({
+          type: 'warning',
+          message: 'Storage permission is required to upload your backup file',
+        });
+        if (confirmed) {
+          Linking.openSettings();
+        }
         return;
       }
 
@@ -292,14 +299,6 @@ const useExistingUser = () => {
     dispatch(setIsOnboarded(true));
   };
 
-  const handleAccessStorageOk = async () => {
-    Linking.openSettings();
-  };
-
-  const handleAccessStorageCancel = () => {
-    setIsStorageModalVisible(false);
-  };
-
   return {
     colors,
     importData,
@@ -312,9 +311,6 @@ const useExistingUser = () => {
     syncError,
     syncStatus,
     syncStats,
-    isStorageModalVisible,
-    handleAccessStorageOk,
-    handleAccessStorageCancel,
   };
 };
 

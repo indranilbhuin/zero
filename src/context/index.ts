@@ -6,3 +6,5 @@ export {
   type ThemeMode,
   type ResolvedTheme,
 } from './ThemeContext';
+
+export {DialogProvider, useDialog} from './DialogContext';

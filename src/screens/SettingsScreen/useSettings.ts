@@ -7,9 +7,10 @@ import {
   selectCurrencySymbol,
   setCurrencyData,
 } from '../../redux/slice/currencyDataSlice';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect} from 'react';
 import {getAppVersion} from '../../utils/getVersion';
 import {useTheme, ThemeMode} from '../../context/ThemeContext';
+import {useDialog} from '../../context/DialogContext';
 import StorageService from '../../utils/asyncStorageService';
 import {updateUserById, updateCurrencyById, deleteAllData} from '../../watermelondb/services';
 import {Linking, Platform} from 'react-native';
@@ -26,13 +27,7 @@ const useSettings = () => {
   const allData = useSelector(selectAllData);
 
   const {colors, themeMode, setThemeMode} = useTheme();
-
-  const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [isStorageModalVisible, setIsStorageModalVisible] = useState(false);
-
-  const [isDownloadSuccessful, setIsDownloadSuccessful] = useState(false);
-  const [isDownloadError, setIsDownloadError] = useState(false);
+  const {showDialog, showAlert} = useDialog();
   const appVersion = getAppVersion();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -41,14 +36,9 @@ const useSettings = () => {
     dispatch(fetchAllData());
   }, [dispatch]);
 
-  const handleThemeModalClose = useCallback(() => {
-    setIsThemeModalVisible(false);
-  }, []);
-
   const handleThemeSelection = useCallback(async (theme: string) => {
     try {
       await setThemeMode(theme as ThemeMode);
-      setIsThemeModalVisible(false);
     } catch (error) {
       if (__DEV__) {
         console.error('Error saving theme preference:', error);
@@ -139,42 +129,48 @@ const useSettings = () => {
     });
   }, []);
 
-  const handleDeleteAllDataOk = useCallback(async () => {
-    await deleteAllData();
-    StorageService.setItemSync('isOnboarded', JSON.stringify(false));
-    dispatch(setIsOnboarded(false));
-  }, [dispatch]);
+  const handleDeleteAllData = useCallback(async () => {
+    const confirmed = await showDialog({
+      type: 'warning',
+      message: 'Are you sure you want to delete all your data?',
+    });
+    if (confirmed) {
+      await deleteAllData();
+      StorageService.setItemSync('isOnboarded', JSON.stringify(false));
+      dispatch(setIsOnboarded(false));
+    }
+  }, [dispatch, showDialog]);
 
-  const handleDeleteAllDataCancel = useCallback(() => {
-    setIsDeleteModalVisible(false);
-  }, []);
+  const handleExportResult = useCallback(
+    async (success: boolean) => {
+      if (success) {
+        await showAlert({
+          type: 'success',
+          message: 'Your data is successfully exported in Downloads folder',
+        });
+      } else {
+        await showAlert({
+          type: 'error',
+          message: 'There is an error in exporting your data',
+        });
+      }
+    },
+    [showAlert],
+  );
 
-  const handleAccessStorageOk = useCallback(async () => {
-    Linking.openSettings();
-  }, []);
-
-  const handleAccessStorageCancel = useCallback(() => {
-    setIsStorageModalVisible(false);
-  }, []);
-
-  const handleDeleteAllData = useCallback(() => {
-    setIsDeleteModalVisible(true);
-  }, []);
-
-  const handleDownloadSuccessful = useCallback(() => {
-    setIsDownloadSuccessful(false);
-  }, []);
-
-  const handleDownloadError = useCallback(() => {
-    setIsDownloadError(false);
-  }, []);
+  const requestStorageViaDialog = useCallback(async () => {
+    const confirmed = await showDialog({
+      type: 'warning',
+      message: 'You need to manually give permission for the storage to download your data',
+    });
+    if (confirmed) {
+      Linking.openSettings();
+    }
+  }, [showDialog]);
 
   return {
-    isThemeModalVisible,
-    setIsThemeModalVisible,
     appVersion,
     colors,
-    handleThemeModalClose,
     handleThemeSelection,
     handleNameUpdate,
     handleCurrencyUpdate,
@@ -188,20 +184,9 @@ const useSettings = () => {
     handlePrivacyPolicy,
     handleTermsAndConditions,
     handleDeleteAllData,
-    isDeleteModalVisible,
-    handleDeleteAllDataOk,
-    handleDeleteAllDataCancel,
     allData,
-    isStorageModalVisible,
-    handleAccessStorageOk,
-    handleAccessStorageCancel,
-    setIsStorageModalVisible,
-    isDownloadSuccessful,
-    setIsDownloadSuccessful,
-    isDownloadError,
-    setIsDownloadError,
-    handleDownloadSuccessful,
-    handleDownloadError,
+    handleExportResult,
+    requestStorageViaDialog,
   };
 };
 
